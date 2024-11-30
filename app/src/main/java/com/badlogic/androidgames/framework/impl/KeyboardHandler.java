@@ -35,7 +35,7 @@ public class KeyboardHandler implements OnKeyListener {
             return false;
 
         synchronized (this) {
-            KeyEvent keyEvent = keyEventPool.newObject();
+            KeyEvent keyEvent = keyEventPool.get();
             keyEvent.keyCode = keyCode;
             keyEvent.keyChar = (char) event.getUnicodeChar();
             if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {

@@ -2,8 +2,9 @@ package com.badlogic.androidgames.framework;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
-public class Pool<T> {
+public class Pool<T> implements Supplier<T> {
 
     public interface PoolObjectFactory<T> {
         T createObject();
@@ -16,18 +17,14 @@ public class Pool<T> {
     public Pool(PoolObjectFactory<T> factory, int maxSize) {
         this.factory = factory;
         this.maxSize = maxSize;
-        this.freeObjects = new ArrayList<T>(maxSize);
+        this.freeObjects = new ArrayList<>(maxSize);
     }
 
-    public T newObject() {
-        T object;
-
-        if (freeObjects.isEmpty())
-            object = factory.createObject();
-        else
-            object = freeObjects.remove(freeObjects.size() - 1);
-
-        return object;
+    @Override
+    public T get() {
+        return freeObjects.isEmpty()
+                ? factory.createObject()
+                : freeObjects.remove(freeObjects.size() - 1);
     }
 
     public void free(T object) {

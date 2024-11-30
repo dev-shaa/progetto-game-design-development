@@ -49,7 +49,7 @@ public class MultiTouchHandler implements TouchHandler {
         switch (action) {
         case MotionEvent.ACTION_DOWN:
         case MotionEvent.ACTION_POINTER_DOWN:
-            touchEvent = touchEventPool.newObject();
+            touchEvent = touchEventPool.get();
             touchEvent.type = TouchEvent.TOUCH_DOWN;
             touchEvent.pointer = pointerId;
             touchEvent.x = touchX[pointerId] = (int) (event
@@ -63,7 +63,7 @@ public class MultiTouchHandler implements TouchHandler {
         case MotionEvent.ACTION_UP:
         case MotionEvent.ACTION_POINTER_UP:
         case MotionEvent.ACTION_CANCEL:
-            touchEvent = touchEventPool.newObject();
+            touchEvent = touchEventPool.get();
             touchEvent.type = TouchEvent.TOUCH_UP;
             touchEvent.pointer = pointerId;
             touchEvent.x = touchX[pointerId] = (int) (event
@@ -80,7 +80,7 @@ public class MultiTouchHandler implements TouchHandler {
                 pointerIndex = i;
                 pointerId = event.getPointerId(pointerIndex);
 
-                touchEvent = touchEventPool.newObject();
+                touchEvent = touchEventPool.get();
                 touchEvent.type = TouchEvent.TOUCH_DRAGGED;
                 touchEvent.pointer = pointerId;
                 touchEvent.x = touchX[pointerId] = (int) (event

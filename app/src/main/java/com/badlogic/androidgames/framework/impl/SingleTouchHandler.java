@@ -37,7 +37,7 @@ public class SingleTouchHandler implements TouchHandler {
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         synchronized(this) {
-            TouchEvent touchEvent = touchEventPool.newObject();
+            TouchEvent touchEvent = touchEventPool.get();
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 touchEvent.type = TouchEvent.TOUCH_DOWN;

@@ -1,6 +1,7 @@
 package com.badlogic.androidgames.framework;
 
 public abstract class Screen {
+
     protected final Game game;
 
     public Screen(Game game) {
@@ -16,4 +17,5 @@ public abstract class Screen {
     public abstract void resume();
 
     public abstract void dispose();
+    
 }

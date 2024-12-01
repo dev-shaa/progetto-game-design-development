@@ -1,21 +1,23 @@
 package com.badlogic.androidgames.framework;
 
 public interface Music {
-    public void play();
 
-    public void stop();
+    void play();
 
-    public void pause();
+    void stop();
 
-    public void setLooping(boolean looping);
+    void pause();
 
-    public void setVolume(float volume);
+    void setLooping(boolean looping);
 
-    public boolean isPlaying();
+    void setVolume(float volume);
 
-    public boolean isStopped();
+    boolean isPlaying();
 
-    public boolean isLooping();
+    boolean isStopped();
 
-    public void dispose();
+    boolean isLooping();
+
+    void dispose();
+
 }

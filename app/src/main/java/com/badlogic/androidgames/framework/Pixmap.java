@@ -3,11 +3,13 @@ package com.badlogic.androidgames.framework;
 import com.badlogic.androidgames.framework.Graphics.PixmapFormat;
 
 public interface Pixmap {
-    public int getWidth();
 
-    public int getHeight();
+    int getWidth();
 
-    public PixmapFormat getFormat();
+    int getHeight();
 
-    public void dispose();
+    PixmapFormat getFormat();
+
+    void dispose();
+
 }

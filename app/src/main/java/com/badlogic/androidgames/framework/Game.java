@@ -1,17 +1,19 @@
 package com.badlogic.androidgames.framework;
 
 public interface Game {
-    public Input getInput();
 
-    public FileIO getFileIO();
+    Input getInput();
 
-    public Graphics getGraphics();
+    FileIO getFileIO();
 
-    public Audio getAudio();
+    Graphics getGraphics();
 
-    public void setScreen(Screen screen);
+    Audio getAudio();
 
-    public Screen getCurrentScreen();
+    void setScreen(Screen screen);
 
-    public Screen getStartScreen();
+    Screen getCurrentScreen();
+
+    Screen getStartScreen();
+
 }

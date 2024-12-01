@@ -33,41 +33,21 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public Pixmap newPixmap(String fileName, PixmapFormat format) {
-        Config config = null;
-        if (format == PixmapFormat.RGB565)
-            config = Config.RGB_565;
-        else if (format == PixmapFormat.ARGB4444)
-            config = Config.ARGB_4444;
-        else
-            config = Config.ARGB_8888;
-
         Options options = new Options();
-        options.inPreferredConfig = config;
+        options.inPreferredConfig = format == PixmapFormat.RGB565 ? Config.RGB_565 : Config.ARGB_8888;
 
-        InputStream in = null;
-        Bitmap bitmap = null;
-        try {
-            in = assets.open(fileName);
+        Bitmap bitmap;
+
+        try (InputStream in = assets.open(fileName)) {
             bitmap = BitmapFactory.decodeStream(in);
             if (bitmap == null)
-                throw new RuntimeException("Couldn't load bitmap from asset '"
-                        + fileName + "'");
+                throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
         } catch (IOException e) {
-            throw new RuntimeException("Couldn't load bitmap from asset '"
-                    + fileName + "'");
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
+            throw new RuntimeException("Couldn't load bitmap from asset '" + fileName + "'");
         }
 
         if (bitmap.getConfig() == Config.RGB_565)
             format = PixmapFormat.RGB565;
-        else if (bitmap.getConfig() == Config.ARGB_4444)
-            format = PixmapFormat.ARGB4444;
         else
             format = PixmapFormat.ARGB8888;
 
@@ -76,8 +56,7 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public void clear(int color) {
-        canvas.drawRGB((color & 0xff0000) >> 16, (color & 0xff00) >> 8,
-                (color & 0xff));
+        canvas.drawRGB((color & 0xff0000) >> 16, (color & 0xff00) >> 8, (color & 0xff));
     }
 
     @Override
@@ -100,8 +79,7 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY,
-            int srcWidth, int srcHeight) {
+    public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
         srcRect.left = srcX;
         srcRect.top = srcY;
         srcRect.right = srcX + srcWidth - 1;
@@ -112,13 +90,12 @@ public class AndroidGraphics implements Graphics {
         dstRect.right = x + srcWidth - 1;
         dstRect.bottom = y + srcHeight - 1;
 
-        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect,
-                null);
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, null);
     }
-    
+
     @Override
     public void drawPixmap(Pixmap pixmap, int x, int y) {
-        canvas.drawBitmap(((AndroidPixmap)pixmap).bitmap, x, y, null);
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, null);
     }
 
     @Override

@@ -8,18 +8,19 @@ import android.view.View;
 
 import com.badlogic.androidgames.framework.Input;
 
-public class AndroidInput implements Input {    
-    AccelerometerHandler accelHandler;
-    KeyboardHandler keyHandler;
-    TouchHandler touchHandler;
+public class AndroidInput implements Input {
+
+    private final AccelerometerHandler accelHandler;
+    private final KeyboardHandler keyHandler;
+    private final TouchHandler touchHandler;
 
     public AndroidInput(Context context, View view, float scaleX, float scaleY) {
         accelHandler = new AccelerometerHandler(context);
-        keyHandler = new KeyboardHandler(view);               
-        if(Integer.parseInt(VERSION.SDK) < 5) 
+        keyHandler = new KeyboardHandler(view);
+        if (Integer.parseInt(VERSION.SDK) < 5)
             touchHandler = new SingleTouchHandler(view, scaleX, scaleY);
         else
-            touchHandler = new MultiTouchHandler(view, scaleX, scaleY);        
+            touchHandler = new MultiTouchHandler(view, scaleX, scaleY);
     }
 
     @Override
@@ -61,9 +62,18 @@ public class AndroidInput implements Input {
     public List<TouchEvent> getTouchEvents() {
         return touchHandler.getTouchEvents();
     }
-    
+
     @Override
     public List<KeyEvent> getKeyEvents() {
         return keyHandler.getKeyEvents();
     }
+
+    public void resume() {
+        accelHandler.resume();
+    }
+
+    public void pause() {
+        accelHandler.pause();
+    }
+
 }

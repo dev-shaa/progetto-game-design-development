@@ -7,19 +7,12 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class AccelerometerHandler implements SensorEventListener {
-    float accelX;
-    float accelY;
-    float accelZ;
+
+    private float accelX, accelY, accelZ;
+    private final SensorManager manager;
 
     public AccelerometerHandler(Context context) {
-        SensorManager manager = (SensorManager) context
-                .getSystemService(Context.SENSOR_SERVICE);
-        if (manager.getSensorList(Sensor.TYPE_ACCELEROMETER).size() != 0) {
-            Sensor accelerometer = manager.getSensorList(
-                    Sensor.TYPE_ACCELEROMETER).get(0);
-            manager.registerListener(this, accelerometer,
-                    SensorManager.SENSOR_DELAY_GAME);
-        }
+        manager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
     @Override
@@ -45,4 +38,16 @@ public class AccelerometerHandler implements SensorEventListener {
     public float getAccelZ() {
         return accelZ;
     }
+
+    public void resume() {
+        if (!manager.getSensorList(Sensor.TYPE_ACCELEROMETER).isEmpty()) {
+            Sensor accelerometer = manager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
+            manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+        }
+    }
+
+    public void pause() {
+        manager.unregisterListener(this);
+    }
+
 }

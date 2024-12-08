@@ -12,18 +12,12 @@ import com.badlogic.androidgames.framework.Pool.PoolObjectFactory;
 
 public class KeyboardHandler implements OnKeyListener {
     boolean[] pressedKeys = new boolean[128];
-    Pool<KeyEvent> keyEventPool;
-    List<KeyEvent> keyEventsBuffer = new ArrayList<KeyEvent>();    
-    List<KeyEvent> keyEvents = new ArrayList<KeyEvent>();
+    private final Pool<KeyEvent> keyEventPool;
+    private final List<KeyEvent> keyEventsBuffer = new ArrayList<>();
+    private final List<KeyEvent> keyEvents = new ArrayList<>();
 
     public KeyboardHandler(View view) {
-        PoolObjectFactory<KeyEvent> factory = new PoolObjectFactory<KeyEvent>() {
-            @Override
-            public KeyEvent createObject() {
-                return new KeyEvent();
-            }
-        };
-        keyEventPool = new Pool<KeyEvent>(factory, 100);
+        keyEventPool = new Pool<>(KeyEvent::new, 100);
         view.setOnKeyListener(this);
         view.setFocusableInTouchMode(true);
         view.requestFocus();
@@ -40,12 +34,12 @@ public class KeyboardHandler implements OnKeyListener {
             keyEvent.keyChar = (char) event.getUnicodeChar();
             if (event.getAction() == android.view.KeyEvent.ACTION_DOWN) {
                 keyEvent.type = KeyEvent.KEY_DOWN;
-                if(keyCode > 0 && keyCode < 127)
+                if (keyCode > 0 && keyCode < 127)
                     pressedKeys[keyCode] = true;
             }
             if (event.getAction() == android.view.KeyEvent.ACTION_UP) {
                 keyEvent.type = KeyEvent.KEY_UP;
-                if(keyCode > 0 && keyCode < 127)
+                if (keyCode > 0 && keyCode < 127)
                     pressedKeys[keyCode] = false;
             }
             keyEventsBuffer.add(keyEvent);

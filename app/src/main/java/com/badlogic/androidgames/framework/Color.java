@@ -9,10 +9,10 @@ public class Color {
                 ((b & 0xff));
     }
 
-    public static final int BLACK = convert(0, 0, 0, 1);
-    public static final int WHITE = convert(1, 1, 1, 1);
-    public static final int RED = convert(1, 0, 0, 1);
-    public static final int GREEN = convert(0, 1, 0, 1);
-    public static final int BLUE = convert(0, 0, 1, 1);
+    public static final int BLACK = 0xff000000;
+    public static final int WHITE = 0xffffffff;
+    public static final int RED = 0xffff0000;
+    public static final int GREEN = 0xff00ff00;
+    public static final int BLUE = 0xff0000ff;
 
 }

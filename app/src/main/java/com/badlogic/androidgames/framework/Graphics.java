@@ -16,6 +16,8 @@ public interface Graphics {
 
     void drawRect(int x, int y, int width, int height, int color);
 
+    void drawPixmap(Pixmap pixmap, int x, int y, int dstWidth, int dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
+
     void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight);
 
     void drawPixmap(Pixmap pixmap, int x, int y);

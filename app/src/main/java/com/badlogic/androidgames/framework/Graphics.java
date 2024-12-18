@@ -10,20 +10,26 @@ public interface Graphics {
 
     void clear(int color);
 
-    void drawPixel(int x, int y, int color);
+    void drawPixel(float x, float y, int color);
 
-    void drawLine(int x, int y, int x2, int y2, int color);
+    void drawLine(float x, float y, float x2, float y2, int color);
 
-    void drawRect(int x, int y, int width, int height, int color);
+    void drawRect(float x, float y, float width, float height, int color);
 
-    void drawPixmap(Pixmap pixmap, int x, int y, int dstWidth, int dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
+    void drawRect(float x, float y, float width, float height, float angle, int color);
 
-    void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight);
+    void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
 
-    void drawPixmap(Pixmap pixmap, int x, int y);
+    void drawPixmap(Pixmap pixmap, float x, float y, int srcX, int srcY, int srcWidth, int srcHeight);
+
+    void drawPixmap(Pixmap pixmap, float x, float y);
 
     int getWidth();
 
     int getHeight();
+
+    default float getAspectRatio() {
+        return (float) getWidth() / getHeight();
+    }
 
 }

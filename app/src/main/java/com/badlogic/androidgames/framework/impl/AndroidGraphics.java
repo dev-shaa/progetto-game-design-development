@@ -17,6 +17,7 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
 public class AndroidGraphics implements Graphics {
+
     AssetManager assets;
     Bitmap frameBuffer;
     Canvas canvas;
@@ -60,46 +61,58 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawPixel(int x, int y, int color) {
+    public void drawPixel(float x, float y, int color) {
         paint.setColor(color);
         canvas.drawPoint(x, y, paint);
     }
 
     @Override
-    public void drawLine(int x, int y, int x2, int y2, int color) {
+    public void drawLine(float x, float y, float x2, float y2, int color) {
         paint.setColor(color);
         canvas.drawLine(x, y, x2, y2, paint);
     }
 
     @Override
-    public void drawRect(int x, int y, int width, int height, int color) {
+    public void drawRect(float x, float y, float width, float height, int color) {
         paint.setColor(color);
         paint.setStyle(Style.FILL);
         canvas.drawRect(x, y, x + width - 1, y + width - 1, paint);
     }
 
     @Override
-    public void drawPixmap(Pixmap pixmap, int x, int y, int dstWidth, int dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
+    public void drawRect(float x, float y, float width, float height, float angle, int color) {
+        canvas.save();
+        canvas.rotate(angle, x, y);
+
+        paint.setColor(color);
+        paint.setStyle(Style.FILL);
+        canvas.drawRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2, paint);
+
+        canvas.restore();
+    }
+
+    @Override
+    public void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
         srcRect.left = srcX;
         srcRect.top = srcY;
         srcRect.right = srcX + srcWidth - 1;
         srcRect.bottom = srcY + srcHeight - 1;
 
-        dstRect.left = x;
-        dstRect.top = y;
-        dstRect.right = x + dstWidth - 1;
-        dstRect.bottom = y + dstHeight - 1;
+        dstRect.left = (int) x;
+        dstRect.top = (int) y;
+        dstRect.right = (int) (x + dstWidth - 1);
+        dstRect.bottom = (int) (y + dstHeight - 1);
 
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, null);
     }
 
     @Override
-    public void drawPixmap(Pixmap pixmap, int x, int y, int srcX, int srcY, int srcWidth, int srcHeight) {
-        drawPixmap(pixmap, x, y, srcWidth, srcHeight, srcX, srcY, srcWidth, srcHeight);
+    public void drawPixmap(Pixmap pixmap, float x, float y, int srcX, int srcY, int srcWidth, int srcHeight) {
+        drawPixmap(pixmap, x, y, (float) srcWidth, (float) srcHeight, srcX, srcY, srcWidth, srcHeight);
     }
 
     @Override
-    public void drawPixmap(Pixmap pixmap, int x, int y) {
+    public void drawPixmap(Pixmap pixmap, float x, float y) {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, null);
     }
 
@@ -112,4 +125,5 @@ public class AndroidGraphics implements Graphics {
     public int getHeight() {
         return frameBuffer.getHeight();
     }
+    
 }

@@ -37,8 +37,8 @@ public abstract class AndroidGame extends Activity implements Game {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        int frameBufferWidth = isLandscape ? 480 : 320;
-        int frameBufferHeight = isLandscape ? 320 : 480;
+        int frameBufferWidth = isLandscape ? 892 : 412;
+        int frameBufferHeight = isLandscape ? 412 : 892;
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
 
         float scaleX = (float) frameBufferWidth / getWindowManager().getDefaultDisplay().getWidth();
@@ -49,8 +49,13 @@ public abstract class AndroidGame extends Activity implements Game {
         fileIO = new AndroidFileIO(getAssets());
         audio = new AndroidAudio(this);
         input = new AndroidInput(this, renderView, scaleX, scaleY);
-        screen = getStartScreen();
+
+        onResourcesInitialized();
+
         setContentView(renderView);
+
+        screen = getStartScreen();
+        screen.initialize();
 
 //        PowerManager powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
 //        wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "myapp:GLGame");
@@ -104,6 +109,7 @@ public abstract class AndroidGame extends Activity implements Game {
 
         this.screen.pause();
         this.screen.dispose();
+        screen.initialize();
         screen.resume();
         screen.update(0);
         this.screen = screen;
@@ -112,4 +118,9 @@ public abstract class AndroidGame extends Activity implements Game {
     public Screen getCurrentScreen() {
         return screen;
     }
+
+    protected void onResourcesInitialized() {
+
+    }
+
 }

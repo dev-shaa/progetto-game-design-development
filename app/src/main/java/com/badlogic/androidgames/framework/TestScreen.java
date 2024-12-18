@@ -51,6 +51,11 @@ class TestScreen extends Screen {
     }
 
     @Override
+    public void initialize() {
+
+    }
+
+    @Override
     public void update(float deltaTime) {
     }
 
@@ -85,7 +90,7 @@ class TestScreen extends Screen {
             if (touchEvents.get(i).type == TouchEvent.TOUCH_UP)
                 sound.play(1);
         }
-        
+
         frames++;
         if (System.nanoTime() - startTime > 1000000000L) {
             Log.d("MrNom", "fps: " + frames + ", delta: " + deltaTime);

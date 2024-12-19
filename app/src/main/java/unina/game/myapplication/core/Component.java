@@ -8,6 +8,10 @@ public abstract class Component {
 
     GameObject owner;
 
+    Component() {
+        // Package-protected constructor to be sure all components are only of the defined types.
+    }
+
     /**
      * Returns the GameObject to which this component is attached.
      *

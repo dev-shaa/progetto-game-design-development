@@ -76,18 +76,22 @@ public class AndroidGraphics implements Graphics {
     public void drawRect(float x, float y, float width, float height, int color) {
         paint.setColor(color);
         paint.setStyle(Style.FILL);
-        canvas.drawRect(x, y, x + width - 1, y + width - 1, paint);
+        canvas.drawRect(x, y, x + width - 1, y + height - 1, paint);
     }
 
     @Override
     public void drawRect(float x, float y, float width, float height, float angle, int color) {
         canvas.save();
-        canvas.rotate(angle, x, y);
+        canvas.rotate(-angle, x + width / 2, y + height / 2);
+        drawRect(x, y, width, height, color);
+        canvas.restore();
+    }
 
-        paint.setColor(color);
-        paint.setStyle(Style.FILL);
-        canvas.drawRect(x - width / 2, y - height / 2, x + width / 2, y + height / 2, paint);
-
+    @Override
+    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
+        canvas.save();
+        canvas.rotate(-angle, x + dstWidth / 2, y + dstHeight / 2);
+        drawPixmap(pixmap, x, y, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
         canvas.restore();
     }
 
@@ -125,5 +129,5 @@ public class AndroidGraphics implements Graphics {
     public int getHeight() {
         return frameBuffer.getHeight();
     }
-    
+
 }

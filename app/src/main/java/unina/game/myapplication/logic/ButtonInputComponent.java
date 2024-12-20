@@ -13,7 +13,7 @@ public class ButtonInputComponent extends InputComponent {
     public void process(Input input) {
         if (input.isKeyPressed(0)) {
             isPressed = !isPressed;
-            //buttonRenderComponent.render();
+            buttonRenderComponent.buttonPressed = true;
         }
     }
 }

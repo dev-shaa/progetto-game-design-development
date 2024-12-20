@@ -11,18 +11,18 @@ import com.google.fpl.liquidfun.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 
 import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
-    private static final float GRAVITY_X = 0, GRAVITY_Y = 9.82f;
+    private static final float GRAVITY_X = 0, GRAVITY_Y = -9.82f;
 
     private World world;
     private CollisionListener collisionListener;
-
-    private Scene sceneToBeLoaded;
+    private Camera camera;
 
     // TODO: check for possible better collection
     private final Collection<GameObject> gameObjects = new ArraySet<>(8);
@@ -30,8 +30,9 @@ public abstract class Scene extends Screen {
     private final Collection<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final Collection<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
     private final Collection<AnimationComponent> animationComponents = new ArraySet<>(4);
-    private final Collection<RenderComponent> renderComponents = new ArraySet<>(8);
+    private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
 
+    private Scene sceneToBeLoaded;
     private final Collection<GameObject> gameObjectsToAdd = new ArrayList<>();
     private final Collection<GameObject> gameObjectsToRemove = new ArrayList<>();
 
@@ -45,6 +46,9 @@ public abstract class Scene extends Screen {
 
         world = new World(GRAVITY_X, GRAVITY_Y);
         world.setContactListener(collisionListener);
+
+        camera = new Camera(game.getGraphics());
+        Camera.instance = camera;
 
         sceneToBeLoaded = null;
     }
@@ -89,6 +93,10 @@ public abstract class Scene extends Screen {
         // Clear the screen
         graphics.clear(Color.BLACK);
 
+        // Sort the renderers by layer
+        // FIXME: sorting each frame is absolutely not a good idea
+        sortRenderers();
+
         // Render each component
         renderComponents.forEach(component -> component.render(deltaTime, graphics));
     }
@@ -126,6 +134,8 @@ public abstract class Scene extends Screen {
         gameObjects.clear();
         gameObjectsToAdd.clear();
         gameObjectsToRemove.clear();
+
+        camera = null;
     }
 
     /**
@@ -221,6 +231,10 @@ public abstract class Scene extends Screen {
 
         gameObjectsToAdd.clear();
         gameObjectsToRemove.clear();
+    }
+
+    private void sortRenderers() {
+        renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
     }
 
 }

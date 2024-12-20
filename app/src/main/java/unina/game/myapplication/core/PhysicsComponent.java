@@ -4,7 +4,7 @@ import com.google.fpl.liquidfun.World;
 
 public class PhysicsComponent extends Component {
 
-    public World world;
+    protected World world;
 
     @Override
     public final Type getType() {

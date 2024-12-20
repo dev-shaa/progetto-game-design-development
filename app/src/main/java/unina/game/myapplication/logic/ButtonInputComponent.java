@@ -11,7 +11,7 @@ public class ButtonInputComponent extends InputComponent {
 
     @Override
     public void process(Input input) {
-        if (input.isKeyPressed(0)) {
+        if (input.isTouchDown(0)) {
             isPressed = !isPressed;
             buttonRenderComponent.buttonPressed = true;
         }

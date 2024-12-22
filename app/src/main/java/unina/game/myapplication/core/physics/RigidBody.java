@@ -1,5 +1,6 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.FixtureDef;
@@ -12,6 +13,8 @@ public final class RigidBody extends PhysicsComponent {
     public enum Type {
         KINEMATIC, DYNAMIC, STATIC;
     }
+
+    private static final Pool<RigidBody> pool = new Pool<>(RigidBody::new, 16);
 
     /**
      * Creates a static RigidBody without a collider.
@@ -40,7 +43,7 @@ public final class RigidBody extends PhysicsComponent {
      * @return a RigidBody of the given type and with the given collider
      */
     public static RigidBody build(Type type, Collider collider) {
-        RigidBody component = new RigidBody();
+        RigidBody component = pool.get();
 
         component.type = type;
         component.collider = collider;
@@ -101,6 +104,8 @@ public final class RigidBody extends PhysicsComponent {
         world.destroyBody(body);
         world = null;
         body = null;
+
+        pool.free(this);
     }
 
     @Override

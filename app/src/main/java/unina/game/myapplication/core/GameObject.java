@@ -34,8 +34,19 @@ public final class GameObject {
         return gameObject;
     }
 
+    /**
+     * The x coordinate of the GameObject, in world units.
+     */
     public float x;
+
+    /**
+     * The y coordinate of the GameObject, in world units.
+     */
     public float y;
+
+    /**
+     * The rotation angle of the GameObject, in degrees.
+     */
     public float angle;
 
     private final EnumMap<Component.Type, Component> components = new EnumMap<>(Component.Type.class);

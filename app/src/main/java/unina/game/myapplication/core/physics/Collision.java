@@ -1,10 +1,8 @@
 package unina.game.myapplication.core.physics;
 
-import unina.game.myapplication.core.PhysicsComponent;
-
 public final class Collision {
 
-    PhysicsComponent a, b;
+    RigidBody a, b;
 
     @Override
     public int hashCode() {

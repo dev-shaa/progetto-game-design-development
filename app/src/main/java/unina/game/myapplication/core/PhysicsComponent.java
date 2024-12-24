@@ -2,6 +2,8 @@ package unina.game.myapplication.core;
 
 import com.google.fpl.liquidfun.World;
 
+import unina.game.myapplication.core.physics.RigidBody;
+
 public class PhysicsComponent extends Component {
 
     protected World world;
@@ -15,11 +17,11 @@ public class PhysicsComponent extends Component {
 
     }
 
-    public void onCollisionEnter(PhysicsComponent other) {
+    public void onCollisionEnter(RigidBody other) {
 
     }
 
-    public void onCollisionExit(PhysicsComponent other) {
+    public void onCollisionExit(RigidBody other) {
 
     }
 

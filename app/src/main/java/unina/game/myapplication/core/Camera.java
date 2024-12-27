@@ -66,4 +66,32 @@ public final class Camera {
         return Utility.inverseLerp(y + halfSizeY, y - halfSizeY, v);
     }
 
+    public float screenToWorldX(float v) {
+        return Utility.lerp(x - halfSizeX, x + halfSizeX, screenToViewportX(v));
+    }
+
+    public float screenToWorldY(float v) {
+        return Utility.lerp(x + halfSizeY, x - halfSizeY, screenToViewportY(v));
+    }
+
+    /**
+     * Converts the given x coordinate from screen space to viewport space.
+     *
+     * @param x screen space value
+     * @return the non-clamped corresponding value in viewport space
+     */
+    public float screenToViewportX(float x) {
+        return Utility.inverseLerp(0, graphics.getWidth(), x);
+    }
+
+    /**
+     * Converts the given y coordinate from screen space to viewport space.
+     *
+     * @param y screen space value
+     * @return the non-clamped corresponding value in viewport space
+     */
+    public float screenToViewportY(float y) {
+        return Utility.inverseLerp(0, graphics.getHeight(), y);
+    }
+
 }

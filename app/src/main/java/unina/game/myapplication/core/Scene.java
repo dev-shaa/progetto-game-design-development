@@ -63,7 +63,6 @@ public abstract class Scene extends Screen {
         applySceneChanges();
 
         world.step(deltaTime, VELOCITY_ITERATIONS, POSITION_ITERATIONS, PARTICLE_ITERATIONS);
-        world.clearForces(); // NOTE: according to documentation, this should be called automatically if not disabled beforehand
 
         // TODO: check for lambda expression memory optimization
         // https://stackoverflow.com/questions/27524445/does-a-lambda-expression-create-an-object-on-the-heap-every-time-its-executed

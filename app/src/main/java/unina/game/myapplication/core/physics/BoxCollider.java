@@ -57,7 +57,7 @@ public final class BoxCollider extends Collider {
         fixtureDef.setDensity(density);
         fixtureDef.setRestitution(restitution);
         fixtureDef.setFriction(friction);
-        fixtureDef.setIsSensor(isSensor);
+//        fixtureDef.setIsSensor(isSensor);
 
         return fixtureDef;
     }

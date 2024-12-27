@@ -3,7 +3,6 @@ package unina.game.myapplication.core.physics;
 import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.DistanceJointDef;
 import com.google.fpl.liquidfun.Joint;
-import com.google.fpl.liquidfun.Vec2;
 
 import unina.game.myapplication.core.PhysicsComponent;
 
@@ -33,9 +32,6 @@ public class DistanceJoint extends PhysicsComponent {
     public void onInitialize() {
         super.onInitialize();
 
-        Vec2 anchorA = new Vec2(0, 0);
-        Vec2 anchorB = new Vec2(0, 0);
-
         DistanceJointDef def = new DistanceJointDef();
 
         def.setBodyA(a.body);
@@ -47,8 +43,6 @@ public class DistanceJoint extends PhysicsComponent {
         joint = world.createJoint(def);
 
         def.delete();
-        anchorB.delete();
-        anchorA.delete();
     }
 
     @Override

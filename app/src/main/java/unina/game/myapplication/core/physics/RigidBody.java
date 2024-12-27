@@ -119,4 +119,16 @@ public final class RigidBody extends PhysicsComponent {
         owner.angle = (float) Math.toDegrees(body.getAngle());
     }
 
+    /**
+     * Sets the position and rotation of the RigidBody. It shouldn't be used when the body is dynamic.
+     *
+     * @param x     x position
+     * @param y     y position
+     * @param angle rotation in degrees
+     */
+    public void setTransform(float x, float y, float angle) {
+        if (body != null)
+            body.setTransform(x, y, (float) Math.toRadians(angle));
+    }
+
 }

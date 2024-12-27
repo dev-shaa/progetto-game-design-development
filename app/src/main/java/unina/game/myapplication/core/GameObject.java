@@ -77,6 +77,13 @@ public final class GameObject {
         pool.free(this);
     }
 
+    /**
+     * Sets the position and rotation of the GameObject. It shouldn't be used when the GameObject has a PhysicsComponent attached.
+     *
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param angle angle in degrees
+     */
     public void setTransform(float x, float y, float angle) {
         this.x = x;
         this.y = y;

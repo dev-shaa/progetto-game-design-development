@@ -77,6 +77,12 @@ public final class GameObject {
         pool.free(this);
     }
 
+    public void setTransform(float x, float y, float angle) {
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+    }
+
     /**
      * Checks if this GameObject has a component of the given type.
      *

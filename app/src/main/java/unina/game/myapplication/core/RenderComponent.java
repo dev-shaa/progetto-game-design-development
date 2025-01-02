@@ -12,6 +12,12 @@ public abstract class RenderComponent extends Component {
         return Type.DRAWABLE;
     }
 
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        scene = null;
+    }
+
     /**
      * Draws the component on screen.
      *
@@ -37,7 +43,7 @@ public abstract class RenderComponent extends Component {
      */
     public final void setLayer(short layer) {
         this.layer = layer;
-        
+
         if (scene != null)
             scene.layerDirty = true;
     }

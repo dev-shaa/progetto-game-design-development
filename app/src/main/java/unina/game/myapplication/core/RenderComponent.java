@@ -5,6 +5,7 @@ import com.badlogic.androidgames.framework.Graphics;
 public abstract class RenderComponent extends Component {
 
     private short layer;
+    Scene scene;
 
     @Override
     public final Type getType() {
@@ -36,6 +37,9 @@ public abstract class RenderComponent extends Component {
      */
     public final void setLayer(short layer) {
         this.layer = layer;
+        
+        if (scene != null)
+            scene.layerDirty = true;
     }
 
 }

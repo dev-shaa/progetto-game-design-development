@@ -35,6 +35,7 @@ public abstract class Scene extends Screen {
     private Scene sceneToBeLoaded;
     private final Collection<GameObject> gameObjectsToAdd = new ArrayList<>();
     private final Collection<GameObject> gameObjectsToRemove = new ArrayList<>();
+    boolean layerDirty = false;
 
     public Scene(Game game) {
         super(game);
@@ -93,8 +94,10 @@ public abstract class Scene extends Screen {
         graphics.clear(Color.BLACK);
 
         // Sort the renderers by layer
-        // FIXME: sorting each frame is absolutely not a good idea
-        sortRenderers();
+        if (layerDirty) {
+            renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
+            layerDirty = false;
+        }
 
         // Render each component
         renderComponents.forEach(component -> component.render(deltaTime, graphics));
@@ -186,6 +189,7 @@ public abstract class Scene extends Screen {
                         inputComponents.add((InputComponent) component);
                         break;
                     case DRAWABLE:
+                        ((RenderComponent) component).scene = this;
                         renderComponents.add((RenderComponent) component);
                         break;
                     case ANIMATION:
@@ -217,6 +221,7 @@ public abstract class Scene extends Screen {
                         inputComponents.remove((InputComponent) component);
                         break;
                     case DRAWABLE:
+                        ((RenderComponent) component).scene = null;
                         renderComponents.remove((RenderComponent) component);
                         break;
                     case ANIMATION:
@@ -230,10 +235,6 @@ public abstract class Scene extends Screen {
 
         gameObjectsToAdd.clear();
         gameObjectsToRemove.clear();
-    }
-
-    private void sortRenderers() {
-        renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
     }
 
 }

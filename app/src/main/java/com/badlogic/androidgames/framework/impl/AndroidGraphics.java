@@ -88,6 +88,13 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void drawCircle(float x, float y, float radius, int color) {
+        paint.setColor(color);
+        paint.setStyle(Style.FILL);
+        canvas.drawCircle(x,y,radius,paint);
+    }
+
+    @Override
     public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
         canvas.save();
         canvas.rotate(-angle, x + dstWidth / 2, y + dstHeight / 2);

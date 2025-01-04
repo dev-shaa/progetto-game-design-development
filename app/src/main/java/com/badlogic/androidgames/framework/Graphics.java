@@ -18,6 +18,8 @@ public interface Graphics {
 
     void drawRect(float x, float y, float width, float height, float angle, int color);
 
+    void drawCircle(float x, float y, float radius, int color);
+
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);

@@ -17,7 +17,7 @@ public class MainActivity extends AndroidGame {
 
     @Override
     public Screen getStartScreen() {
-        return null;
+        return new TestingScene(this);
     }
 
 }

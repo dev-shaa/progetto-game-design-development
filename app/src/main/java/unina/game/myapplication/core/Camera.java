@@ -6,18 +6,34 @@ public final class Camera {
 
     static Camera instance;
 
+    /**
+     * Returns the current active camera.
+     *
+     * @return current camera
+     */
     public static Camera getInstance() {
         return instance;
     }
 
-    public float x, y;
+    private float x, y;
     private float halfSizeX, halfSizeY;
     private final Graphics graphics;
 
     Camera(Graphics graphics) {
         this.graphics = graphics;
-        this.x = this.y = 0;
+        setPosition(0, 0);
         setSize(10);
+    }
+
+    /**
+     * Sets the world space position of the camera.
+     *
+     * @param x x coordinate in world space
+     * @param y y coordinate in world space
+     */
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -92,6 +108,24 @@ public final class Camera {
      */
     public float screenToViewportY(float y) {
         return Utility.inverseLerp(0, graphics.getHeight(), y);
+    }
+
+    /**
+     * Returns the width of the screen.
+     *
+     * @return screen width
+     */
+    public float getScreenWidth() {
+        return graphics.getWidth();
+    }
+
+    /**
+     * Returns the height of the screen.
+     *
+     * @return screen height
+     */
+    public float getScreenHeight() {
+        return graphics.getHeight();
     }
 
 }

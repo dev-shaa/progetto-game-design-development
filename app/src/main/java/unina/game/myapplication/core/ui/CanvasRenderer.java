@@ -12,6 +12,7 @@ public final class CanvasRenderer extends RenderComponent {
     public static CanvasRenderer build(Canvas canvas) {
         CanvasRenderer renderer = pool.get();
         renderer.canvas = canvas;
+        renderer.setLayer(Short.MAX_VALUE); // By default, the canvas should be rendered on top of everything else
         return renderer;
     }
 
@@ -29,8 +30,10 @@ public final class CanvasRenderer extends RenderComponent {
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        for (Element element : canvas.getElements())
-            element.draw(deltaTime, graphics);
+        for (Element element : canvas.getElements()) {
+            if (element.isEnabled())
+                element.draw(deltaTime, graphics);
+        }
     }
 
 }

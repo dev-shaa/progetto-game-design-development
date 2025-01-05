@@ -4,7 +4,19 @@ import com.badlogic.androidgames.framework.Graphics;
 
 public abstract class Element {
 
+    public enum Alignment {
+        START, CENTER, END
+    }
+
     protected float x, y;
+    protected Alignment horizontalAlignment, verticalAlignment;
+    private boolean enabled;
+
+    public Element() {
+        x = y = 0;
+        horizontalAlignment = verticalAlignment = Alignment.START;
+        enabled = true;
+    }
 
     /**
      * Sets the position of the element.
@@ -15,6 +27,17 @@ public abstract class Element {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+
+    /**
+     * Sets the alignment anchors of the element.
+     *
+     * @param horizontalAlignment horizontal anchor
+     * @param verticalAlignment   vertical anchor
+     */
+    public void setAlignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
+        this.horizontalAlignment = horizontalAlignment;
+        this.verticalAlignment = verticalAlignment;
     }
 
     /**
@@ -53,6 +76,24 @@ public abstract class Element {
      */
     public void onRemove() {
 
+    }
+
+    /**
+     * Checks if the element is enabled and should be interested by input events.
+     *
+     * @return the state of the element
+     */
+    public final boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Sets the state of the element.
+     *
+     * @param enabled new state of the element
+     */
+    public final void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
 }

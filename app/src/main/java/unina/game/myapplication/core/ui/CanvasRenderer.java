@@ -3,6 +3,8 @@ package unina.game.myapplication.core.ui;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pool;
 
+import java.util.List;
+
 import unina.game.myapplication.core.RenderComponent;
 
 public final class CanvasRenderer extends RenderComponent {
@@ -25,15 +27,17 @@ public final class CanvasRenderer extends RenderComponent {
     @Override
     public void onRemove() {
         super.onRemove();
+
+        canvas = null;
         pool.free(this);
     }
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        for (Element element : canvas.getElements()) {
-            if (element.isEnabled())
-                element.draw(deltaTime, graphics);
-        }
+        List<Element> elements = canvas.getElements();
+
+        for (int i = 0; i < elements.size(); i++)
+            elements.get(i).drawInternal(graphics);
     }
 
 }

@@ -2,20 +2,28 @@ package unina.game.myapplication.core.ui;
 
 import com.badlogic.androidgames.framework.Graphics;
 
+import unina.game.myapplication.core.Camera;
+
 public abstract class Element {
 
-    public enum Alignment {
-        START, CENTER, END
-    }
+    public static final float ALIGNMENT_START = 0;
+    public static final float ALIGNMENT_CENTER = 0.5f;
+    public static final float ALIGNMENT_END = 1;
 
     protected float x, y;
-    protected Alignment horizontalAlignment, verticalAlignment;
+    private float width, height;
     private boolean enabled;
+    private boolean interactable;
+
+    private float horizontalAlignment, verticalAlignment;
+    private float pivotX, pivotY;
 
     public Element() {
         x = y = 0;
-        horizontalAlignment = verticalAlignment = Alignment.START;
-        enabled = true;
+        width = height = 64;
+        horizontalAlignment = verticalAlignment = ALIGNMENT_START;
+        pivotX = pivotY = ALIGNMENT_START;
+        enabled = interactable = true;
     }
 
     /**
@@ -30,39 +38,73 @@ public abstract class Element {
     }
 
     /**
+     * Sets the size of the element, in pixels.
+     *
+     * @param width  width of the element
+     * @param height height of the element
+     */
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    /**
+     * Returns the width of the element, in pixels.
+     *
+     * @return width of the element
+     */
+    public float getWidth() {
+        return width;
+    }
+
+    /**
+     * Returns the height of the element, in pixels.
+     *
+     * @return height of the element
+     */
+    public float getHeight() {
+        return height;
+    }
+
+    /**
      * Sets the alignment anchors of the element.
      *
      * @param horizontalAlignment horizontal anchor
      * @param verticalAlignment   vertical anchor
      */
-    public void setAlignment(Alignment horizontalAlignment, Alignment verticalAlignment) {
+    public void setAlignment(float horizontalAlignment, float verticalAlignment) {
         this.horizontalAlignment = horizontalAlignment;
         this.verticalAlignment = verticalAlignment;
     }
 
-    /**
-     * Checks if the given coordinates are considered over this element.
-     *
-     * @param x x position in screen space
-     * @param y y position in screen space
-     * @return {@code true} if the coordinates are over this element, {@code false} otherwise
-     */
-    public abstract boolean isPointerOver(float x, float y);
+    public void setPivot(float pivotX, float pivotY) {
+        this.pivotX = pivotX;
+        this.pivotY = pivotY;
+    }
 
-    /**
-     * Called when the user clicks on this element.
-     */
-    public void onClick() {
+    final boolean onClickInternal(float x, float y) {
+        if (!enabled || !interactable)
+            return false;
+
+        if (!isPointerOver(x, y))
+            return false;
+
+        onClick();
+        return true;
+    }
+
+    protected void onClick() {
 
     }
 
-    /**
-     * Draws this UI element.
-     *
-     * @param deltaTime elapsed time since last draw
-     * @param graphics  graphics utility class
-     */
-    public abstract void draw(float deltaTime, Graphics graphics);
+    final void drawInternal(Graphics graphics) {
+        if (enabled)
+            draw(graphics);
+    }
+
+    protected void draw(Graphics graphics) {
+
+    }
 
     /**
      * Called when the element is added to the canvas.
@@ -94,6 +136,28 @@ public abstract class Element {
      */
     public final void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public final boolean isInteractable() {
+        return interactable;
+    }
+
+    public final void setInteractable(boolean interactable) {
+        this.interactable = interactable;
+    }
+
+    private boolean isPointerOver(float x, float y) {
+        float minX = getMinX();
+        float minY = getMinY();
+        return x > minX && x < minX + width && y > minY && y < minY + height;
+    }
+
+    protected float getMinX() {
+        return Camera.getInstance().getScreenWidth() * horizontalAlignment + x - width * pivotX;
+    }
+
+    protected float getMinY() {
+        return Camera.getInstance().getScreenHeight() * verticalAlignment + y - height * pivotY;
     }
 
 }

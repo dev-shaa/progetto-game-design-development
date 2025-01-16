@@ -20,8 +20,8 @@ public final class Canvas extends InputComponent {
         return pool.get();
     }
 
-    private final ArrayList<Element> elements = new ArrayList<>();
     private boolean wasTouchDown = false;
+    private final ArrayList<Element> elements = new ArrayList<>();
 
     private Canvas() {
 
@@ -46,16 +46,10 @@ public final class Canvas extends InputComponent {
 
         // TODO: for now it only detects clicks
         if (!wasTouchDown && isTouchDown) {
-
             for (int i = elements.size() - 1; i >= 0; i--) {
-                Element element = elements.get(i);
-
-                if (element.isEnabled() && element.isPointerOver(touchX, touchY)) {
-                    element.onClick();
+                if (elements.get(i).onClickInternal(touchX, touchY))
                     break;
-                }
             }
-
         }
 
         wasTouchDown = isTouchDown;
@@ -67,26 +61,10 @@ public final class Canvas extends InputComponent {
      * @param element element to add
      */
     public void addElement(Element element) {
-        if (elements.add(element))
-            element.onAdd();
+        elements.add(element);
     }
 
-    /**
-     * Removes an element from the canvas.
-     *
-     * @param element element to remove
-     */
-    public void removeElement(Element element) {
-        if (elements.remove(element))
-            element.onRemove();
-    }
-
-    /**
-     * Returns all elements of the canvas.
-     *
-     * @return elements of the canvas
-     */
-    public Iterable<Element> getElements() {
+    ArrayList<Element> getElements() {
         return elements;
     }
 

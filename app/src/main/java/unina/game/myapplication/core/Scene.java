@@ -12,6 +12,7 @@ import com.google.fpl.liquidfun.World;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
 
 import unina.game.myapplication.core.physics.CollisionListener;
 
@@ -154,12 +155,16 @@ public abstract class Scene extends Screen {
     }
 
     /**
-     * Enqueues a GameObject to be added in the scene at the start of the next frame.
+     * Creates a new GameObject which will be added in the scene at the start of the next frame.
      *
-     * @param gameObject GameObject to add
+     * @param components components of the GameObject
+     * @return the created GameObject
      */
-    public final void addGameObject(GameObject gameObject) {
+    public final GameObject createGameObject(Component... components) {
+        Objects.requireNonNull(components);
+        GameObject gameObject = GameObject.create(components);
         gameObjectsToAdd.add(gameObject);
+        return gameObject;
     }
 
     /**
@@ -168,7 +173,8 @@ public abstract class Scene extends Screen {
      * @param gameObject GameObject to remove
      */
     public final void removeGameObject(GameObject gameObject) {
-        gameObjectsToRemove.add(gameObject);
+        if (gameObject != null)
+            gameObjectsToRemove.add(gameObject);
     }
 
     private void applySceneChanges() {

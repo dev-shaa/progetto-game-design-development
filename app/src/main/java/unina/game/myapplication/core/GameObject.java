@@ -13,7 +13,7 @@ public final class GameObject {
      *
      * @return an empty GameObject
      */
-    public static GameObject create() {
+    static GameObject create() {
         return pool.get();
     }
 

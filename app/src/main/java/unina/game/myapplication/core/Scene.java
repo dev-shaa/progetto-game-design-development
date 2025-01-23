@@ -157,6 +157,17 @@ public abstract class Scene extends Screen {
     /**
      * Creates a new GameObject which will be added in the scene at the start of the next frame.
      *
+     * @return the created GameObject
+     */
+    public final GameObject createGameObject() {
+        GameObject gameObject = GameObject.create();
+        gameObjectsToAdd.add(gameObject);
+        return gameObject;
+    }
+
+    /**
+     * Creates a new GameObject which will be added in the scene at the start of the next frame.
+     *
      * @param components components of the GameObject
      * @return the created GameObject
      */

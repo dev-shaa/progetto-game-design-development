@@ -23,8 +23,8 @@ public final class GameObject {
      * @param components components to add
      * @return a GameObject with the given components
      */
-    public static GameObject create(Component... components) {
-        GameObject gameObject = pool.get();
+    static GameObject create(Component... components) {
+        GameObject gameObject = create();
 
         for (Component component : components) {
             component.owner = gameObject;

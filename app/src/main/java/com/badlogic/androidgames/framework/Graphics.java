@@ -14,8 +14,27 @@ public interface Graphics {
 
     void drawLine(float x, float y, float x2, float y2, int color);
 
+    /**
+     * Draws a rectangle on screen.
+     *
+     * @param x      the x coordinate of the top left corner
+     * @param y      the y coordinate of the top left corner
+     * @param width  the width of the rect
+     * @param height the height of the rect
+     * @param color  the color of the rect
+     */
     void drawRect(float x, float y, float width, float height, int color);
 
+    /**
+     * Draws a rectangle on screen, rotated by the given angle.
+     *
+     * @param x      the x coordinate of the top left corner
+     * @param y      the y coordinate of the top left corner
+     * @param width  the width of the rect
+     * @param height the height of the rect
+     * @param angle  the rotation of the rect
+     * @param color  the color of the rect
+     */
     void drawRect(float x, float y, float width, float height, float angle, int color);
 
     void drawCircle(float x, float y, float radius, int color);

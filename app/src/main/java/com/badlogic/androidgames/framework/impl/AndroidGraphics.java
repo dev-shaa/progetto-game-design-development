@@ -9,9 +9,12 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.util.ArrayMap;
 
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
@@ -25,11 +28,17 @@ public class AndroidGraphics implements Graphics {
     Rect srcRect = new Rect();
     Rect dstRect = new Rect();
 
+    private final float[] colorMatrixArray;
+    private final ArrayMap<Integer, ColorMatrixColorFilter> filters;
+
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
+
+        this.colorMatrixArray = new float[4 * 5];
+        this.filters = new ArrayMap<>();
     }
 
     @Override
@@ -95,6 +104,29 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
+        if (color == Color.WHITE) {
+            ColorMatrixColorFilter filter = filters.get(color);
+
+            if (filter == null) {
+                colorMatrixArray[0] = Color.red(color) / 255.0f;
+                colorMatrixArray[6] = Color.green(color) / 255.0f;
+                colorMatrixArray[12] = Color.blue(color) / 255.0f;
+                colorMatrixArray[18] = Color.alpha(color) / 255.0f;
+                filter = new ColorMatrixColorFilter(colorMatrixArray);
+
+                filters.put(color, filter);
+            }
+
+            paint.setColorFilter(filter);
+        }
+
+        drawPixmap(pixmap, x, y, angle, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
+
+        paint.setColorFilter(null);
+    }
+
+    @Override
     public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
         canvas.save();
         canvas.rotate(-angle, x + dstWidth / 2, y + dstHeight / 2);
@@ -114,7 +146,7 @@ public class AndroidGraphics implements Graphics {
         dstRect.right = (int) (x + dstWidth - 1);
         dstRect.bottom = (int) (y + dstHeight - 1);
 
-        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, null);
+        canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, paint);
     }
 
     @Override

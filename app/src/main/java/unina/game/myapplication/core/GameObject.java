@@ -78,26 +78,6 @@ public final class GameObject {
     }
 
     /**
-     * Sets the position of the GameObject. It shouldn't be used when the GameObject has a PhysicsComponent attached.
-     *
-     * @param x x coordinate
-     * @param y y coordinate
-     */
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    /**
-     * Sets the rotation of the GameObject. It shouldn't be used when the GameObject has a PhysicsComponent attached.
-     *
-     * @param angle angle in degrees
-     */
-    public void setAngle(float angle) {
-        this.angle = angle;
-    }
-
-    /**
      * Sets the position and rotation of the GameObject. It shouldn't be used when the GameObject has a PhysicsComponent attached.
      *
      * @param x     x coordinate
@@ -105,8 +85,9 @@ public final class GameObject {
      * @param angle angle in degrees
      */
     public void setTransform(float x, float y, float angle) {
-        setPosition(x, y);
-        setAngle(angle);
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
     }
 
     /**

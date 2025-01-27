@@ -20,27 +20,6 @@ public class MainMenu extends Scene {
     @Override
     public void initialize() {
         super.initialize();
-
-        Button selectLevelButton = Button.build();
-        selectLevelButton.setAlignment(Element.Alignment.CENTER, Element.Alignment.CENTER);
-        selectLevelButton.setPosition(0, 50);
-        selectLevelButton.setSize(150, 50);
-        selectLevelButton.setColor(Color.RED);
-        selectLevelButton.setOnClick(() -> loadScene(new TestingScene(game)));
-
-        Button helpButton = Button.build();
-        helpButton.setAlignment(Element.Alignment.CENTER, Element.Alignment.CENTER);
-        helpButton.setPosition(0, -50);
-        helpButton.setSize(150, 50);
-
-        Canvas canvas = Canvas.build();
-        CanvasRenderer canvasRenderer = CanvasRenderer.build(canvas);
-        GameObject canvasGameObject = GameObject.create(canvas, canvasRenderer);
-
-        canvas.addElement(selectLevelButton);
-        canvas.addElement(helpButton);
-
-        addGameObject(canvasGameObject);
     }
 
 }

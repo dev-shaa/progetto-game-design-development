@@ -1,5 +1,7 @@
 package unina.game.myapplication.logic;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Input;
 
 import unina.game.myapplication.core.InputComponent;
@@ -14,6 +16,7 @@ public class ButtonInputComponent extends InputComponent {
         if (input.isTouchDown(0)) {
             isPressed = !isPressed;
             buttonRenderComponent.buttonPressed = true;
+            Log.d("Button",Boolean.toString(isPressed));
         }
     }
 }

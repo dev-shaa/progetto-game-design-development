@@ -131,4 +131,9 @@ public final class RigidBody extends PhysicsComponent {
             body.setTransform(x, y, (float) Math.toRadians(angle));
     }
 
+    public void setTransform(float x, float y) {
+        if (body != null)
+            body.setTransform(x,y, body.getAngle());
+    }
+
 }

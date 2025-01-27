@@ -23,8 +23,10 @@ public class TestingScene extends Scene {
         //RigidBody rigidBodyA = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(1, 1));
         ButtonRenderComponent buttonRenderComponent = new ButtonRenderComponent();
         ButtonInputComponent buttonInputComponent = new ButtonInputComponent();
+        buttonInputComponent.buttonRenderComponent = buttonRenderComponent;
         buttonRenderComponent.edge = 1;
         buttonRenderComponent.radius = 0.3f;
+        buttonInputComponent.size = 1;
         createGameObject(buttonRenderComponent,buttonInputComponent);
 
     }

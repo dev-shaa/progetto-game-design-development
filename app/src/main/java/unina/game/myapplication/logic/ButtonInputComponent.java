@@ -12,6 +12,7 @@ public class ButtonInputComponent extends InputComponent {
     boolean isPressed = false;
     boolean wasPressed = false;
     public float size;
+    public Runnable runnable;
     public ButtonRenderComponent buttonRenderComponent;
 
     @Override
@@ -28,7 +29,8 @@ public class ButtonInputComponent extends InputComponent {
         if (input.isTouchDown(0) && !wasPressed && inside) {
             isPressed = !isPressed;
             buttonRenderComponent.buttonPressed = isPressed;
-            Log.d("Button",Boolean.toString(isPressed));
+            if (runnable!=null)
+                runnable.run();
         }
         wasPressed = input.isTouchDown(0);
     }

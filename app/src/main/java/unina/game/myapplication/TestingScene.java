@@ -1,5 +1,7 @@
 package unina.game.myapplication;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Game;
 
 import unina.game.myapplication.core.Camera;
@@ -27,8 +29,13 @@ public class TestingScene extends Scene {
         buttonRenderComponent.edge = 1;
         buttonRenderComponent.radius = 0.3f;
         buttonInputComponent.size = 1;
+        buttonInputComponent.runnable = this::prova;
         createGameObject(buttonRenderComponent,buttonInputComponent);
 
+    }
+
+    public void prova() {
+        Log.d("prova","Ciao");
     }
 
     @Override

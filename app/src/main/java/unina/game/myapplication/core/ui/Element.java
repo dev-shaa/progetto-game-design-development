@@ -97,12 +97,7 @@ public abstract class Element {
 
     }
 
-    final void drawInternal(Graphics graphics) {
-        if (enabled)
-            draw(graphics);
-    }
-
-    protected void draw(Graphics graphics) {
+    protected void draw(Graphics graphics, Camera camera) {
 
     }
 

@@ -5,6 +5,7 @@ import com.badlogic.androidgames.framework.Pool;
 
 import java.util.List;
 
+import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
 public final class CanvasRenderer extends RenderComponent {
@@ -36,8 +37,12 @@ public final class CanvasRenderer extends RenderComponent {
     public void render(float deltaTime, Graphics graphics) {
         List<Element> elements = canvas.getElements();
 
-        for (int i = 0; i < elements.size(); i++)
-            elements.get(i).drawInternal(graphics);
+        for (int i = 0; i < elements.size(); i++) {
+            Element element = elements.get(i);
+
+            if (element.isEnabled())
+                element.draw(graphics, Camera.getInstance());
+        }
     }
 
 }

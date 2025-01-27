@@ -62,6 +62,7 @@ public final class Canvas extends InputComponent {
      */
     public void addElement(Element element) {
         elements.add(element);
+        element.onAdd();
     }
 
     ArrayList<Element> getElements() {

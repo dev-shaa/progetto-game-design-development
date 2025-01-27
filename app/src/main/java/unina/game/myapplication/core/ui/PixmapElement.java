@@ -4,6 +4,8 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
+import unina.game.myapplication.core.Camera;
+
 public abstract class PixmapElement extends Element {
 
     private int srcX, srcY;
@@ -33,7 +35,7 @@ public abstract class PixmapElement extends Element {
     }
 
     @Override
-    protected void draw(Graphics graphics) {
+    protected void draw(Graphics graphics, Camera camera) {
         if (image == null)
             graphics.drawRect(getMinX(), getMinY(), getWidth(), getHeight(), Color.WHITE);
         else

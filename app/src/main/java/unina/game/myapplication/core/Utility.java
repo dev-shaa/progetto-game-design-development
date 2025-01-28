@@ -22,4 +22,19 @@ public final class Utility {
         return (v - a) / (b - a);
     }
 
+    /**
+     * Limits a value to a range between a minimum and a maximum value.
+     *
+     * @param min min value
+     * @param max max value
+     * @param v   value to clamp
+     * @return the min value if {@code v < min}, the max value if {@code v > max}, the value itself if {@code min <= v <= max}
+     */
+    public static float clamp(float min, float max, float v) {
+        if (v < min)
+            return min;
+        else
+            return Math.min(v, max);
+    }
+
 }

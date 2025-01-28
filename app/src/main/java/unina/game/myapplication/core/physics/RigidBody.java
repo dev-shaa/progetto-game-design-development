@@ -54,6 +54,7 @@ public final class RigidBody extends PhysicsComponent {
     Body body;
     private Type type;
     private Collider collider;
+    private boolean sleepingAllowed = true;
 
     private RigidBody() {
         // Private constructor to avoid manual instantiation
@@ -95,6 +96,7 @@ public final class RigidBody extends PhysicsComponent {
         }
 
         body.setUserData(this);
+        body.setSleepingAllowed(sleepingAllowed);
     }
 
     @Override
@@ -140,6 +142,13 @@ public final class RigidBody extends PhysicsComponent {
     public void setTransform(float x, float y) {
         if (body != null)
             body.setTransform(x, y, body.getAngle());
+    }
+
+    public void setSleepingAllowed(boolean sleepingAllowed) {
+        this.sleepingAllowed = sleepingAllowed;
+
+        if (body != null)
+            body.setSleepingAllowed(sleepingAllowed);
     }
 
 }

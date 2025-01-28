@@ -96,6 +96,21 @@ public class AndroidGraphics implements Graphics {
         canvas.restore();
     }
 
+//    @Override
+//    public void drawRectNotCenter(float x, float y, float width, float height, float angle, int color) {
+//        canvas.save();
+//        canvas.rotate(-angle, x, y);
+//        drawRect(x, y, width, height, color);
+//        canvas.restore();
+//    }
+
+    @Override
+    public void rotate(float angle) {
+        canvas.save();
+        canvas.rotate(angle);
+        //canvas.restore();
+    }
+
     @Override
     public void drawCircle(float x, float y, float radius, int color) {
         paint.setColor(color);

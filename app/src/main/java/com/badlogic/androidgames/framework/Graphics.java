@@ -37,6 +37,10 @@ public interface Graphics {
      */
     void drawRect(float x, float y, float width, float height, float angle, int color);
 
+    //public void drawRectNotCenter(float x, float y, float width, float height, float angle, int color);
+
+    public void rotate(float angle);
+
     void drawCircle(float x, float y, float radius, int color);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);

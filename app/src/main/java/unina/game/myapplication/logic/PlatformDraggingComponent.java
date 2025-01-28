@@ -8,7 +8,6 @@ import unina.game.myapplication.core.physics.RigidBody;
 
 public class PlatformDraggingComponent extends InputComponent {
 
-    PlatformBehaviourComponent platformBehaviourComponent;
     public RigidBody rigidBody;
     boolean isPressed = false;
     boolean wasPressed = false;

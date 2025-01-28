@@ -1,44 +1,44 @@
 package unina.game.myapplication.core.physics;
 
 import com.badlogic.androidgames.framework.Pool;
-import com.google.fpl.liquidfun.DistanceJointDef;
 import com.google.fpl.liquidfun.Joint;
+import com.google.fpl.liquidfun.PrismaticJointDef;
 
 import unina.game.myapplication.core.PhysicsComponent;
 
-public class DistanceJoint extends PhysicsComponent {
+public class PrismaticJoint extends PhysicsComponent {
 
-    private static final Pool<DistanceJoint> pool = new Pool<>(DistanceJoint::new, 16);
+    private static final Pool<PrismaticJoint> pool = new Pool<>(PrismaticJoint::new, 16);
 
-    public static DistanceJoint build(RigidBody a, RigidBody b, float length) {
-        DistanceJoint joint = pool.get();
+    public static PrismaticJoint build(RigidBody a, RigidBody b, float axisX, float axisY) {
+        PrismaticJoint joint = pool.get();
 
         joint.a = a;
         joint.b = b;
-        joint.length = length;
+        joint.axisX = axisX;
+        joint.axisY = axisY;
 
         return joint;
     }
 
-    private RigidBody a;
-    private RigidBody b;
-    private float length;
+    private RigidBody a, b;
+    private float axisX, axisY;
     private Joint joint;
 
-    private DistanceJoint() {
+    private PrismaticJoint() {
     }
 
     @Override
     public void onInitialize() {
         super.onInitialize();
 
-        DistanceJointDef def = new DistanceJointDef();
+        PrismaticJointDef def = new PrismaticJointDef();
 
         def.setBodyA(a.body);
         def.setBodyB(b.body);
         def.setLocalAnchorA(0, 0);
         def.setLocalAnchorB(0, 0);
-        def.setLength(length);
+        def.setLocalAxisA(axisX, axisY);
 
         joint = world.createJoint(def);
 

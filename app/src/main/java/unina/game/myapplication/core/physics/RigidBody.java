@@ -131,9 +131,15 @@ public final class RigidBody extends PhysicsComponent {
             body.setTransform(x, y, (float) Math.toRadians(angle));
     }
 
+    /**
+     * Sets the position of the RigidBody. It shouldn't be used when the body is dynamic.
+     *
+     * @param x x position
+     * @param y y position
+     */
     public void setTransform(float x, float y) {
         if (body != null)
-            body.setTransform(x,y, body.getAngle());
+            body.setTransform(x, y, body.getAngle());
     }
 
 }

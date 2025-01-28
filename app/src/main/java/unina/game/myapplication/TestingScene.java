@@ -2,6 +2,7 @@ package unina.game.myapplication;
 
 import android.util.Log;
 
+import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
 import unina.game.myapplication.core.Camera;
@@ -40,6 +41,7 @@ public class TestingScene extends Scene {
         platformRenderComponent.height = 1;
         platformDraggingComponent.width = 5;
         platformDraggingComponent.height = 1;
+        platformRenderComponent.color = Color.GOLD;
         RigidBody PlatformRigidBody = RigidBody.build(RigidBody.Type.KINEMATIC,BoxCollider.build(5,1));
         platformDraggingComponent.rigidBody = PlatformRigidBody;
         createGameObject(platformRenderComponent,platformDraggingComponent,PlatformRigidBody);

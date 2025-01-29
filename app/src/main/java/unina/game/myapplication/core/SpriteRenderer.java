@@ -19,11 +19,15 @@ public class SpriteRenderer extends RenderComponent {
     public int srcX, srcY;
     public int srcWidth, srcHeight;
     public float width, height;
-    public int color = Color.WHITE;
+    public int color;
+
     private Pixmap image;
+    private float pivotX, pivotY;
 
     private SpriteRenderer() {
-
+        this.color = Color.WHITE;
+        this.width = this.height = 1;
+        this.pivotX = this.pivotY = 0.5f;
     }
 
     public void setImage(Pixmap image) {
@@ -50,6 +54,11 @@ public class SpriteRenderer extends RenderComponent {
         this.height = height;
     }
 
+    public void setPivot(float x, float y) {
+        this.pivotX = x;
+        this.pivotY = y;
+    }
+
     @Override
     public void onRemove() {
         super.onRemove();
@@ -64,8 +73,8 @@ public class SpriteRenderer extends RenderComponent {
 
         Camera camera = Camera.getInstance();
 
-        float screenX = camera.worldToScreenX(getOwner().x - width / 2);
-        float screenY = camera.worldToScreenY(getOwner().y + height / 2);
+        float screenX = camera.worldToScreenX(getOwner().x - pivotX * width);
+        float screenY = camera.worldToScreenY(getOwner().y + pivotY * height);
         float screenWidth = camera.worldToScreenSizeX(width);
         float screenHeight = camera.worldToScreenSizeY(height);
 

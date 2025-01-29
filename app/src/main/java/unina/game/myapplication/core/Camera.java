@@ -15,7 +15,7 @@ public final class Camera {
         return instance;
     }
 
-    private float x, y;
+    public float x, y;
     private float halfSizeX, halfSizeY;
     private final Graphics graphics;
 
@@ -26,33 +26,14 @@ public final class Camera {
     }
 
     /**
-     * Sets the world space x coordinate of the camera.
-     *
-     * @param x x coordinate in world space
-     */
-    public void setX(float x) {
-        this.x = x;
-    }
-
-
-    /**
-     * Sets the world space y coordinate of the camera.
-     *
-     * @param y y coordinate in world space
-     */
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    /**
      * Sets the world space position of the camera.
      *
      * @param x x coordinate in world space
      * @param y y coordinate in world space
      */
     public void setPosition(float x, float y) {
-        setX(x);
-        setY(y);
+        this.x = x;
+        this.y = y;
     }
 
     /**

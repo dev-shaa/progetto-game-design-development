@@ -23,7 +23,9 @@ public interface Graphics {
      * @param height the height of the rect
      * @param color  the color of the rect
      */
-    void drawRect(float x, float y, float width, float height, int color);
+    default void drawRect(float x, float y, float width, float height, int color) {
+        drawRect(x, y, width, height, 0, color);
+    }
 
     /**
      * Draws a rectangle on screen, rotated by the given angle.
@@ -35,11 +37,11 @@ public interface Graphics {
      * @param angle  the rotation of the rect
      * @param color  the color of the rect
      */
-    void drawRect(float x, float y, float width, float height, float angle, int color);
+    default void drawRect(float x, float y, float width, float height, float angle, int color) {
+        drawRect(x, y, width, height, angle, x + width / 2, y + height / 2, color);
+    }
 
-    //public void drawRectNotCenter(float x, float y, float width, float height, float angle, int color);
-
-    public void rotate(float angle);
+    void drawRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color);
 
     void drawCircle(float x, float y, float radius, int color);
 

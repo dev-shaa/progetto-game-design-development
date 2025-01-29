@@ -78,6 +78,7 @@ public class AndroidGraphics implements Graphics {
     @Override
     public void drawLine(float x, float y, float x2, float y2, int color) {
         paint.setColor(color);
+        paint.setStrokeWidth(0);
         canvas.drawLine(x, y, x2, y2, paint);
     }
 
@@ -89,26 +90,11 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawRect(float x, float y, float width, float height, float angle, int color) {
+    public void drawRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color) {
         canvas.save();
-        canvas.rotate(-angle, x + width / 2, y + height / 2);
+        canvas.rotate(-angle, pivotX, pivotY);
         drawRect(x, y, width, height, color);
         canvas.restore();
-    }
-
-//    @Override
-//    public void drawRectNotCenter(float x, float y, float width, float height, float angle, int color) {
-//        canvas.save();
-//        canvas.rotate(-angle, x, y);
-//        drawRect(x, y, width, height, color);
-//        canvas.restore();
-//    }
-
-    @Override
-    public void rotate(float angle) {
-        canvas.save();
-        canvas.rotate(angle);
-        //canvas.restore();
     }
 
     @Override

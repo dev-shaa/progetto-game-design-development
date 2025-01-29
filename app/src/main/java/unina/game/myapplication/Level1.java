@@ -9,6 +9,7 @@ import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.ButtonRenderComponent;
+import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 
 public class Level1 extends Scene {
@@ -16,7 +17,7 @@ public class Level1 extends Scene {
         super(game);
     }
 
-    private boolean platformRotated = false;
+    private boolean platformMoved = false;
 
     @Override
     public void initialize() {
@@ -42,15 +43,16 @@ public class Level1 extends Scene {
         floor2.x = 5;
         floor2.y = -10;
 
-        //Ponte elevatoio
-        PlatformRenderComponent platformRenderComponent3 = new PlatformRenderComponent();
-        platformRenderComponent3.color = Color.GOLD;
-        platformRenderComponent3.height = 3.5f;
-        platformRenderComponent3.width = 0.7f;
+        //Ponte
+        PlatformRenderComponent bridgeRenderComponent = new PlatformRenderComponent();
+        bridgeRenderComponent.color = Color.GOLD;
+        bridgeRenderComponent.width = 3f;
+        bridgeRenderComponent.height = 0.7f;
         RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(5,2));
-        GameObject bridge = createGameObject(platformRenderComponent3,rigidBridge);
-        bridge.x = -1.35f;
-        bridge.y = -4.55f;
+        PlatformBehaviourComponent bridgeBehaviourComponent = new PlatformBehaviourComponent();
+        GameObject bridge = createGameObject(bridgeRenderComponent,rigidBridge, bridgeBehaviourComponent);
+        //bridge.x = -1.35f;
+        bridge.y = -2.55f;
 
         //Pulsante
         ButtonRenderComponent buttonRenderComponent = new ButtonRenderComponent();
@@ -59,18 +61,19 @@ public class Level1 extends Scene {
         buttonRenderComponent.edge = 1;
         buttonRenderComponent.radius = 0.3f;
         buttonInputComponent.size = 1;
-        buttonInputComponent.runnable = () -> rotate(rigidBridge, -1.35f, -4.55f, 90, 3.5f, 0.7f);
+        buttonInputComponent.runnable = () -> move(bridgeBehaviourComponent, -4.55f);
         GameObject button = createGameObject(buttonRenderComponent,buttonInputComponent);
         button.y = 5;
     }
 
 
 
-    public void rotate(RigidBody body, float x, float y, float angle, float width, float height) {
-        if (platformRotated)
-            body.setTransform(x - height / 2, y + width / 2,0);
+    public void move(PlatformBehaviourComponent bridge, float y) {
+        if (platformMoved)
+            bridge.destY = y + 1.8f;
         else
-            body.setTransform(x + height / 2, y - width / 2,angle);
-        platformRotated = !platformRotated;
+            bridge.destY = y - 1.8f;
+        bridge.hasToMove = true;
+        platformMoved = !platformMoved;
     }
 }

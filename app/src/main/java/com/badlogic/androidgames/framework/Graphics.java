@@ -39,7 +39,6 @@ public interface Graphics {
 
     //public void drawRectNotCenter(float x, float y, float width, float height, float angle, int color);
 
-    public void rotate(float angle);
 
     void drawCircle(float x, float y, float radius, int color);
 

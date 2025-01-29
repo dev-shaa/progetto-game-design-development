@@ -17,8 +17,6 @@ public class Level1 extends Scene {
         super(game);
     }
 
-    private boolean platformMoved = false;
-
     @Override
     public void initialize() {
         super.initialize();
@@ -48,9 +46,9 @@ public class Level1 extends Scene {
         bridgeRenderComponent.color = Color.GOLD;
         bridgeRenderComponent.width = 3f;
         bridgeRenderComponent.height = 0.7f;
-        RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(5,2));
+        //RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(5,2));
         PlatformBehaviourComponent bridgeBehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge = createGameObject(bridgeRenderComponent,rigidBridge, bridgeBehaviourComponent);
+        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent);
         //bridge.x = -1.35f;
         bridge.y = -2.55f;
 
@@ -69,11 +67,7 @@ public class Level1 extends Scene {
 
 
     public void move(PlatformBehaviourComponent bridge, float y) {
-        if (platformMoved)
-            bridge.destY = y + 1.8f;
-        else
-            bridge.destY = y - 1.8f;
+        bridge.destY = y - 1.8f;
         bridge.hasToMove = true;
-        platformMoved = !platformMoved;
     }
 }

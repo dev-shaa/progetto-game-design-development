@@ -9,13 +9,11 @@ public class PlatformBehaviourComponent extends BehaviourComponent {
     public boolean hasToMove = false;
     @Override
     public void update(float deltaTime) {
-//        if (hasToMove) {
-//            float y = getOwner().y;
-//            getOwner().y = Utility.moveTowards(y,destY,deltaTime);
-//            if (y == destY)
-//                hasToMove = false;
-//        }
-        float y = getOwner().y;
-        getOwner().y = Utility.moveTowards(y,destY,deltaTime);
+        if (hasToMove) {
+            float y = getOwner().y;
+            getOwner().y = Utility.moveTowards(y,destY,deltaTime*5);
+            if (y == destY)
+                hasToMove = false;
+        }
     }
 }

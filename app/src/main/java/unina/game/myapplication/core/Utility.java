@@ -37,4 +37,13 @@ public final class Utility {
             return Math.min(v, max);
     }
 
+    public static float moveTowards(float current, float destination, float amount) {
+        if (current < destination)
+            return Math.min(current + amount, destination);
+        else if (current > destination)
+            return Math.max(current - amount, destination);
+        else
+            return current;
+    }
+
 }

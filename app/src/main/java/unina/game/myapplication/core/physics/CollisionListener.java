@@ -9,6 +9,8 @@ import com.google.fpl.liquidfun.Fixture;
 import java.util.HashSet;
 import java.util.function.BiConsumer;
 
+import unina.game.myapplication.core.GameObject;
+
 public final class CollisionListener extends ContactListener {
 
     private final Pool<Collision> collisionPool;
@@ -24,7 +26,7 @@ public final class CollisionListener extends ContactListener {
         collisionPool = new Pool<>(Collision::new, maxSize);
     }
 
-    public void forEachEnter(BiConsumer<RigidBody, RigidBody> action) {
+    public void forEachEnter(BiConsumer<GameObject, GameObject> action) {
         for (Collision collision : enterBuffer) {
             action.accept(collision.a, collision.b);
             collisionPool.free(collision);
@@ -33,7 +35,7 @@ public final class CollisionListener extends ContactListener {
         enterBuffer.clear();
     }
 
-    public void forEachExit(BiConsumer<RigidBody, RigidBody> action) {
+    public void forEachExit(BiConsumer<GameObject, GameObject> action) {
         for (Collision collision : exitBuffer) {
             action.accept(collision.a, collision.b);
             collisionPool.free(collision);
@@ -65,8 +67,8 @@ public final class CollisionListener extends ContactListener {
         RigidBody gb = (RigidBody) bb.getUserData();
 
         Collision collision = collisionPool.get();
-        collision.a = ga;
-        collision.b = gb;
+        collision.a = ga.getOwner();
+        collision.b = gb.getOwner();
 
         buffer.add(collision);
     }

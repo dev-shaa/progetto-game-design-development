@@ -72,13 +72,27 @@ public abstract class Scene extends Screen {
         physicsComponents.forEach(component -> component.update(deltaTime));
 
         collisionListener.forEachEnter((a, b) -> {
-            a.onCollisionEnter(b);
-            b.onCollisionEnter(a);
+            if (a.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) a.getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionEnter(b);
+            }
+
+            if (b.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) b.getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionEnter(a);
+            }
         });
 
         collisionListener.forEachExit((a, b) -> {
-            a.onCollisionExit(b);
-            b.onCollisionExit(a);
+            if (a.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) a.getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionExit(b);
+            }
+
+            if (b.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) b.getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionExit(a);
+            }
         });
 
         Input input = game.getInput();

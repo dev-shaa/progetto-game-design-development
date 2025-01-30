@@ -54,7 +54,7 @@ public final class RigidBody extends PhysicsComponent {
     Body body;
     private Type type;
     private Collider collider;
-    private boolean sleepingAllowed = true;
+    private boolean sleepingAllowed;
 
     private RigidBody() {
         // Private constructor to avoid manual instantiation
@@ -106,6 +106,7 @@ public final class RigidBody extends PhysicsComponent {
         world.destroyBody(body);
         world = null;
         body = null;
+        sleepingAllowed = true;
 
         pool.free(this);
     }

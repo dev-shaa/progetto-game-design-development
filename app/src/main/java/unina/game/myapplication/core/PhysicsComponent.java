@@ -17,12 +17,4 @@ public class PhysicsComponent extends Component {
 
     }
 
-    public void onCollisionEnter(RigidBody other) {
-
-    }
-
-    public void onCollisionExit(RigidBody other) {
-
-    }
-
 }

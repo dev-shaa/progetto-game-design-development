@@ -9,6 +9,10 @@ public class Color {
                 ((b & 0xff));
     }
 
+    public static int withAlpha(int color, byte a) {
+        return (color & 0x00ffffff) | (a << 24);
+    }
+
     public static final int BLACK = 0xff000000;
     public static final int WHITE = 0xffffffff;
     public static final int GOLD = 0xffdaa520;

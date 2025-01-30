@@ -22,11 +22,11 @@ public class AndroidAudio implements Audio {
         activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         this.assets = activity.getAssets();
         this.soundPool = new SoundPool.Builder().setMaxStreams(SIMULTANEOUS_CHANNELS)
-                                                .setAudioAttributes(
-                                                        new AudioAttributes.Builder()
-                                                                           .setUsage(AudioAttributes.USAGE_GAME)
-                                                                           .build())
-                                                .build();
+                .setAudioAttributes(
+                        new AudioAttributes.Builder()
+                                .setUsage(AudioAttributes.USAGE_GAME)
+                                .build())
+                .build();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class AndroidAudio implements Audio {
             int soundId = soundPool.load(assetDescriptor, 0);
             return new AndroidSound(soundPool, soundId);
         } catch (IOException e) {
-            throw new RuntimeException("Couldn't load sound '" + filename + "'");
+            throw new RuntimeException("Couldn't load sounds '" + filename + "'");
         }
     }
 }

@@ -11,7 +11,7 @@ import com.badlogic.androidgames.framework.Music;
 
 public class AndroidMusic implements Music, OnCompletionListener {
     MediaPlayer mediaPlayer;
-    boolean isPrepared = false;
+    boolean isPrepared;
 
     public AndroidMusic(AssetFileDescriptor assetDescriptor) {
         mediaPlayer = new MediaPlayer();
@@ -66,10 +66,8 @@ public class AndroidMusic implements Music, OnCompletionListener {
                     mediaPlayer.prepare();
                 mediaPlayer.start();
             }
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IllegalStateException | IOException e) {
+            Log.e("AndroidMusic", "Exception while playing", e);
         }
     }
 

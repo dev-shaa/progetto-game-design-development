@@ -2,8 +2,6 @@ package unina.game.myapplication.core;
 
 import com.google.fpl.liquidfun.World;
 
-import unina.game.myapplication.core.physics.RigidBody;
-
 public class PhysicsComponent extends Component {
 
     protected World world;

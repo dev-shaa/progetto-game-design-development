@@ -11,7 +11,7 @@ import unina.game.myapplication.core.PhysicsComponent;
 public final class RigidBody extends PhysicsComponent {
 
     public enum Type {
-        KINEMATIC, DYNAMIC, STATIC;
+        KINEMATIC, DYNAMIC, STATIC
     }
 
     private static final Pool<RigidBody> pool = new Pool<>(RigidBody::new, 16);

@@ -34,8 +34,8 @@ public abstract class Scene extends Screen {
     private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
 
     private Scene sceneToBeLoaded;
-    private final Collection<GameObject> gameObjectsToAdd = new ArrayList<>();
-    private final Collection<GameObject> gameObjectsToRemove = new ArrayList<>();
+    private final ArrayList<GameObject> gameObjectsToAdd = new ArrayList<>();
+    private final ArrayList<GameObject> gameObjectsToRemove = new ArrayList<>();
     boolean layerDirty = false;
 
     public Scene(Game game) {
@@ -189,7 +189,9 @@ public abstract class Scene extends Screen {
     }
 
     private void applySceneChanges() {
-        for (GameObject gameObject : gameObjectsToAdd) {
+        for (int i = 0; i < gameObjectsToAdd.size(); i++) {
+            GameObject gameObject = gameObjectsToAdd.get(i);
+
             if (!gameObjects.add(gameObject))
                 continue;
 
@@ -221,11 +223,11 @@ public abstract class Scene extends Screen {
             gameObject.initialize();
         }
 
-        for (GameObject gameObject : gameObjectsToRemove) {
+        for (int i = 0; i < gameObjectsToRemove.size(); i++) {
+            GameObject gameObject = gameObjectsToRemove.get(i);
+
             if (!gameObjects.remove(gameObject))
                 continue;
-
-            gameObject.dispose();
 
             for (Component component : gameObject.getComponents()) {
                 switch (component.getType()) {
@@ -249,6 +251,8 @@ public abstract class Scene extends Screen {
                         break;
                 }
             }
+
+            gameObject.dispose();
         }
 
         gameObjectsToAdd.clear();

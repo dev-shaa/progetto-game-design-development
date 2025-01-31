@@ -1,7 +1,5 @@
 package unina.game.myapplication.core.physics;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.PolygonShape;

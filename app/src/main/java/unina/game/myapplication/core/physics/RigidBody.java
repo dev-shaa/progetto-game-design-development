@@ -4,6 +4,7 @@ import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.FixtureDef;
+import com.google.fpl.liquidfun.Vec2;
 
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.PhysicsComponent;
@@ -150,6 +151,14 @@ public final class RigidBody extends PhysicsComponent {
 
         if (body != null)
             body.setSleepingAllowed(sleepingAllowed);
+    }
+
+    public void addForce(float x, float y) {
+        if (body != null) {
+            Vec2 force = new Vec2(x, y);
+            body.applyForceToCenter(force, true);
+            force.delete();
+        }
     }
 
 }

@@ -9,8 +9,6 @@ import com.google.fpl.liquidfun.Fixture;
 import java.util.HashSet;
 import java.util.function.BiConsumer;
 
-import unina.game.myapplication.core.GameObject;
-
 public final class CollisionListener extends ContactListener {
 
     private final Pool<Collision> collisionPool;

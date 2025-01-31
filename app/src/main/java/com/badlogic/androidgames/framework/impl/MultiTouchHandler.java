@@ -13,21 +13,21 @@ import android.view.View;
 
 import com.badlogic.androidgames.framework.Input.TouchEvent;
 import com.badlogic.androidgames.framework.Pool;
-import com.badlogic.androidgames.framework.Pool.PoolObjectFactory;
 
 public class MultiTouchHandler implements TouchHandler {
-    boolean[] isTouching = new boolean[20];
-    int[] touchX = new int[20];
-    int[] touchY = new int[20];
-    Pool<TouchEvent> touchEventPool;
-    List<TouchEvent> touchEvents = new ArrayList<TouchEvent>();
-    List<TouchEvent> touchEventsBuffer = new ArrayList<TouchEvent>();
-    float scaleX;
-    float scaleY;
-    private static final int MAXPOOLSIZE = 100;
+
+    private static final int MAX_POOL_SIZE = 128;
+
+    private final boolean[] isTouching = new boolean[20];
+    private final int[] touchX = new int[20];
+    private final int[] touchY = new int[20];
+    private final Pool<TouchEvent> touchEventPool;
+    private ArrayList<TouchEvent> touchEvents = new ArrayList<>();
+    private ArrayList<TouchEvent> touchEventsBuffer = new ArrayList<>();
+    private final float scaleX, scaleY;
 
     public MultiTouchHandler(View view, float scaleX, float scaleY) {
-        touchEventPool = new Pool<>(TouchEvent::new, MAXPOOLSIZE);
+        touchEventPool = new Pool<>(TouchEvent::new, MAX_POOL_SIZE);
         view.setOnTouchListener(this);
 
         this.scaleX = scaleX;
@@ -74,10 +74,8 @@ public class MultiTouchHandler implements TouchHandler {
                     touchEvent = touchEventPool.get();
                     touchEvent.type = TouchEvent.TOUCH_DRAGGED;
                     touchEvent.pointer = pointerId;
-                    touchEvent.x = touchX[pointerId] = (int) (event
-                            .getX(pointerIndex) * scaleX);
-                    touchEvent.y = touchY[pointerId] = (int) (event
-                            .getY(pointerIndex) * scaleY);
+                    touchEvent.x = touchX[pointerId] = (int) (event.getX(pointerIndex) * scaleX);
+                    touchEvent.y = touchY[pointerId] = (int) (event.getY(pointerIndex) * scaleY);
                     touchEventsBuffer.add(touchEvent);
                 }
                 break;
@@ -115,19 +113,14 @@ public class MultiTouchHandler implements TouchHandler {
         // empty the old list and return the events to the pool
         for (TouchEvent event : touchEvents)
             touchEventPool.free(event);
+
         touchEvents.clear();
 
-        // swap the lists
-        List<TouchEvent> temp = touchEvents;
+        ArrayList<TouchEvent> temp = touchEvents;
         touchEvents = touchEventsBuffer;
         touchEventsBuffer = temp;
 
-        /* old:
-        // copy the event buffer into the list
-        touchEvents.addAll(touchEventsBuffer);
-        touchEventsBuffer.clear();
-        */
-
         return touchEvents;
     }
+
 }

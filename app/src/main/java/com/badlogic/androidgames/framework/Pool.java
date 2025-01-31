@@ -6,15 +6,11 @@ import java.util.function.Supplier;
 
 public class Pool<T> implements Supplier<T> {
 
-    public interface PoolObjectFactory<T> {
-        T createObject();
-    }
-
     private final List<T> freeObjects;
-    private final PoolObjectFactory<T> factory;
+    private final Supplier<T> factory;
     private final int maxSize;
 
-    public Pool(PoolObjectFactory<T> factory, int maxSize) {
+    public Pool(Supplier<T> factory, int maxSize) {
         this.factory = factory;
         this.maxSize = maxSize;
         this.freeObjects = new ArrayList<>(maxSize);
@@ -23,7 +19,7 @@ public class Pool<T> implements Supplier<T> {
     @Override
     public T get() {
         return freeObjects.isEmpty()
-                ? factory.createObject()
+                ? factory.get()
                 : freeObjects.remove(freeObjects.size() - 1);
     }
 

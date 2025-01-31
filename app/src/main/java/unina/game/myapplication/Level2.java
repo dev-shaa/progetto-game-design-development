@@ -8,6 +8,7 @@ import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
+import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
@@ -79,5 +80,25 @@ public class Level2 extends Scene {
         platformDragged.y = 7;
         platformDragged.angle = 120;
 
+        //Pulsante a pressione
+        float phisicW = 3;
+        float phisicH = 1;
+        PlatformRenderComponent phisicRenderComponent = new PlatformRenderComponent();
+        phisicRenderComponent.color = Color.RED;
+        phisicRenderComponent.height = phisicH;
+        phisicRenderComponent.width = phisicW;
+        RigidBody phisicSensor = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(phisicW,phisicH,true));
+        phisicSensor.setSleepingAllowed(false);
+        PhysicsButton physicsButton = PhysicsButton.build();
+        physicsButton.onCollisionEnter = () -> move(phisicRenderComponent,Color.GREEN);
+        physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        GameObject pressure_plate = createGameObject(phisicRenderComponent,phisicSensor,physicsButton);
+        //pressure_plate.x = -3;
+        //pressure_plate.y = -1;
+        pressure_plate.y = -8;
+    }
+
+public void move(PlatformRenderComponent prova, int color) {
+        prova.color = color;
     }
 }

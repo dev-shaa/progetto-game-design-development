@@ -14,8 +14,8 @@ public final class PhysicsButton extends BehaviourComponent {
     }
 
     private int counter;
-    private Runnable onCollisionEnter;
-    private Runnable onCollisionExit;
+    public Runnable onCollisionEnter;
+    public Runnable onCollisionExit;
 
     private PhysicsButton() {
 

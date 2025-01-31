@@ -27,6 +27,12 @@ public final class GameObject {
         GameObject gameObject = create();
 
         for (Component component : components) {
+            if (component.owner != null)
+                throw new RuntimeException("Component is already owned by another GameObject");
+
+            if (gameObject.hasComponent(component.getType()))
+                throw new RuntimeException("GameObject already has a component of the same type");
+
             component.owner = gameObject;
             gameObject.components.put(component.getType(), component);
         }

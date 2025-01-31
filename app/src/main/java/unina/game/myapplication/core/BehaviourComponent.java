@@ -1,5 +1,7 @@
 package unina.game.myapplication.core;
 
+import unina.game.myapplication.core.physics.RigidBody;
+
 /**
  * A component focused on executing entities logic.
  */
@@ -25,7 +27,7 @@ public abstract class BehaviourComponent extends Component {
      *
      * @param other the other GameObject
      */
-    public void onCollisionEnter(GameObject other) {
+    public void onCollisionEnter(RigidBody other) {
 
     }
 
@@ -35,7 +37,7 @@ public abstract class BehaviourComponent extends Component {
      *
      * @param other the other GameObject
      */
-    public void onCollisionExit(GameObject other) {
+    public void onCollisionExit(RigidBody other) {
 
     }
 

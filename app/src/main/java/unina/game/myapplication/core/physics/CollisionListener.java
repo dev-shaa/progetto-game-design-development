@@ -26,7 +26,7 @@ public final class CollisionListener extends ContactListener {
         collisionPool = new Pool<>(Collision::new, maxSize);
     }
 
-    public void forEachEnter(BiConsumer<GameObject, GameObject> action) {
+    public void forEachEnter(BiConsumer<RigidBody, RigidBody> action) {
         for (Collision collision : enterBuffer) {
             action.accept(collision.a, collision.b);
             collisionPool.free(collision);
@@ -35,7 +35,7 @@ public final class CollisionListener extends ContactListener {
         enterBuffer.clear();
     }
 
-    public void forEachExit(BiConsumer<GameObject, GameObject> action) {
+    public void forEachExit(BiConsumer<RigidBody, RigidBody> action) {
         for (Collision collision : exitBuffer) {
             action.accept(collision.a, collision.b);
             collisionPool.free(collision);
@@ -67,8 +67,8 @@ public final class CollisionListener extends ContactListener {
         RigidBody gb = (RigidBody) bb.getUserData();
 
         Collision collision = collisionPool.get();
-        collision.a = ga.getOwner();
-        collision.b = gb.getOwner();
+        collision.a = ga;
+        collision.b = gb;
 
         buffer.add(collision);
     }

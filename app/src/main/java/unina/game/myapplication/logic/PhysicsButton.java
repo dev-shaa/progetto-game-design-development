@@ -3,7 +3,7 @@ package unina.game.myapplication.logic;
 import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.BehaviourComponent;
-import unina.game.myapplication.core.GameObject;
+import unina.game.myapplication.core.physics.RigidBody;
 
 public final class PhysicsButton extends BehaviourComponent {
 
@@ -36,7 +36,7 @@ public final class PhysicsButton extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionEnter(GameObject other) {
+    public void onCollisionEnter(RigidBody other) {
         super.onCollisionEnter(other);
 
         counter++;
@@ -45,7 +45,7 @@ public final class PhysicsButton extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionExit(GameObject other) {
+    public void onCollisionExit(RigidBody other) {
         super.onCollisionExit(other);
 
         counter--;

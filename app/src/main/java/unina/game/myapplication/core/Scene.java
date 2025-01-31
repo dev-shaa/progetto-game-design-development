@@ -72,25 +72,25 @@ public abstract class Scene extends Screen {
         physicsComponents.forEach(component -> component.update(deltaTime));
 
         collisionListener.forEachEnter((a, b) -> {
-            if (a.hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) a.getComponent(Component.Type.BEHAVIOUR);
+            if (a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) a.getOwner().getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionEnter(b);
             }
 
-            if (b.hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) b.getComponent(Component.Type.BEHAVIOUR);
+            if (b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) b.getOwner().getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionEnter(a);
             }
         });
 
         collisionListener.forEachExit((a, b) -> {
-            if (a.hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) a.getComponent(Component.Type.BEHAVIOUR);
+            if (a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) a.getOwner().getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionExit(b);
             }
 
-            if (b.hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) b.getComponent(Component.Type.BEHAVIOUR);
+            if (b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) b.getOwner().getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionExit(a);
             }
         });

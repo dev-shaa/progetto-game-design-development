@@ -18,7 +18,11 @@ public final class CircleCollider extends Collider {
      * @return a new CircleCollider
      */
     public static CircleCollider build(float radius) {
-        return build(radius, 1, 0.2f, 0.4f);
+        return build(radius, false);
+    }
+
+    public static CircleCollider build(float radius, boolean isSensor) {
+        return build(radius, 1, 0.2f, 0.4f, isSensor);
     }
 
     /**
@@ -30,19 +34,21 @@ public final class CircleCollider extends Collider {
      * @param friction    friction of the circle
      * @return a new CircleCollider
      */
-    public static CircleCollider build(float radius, float density, float restitution, float friction) {
+    public static CircleCollider build(float radius, float density, float restitution, float friction, boolean isSensor) {
         CircleCollider collider = pool.get();
 
         collider.radius = radius;
         collider.density = density;
         collider.restitution = restitution;
         collider.friction = friction;
+        collider.isSensor = isSensor;
 
         return collider;
     }
 
     private float radius;
     private float density, restitution, friction;
+    private boolean isSensor;
 
     private CircleCollider() {
 
@@ -58,6 +64,7 @@ public final class CircleCollider extends Collider {
         fixtureDef.setDensity(density);
         fixtureDef.setRestitution(restitution);
         fixtureDef.setFriction(friction);
+        fixtureDef.setIsSensor(isSensor);
 
         return fixtureDef;
     }

@@ -26,8 +26,8 @@ public class Level1 extends Scene {
         platformRenderComponent1.color = Color.GREY;
         platformRenderComponent1.width = 7;
         platformRenderComponent1.height = 8;
-        RigidBody rigidFloor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(7,8));
-        GameObject floor1 = createGameObject(platformRenderComponent1,rigidFloor1);
+        RigidBody rigidFloor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(7, 8));
+        GameObject floor1 = createGameObject(platformRenderComponent1, rigidFloor1);
         floor1.x = -5;
         floor1.y = -10;
 
@@ -36,8 +36,8 @@ public class Level1 extends Scene {
         platformRenderComponent2.color = Color.GREY;
         platformRenderComponent2.width = 7;
         platformRenderComponent2.height = 8;
-        RigidBody rigidFloor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(7,8));
-        GameObject floor2 = createGameObject(platformRenderComponent2,rigidFloor2);
+        RigidBody rigidFloor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(7, 8));
+        GameObject floor2 = createGameObject(platformRenderComponent2, rigidFloor2);
         floor2.x = 5;
         floor2.y = -10;
 
@@ -58,12 +58,12 @@ public class Level1 extends Scene {
         buttonInputComponent.buttonRenderComponent = buttonRenderComponent;
         buttonRenderComponent.edge = 1;
         buttonRenderComponent.radius = 0.3f;
-        buttonInputComponent.size = 1;
+        buttonInputComponent.width = 1;
+        buttonInputComponent.height = 1;
         buttonInputComponent.runnable = () -> move(bridgeBehaviourComponent, -4.55f);
-        GameObject button = createGameObject(buttonRenderComponent,buttonInputComponent);
+        GameObject button = createGameObject(buttonRenderComponent, buttonInputComponent);
         button.y = 5;
     }
-
 
 
     public void move(PlatformBehaviourComponent bridge, float y) {

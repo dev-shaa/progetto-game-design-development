@@ -12,6 +12,7 @@ import com.google.fpl.liquidfun.World;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 import unina.game.myapplication.core.physics.CollisionListener;
@@ -27,7 +28,7 @@ public abstract class Scene extends Screen {
 
     // TODO: check for possible better collection
     private final Collection<GameObject> gameObjects = new ArraySet<>(8);
-    private final Collection<InputComponent> inputComponents = new ArraySet<>(4);
+    private final List<InputComponent> inputComponents = new ArrayList<>(4);
     private final Collection<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final Collection<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
     private final Collection<AnimationComponent> animationComponents = new ArraySet<>(4);
@@ -95,8 +96,15 @@ public abstract class Scene extends Screen {
             }
         });
 
-        Input input = game.getInput();
-        inputComponents.forEach(component -> component.process(input));
+        List<Input.TouchEvent> events = game.getInput().getTouchEvents();
+
+        for (int i = 0; i < events.size(); i++) {
+            Input.TouchEvent event = events.get(i);
+
+            for (int j = 0; j < inputComponents.size(); j++)
+                inputComponents.get(j).process(event);
+        }
+
         behaviourComponents.forEach(component -> component.update(deltaTime));
         animationComponents.forEach(component -> component.update(deltaTime));
     }

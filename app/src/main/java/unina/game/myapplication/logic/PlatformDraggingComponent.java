@@ -10,10 +10,6 @@ public class PlatformDraggingComponent extends PressableComponent {
     @Override
     protected void onPointerDrag(int pointer, float x, float y) {
         super.onPointerDrag(pointer, x, y);
-
-        x = Camera.getInstance().screenToWorldX(x);
-        y = Camera.getInstance().screenToWorldY(y);
-
         rigidBody.setTransform(x, y);
     }
 

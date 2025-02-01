@@ -14,7 +14,9 @@ public final class GameObject {
      * @return an empty GameObject
      */
     static GameObject create() {
-        return pool.get();
+        GameObject go = pool.get();
+        go.setTransform(0, 0, 0);
+        return go;
     }
 
     /**
@@ -36,6 +38,8 @@ public final class GameObject {
             component.owner = gameObject;
             gameObject.components.put(component.getType(), component);
         }
+
+        gameObject.setTransform(0, 0, 0);
 
         return gameObject;
     }

@@ -13,8 +13,9 @@ public final class GameObject {
      *
      * @return an empty GameObject
      */
-    static GameObject create() {
+    static GameObject create(Scene scene) {
         GameObject go = pool.get();
+        go.scene = scene;
         go.setTransform(0, 0, 0);
         return go;
     }
@@ -25,8 +26,8 @@ public final class GameObject {
      * @param components components to add
      * @return a GameObject with the given components
      */
-    static GameObject create(Component... components) {
-        GameObject gameObject = create();
+    static GameObject create(Scene scene, Component... components) {
+        GameObject gameObject = create(scene);
 
         for (Component component : components) {
             if (component.owner != null)
@@ -38,8 +39,6 @@ public final class GameObject {
             component.owner = gameObject;
             gameObject.components.put(component.getType(), component);
         }
-
-        gameObject.setTransform(0, 0, 0);
 
         return gameObject;
     }
@@ -58,6 +57,8 @@ public final class GameObject {
      * The rotation angle of the GameObject, in degrees.
      */
     public float angle;
+
+    private Scene scene;
 
     private final EnumMap<Component.Type, Component> components = new EnumMap<>(Component.Type.class);
 
@@ -84,6 +85,7 @@ public final class GameObject {
             component.onRemove();
 
         components.clear();
+        scene = null;
         pool.free(this);
     }
 

@@ -27,7 +27,7 @@ public abstract class Scene extends Screen {
     private Camera camera;
 
     // TODO: check for possible better collection
-    private final Collection<GameObject> gameObjects = new ArraySet<>(8);
+    private final List<GameObject> gameObjects = new ArrayList<>(8);
     private final List<InputComponent> inputComponents = new ArrayList<>(4);
     private final Collection<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final Collection<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
@@ -190,7 +190,7 @@ public abstract class Scene extends Screen {
      * @return the created GameObject
      */
     public final GameObject createGameObject() {
-        GameObject gameObject = GameObject.create();
+        GameObject gameObject = GameObject.create(this);
         gameObjectsToAdd.add(gameObject);
         return gameObject;
     }
@@ -203,7 +203,7 @@ public abstract class Scene extends Screen {
      */
     public final GameObject createGameObject(Component... components) {
         Objects.requireNonNull(components);
-        GameObject gameObject = GameObject.create(components);
+        GameObject gameObject = GameObject.create(this, components);
         gameObjectsToAdd.add(gameObject);
         return gameObject;
     }

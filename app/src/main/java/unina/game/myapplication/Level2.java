@@ -95,6 +95,9 @@ public class Level2 extends Scene {
         PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
         platformDraggingComponent.width = dragPlatformWidth;
         platformDraggingComponent.height = dragPlatformHeight;
+        platformDraggingComponent.x0 = 3;
+        platformDraggingComponent.y0 = 14;
+        platformDraggingComponent.angle = 120;
         RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth,dragPlatformHeight));
         rigidDrag.setSleepingAllowed(false);
         platformDraggingComponent.rigidBody = rigidDrag;

@@ -153,9 +153,9 @@ public final class RigidBody extends PhysicsComponent {
             body.setSleepingAllowed(sleepingAllowed);
     }
 
-    public void addForce(float x, float y) {
+    public void addForce(float forceX, float forceY) {
         if (body != null) {
-            Vec2 force = new Vec2(x, y);
+            Vec2 force = new Vec2(forceX, forceY);
             body.applyForceToCenter(force, true);
             force.delete();
         }

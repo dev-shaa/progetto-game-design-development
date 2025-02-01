@@ -164,16 +164,23 @@ public abstract class Scene extends Screen {
     }
 
     /**
-     * Loads the given scene.
+     * Loads the scene of the specified class.
      *
-     * @param scene scene to load
+     * @param scene class of the scene to be loaded
+     * @throws RuntimeException if the given class doesn't have an accessible constructor that accepts only a Game parameter
      */
-    public final void loadScene(Scene scene) {
+    public final void loadScene(Class<? extends Scene> scene) {
         // It could be called multiple times during a frame, since the new scene is loaded at the start of the next one.
         // Only the first call should be considered.
+        if (sceneToBeLoaded != null)
+            return;
 
-        if (sceneToBeLoaded == null)
-            sceneToBeLoaded = scene;
+        // Reflection magic, handle with care
+        try {
+            sceneToBeLoaded = scene.getConstructor(Game.class).newInstance(game);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

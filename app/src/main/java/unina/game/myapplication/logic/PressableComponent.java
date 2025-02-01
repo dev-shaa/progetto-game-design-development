@@ -8,6 +8,7 @@ import unina.game.myapplication.core.InputComponent;
 public abstract class PressableComponent extends InputComponent {
 
     public float width, height;
+    public boolean interactable = true;
     private Camera camera;
 
     private boolean clicked;
@@ -16,26 +17,30 @@ public abstract class PressableComponent extends InputComponent {
     public void onInitialize() {
         super.onInitialize();
         camera = Camera.getInstance();
+        clicked = false;
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
-        clicked = false;
         camera = null;
+        interactable = true;
     }
 
     @Override
     public final void process(Input.TouchEvent event) {
+        if (!interactable)
+            return;
+
         float pointerX = camera.screenToWorldX(event.x);
         float pointerY = camera.screenToWorldY(event.y);
 
         switch (event.type) {
             case Input.TouchEvent.TOUCH_DOWN:
-                if (isPointerOver(pointerX, pointerY))
+                if (isPointerOver(pointerX, pointerY)) {
                     onPointerDown(event.pointer, pointerX, pointerY);
-
-                clicked = true;
+                    clicked = true;
+                }
                 break;
             case Input.TouchEvent.TOUCH_DRAGGED:
                 if (clicked)
@@ -70,7 +75,7 @@ public abstract class PressableComponent extends InputComponent {
 
     }
 
-    private boolean isPointerOver(float pointerX, float pointerY) {
+    protected boolean isPointerOver(float pointerX, float pointerY) {
         float x = getOwner().x;
         float y = getOwner().y;
         return (pointerX > x - width / 2 && pointerX < x + width / 2 && pointerY < y + height / 2 && pointerY > y - height / 2);

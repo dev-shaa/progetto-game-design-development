@@ -46,4 +46,12 @@ public final class Utility {
             return current;
     }
 
+    public static float calcolaTproiezione(float x0, float y0, float x, float y, float angle)
+    {
+        float theta = (float) Math.toRadians(angle);
+        float cosTheta = (float) Math.cos(theta);
+        float sinTheta = (float) Math.sin(theta);
+        return  (x-x0) * cosTheta + (y-y0) * sinTheta;
+    }
+
 }

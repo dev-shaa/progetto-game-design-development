@@ -138,7 +138,6 @@ public abstract class Scene extends Screen {
 
     @Override
     public void dispose() {
-        world.delete();
         sceneToBeLoaded = null;
 
         for (GameObject gameObject : gameObjects)
@@ -149,6 +148,8 @@ public abstract class Scene extends Screen {
 
         for (GameObject gameObject : gameObjectsToRemove)
             gameObject.dispose();
+
+        world.delete();
 
         renderComponents.clear();
         inputComponents.clear();

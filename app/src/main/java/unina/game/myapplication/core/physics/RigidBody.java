@@ -15,7 +15,7 @@ public final class RigidBody extends PhysicsComponent {
         KINEMATIC, DYNAMIC, STATIC
     }
 
-    private static final Pool<RigidBody> pool = new Pool<>(RigidBody::new, 16);
+    private static Pool<RigidBody> pool;
 
     /**
      * Creates a static RigidBody without a collider.
@@ -44,6 +44,9 @@ public final class RigidBody extends PhysicsComponent {
      * @return a RigidBody of the given type and with the given collider
      */
     public static RigidBody build(Type type, Collider collider) {
+        if (pool == null)
+            pool = new Pool<>(RigidBody::new, 16);
+
         RigidBody component = pool.get();
 
         component.type = type;

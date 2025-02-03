@@ -2,9 +2,9 @@ package unina.game.myapplication.core;
 
 import com.badlogic.androidgames.framework.Graphics;
 
-public final class Camera {
+public final class Camera extends Component {
 
-    static Camera instance;
+    private static Camera instance;
 
     /**
      * Returns the current active camera.
@@ -15,25 +15,22 @@ public final class Camera {
         return instance;
     }
 
-    public float x, y;
     private float halfSizeX, halfSizeY;
     private final Graphics graphics;
 
     Camera(Graphics graphics) {
+        if (instance != null)
+            throw new RuntimeException();
+
+        instance = this;
         this.graphics = graphics;
-        setPosition(0, 0);
         setSize(10);
     }
 
-    /**
-     * Sets the world space position of the camera.
-     *
-     * @param x x coordinate in world space
-     * @param y y coordinate in world space
-     */
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        instance = null;
     }
 
     /**
@@ -75,19 +72,19 @@ public final class Camera {
     }
 
     public float worldToViewportX(float v) {
-        return Utility.inverseLerp(x - halfSizeX, x + halfSizeX, v);
+        return Utility.inverseLerp(getOwner().x - halfSizeX, getOwner().x + halfSizeX, v);
     }
 
     public float worldToViewportY(float v) {
-        return Utility.inverseLerp(y + halfSizeY, y - halfSizeY, v);
+        return Utility.inverseLerp(getOwner().y + halfSizeY, getOwner().y - halfSizeY, v);
     }
 
     public float screenToWorldX(float v) {
-        return Utility.lerp(x - halfSizeX, x + halfSizeX, screenToViewportX(v));
+        return Utility.lerp(getOwner().x - halfSizeX, getOwner().x + halfSizeX, screenToViewportX(v));
     }
 
     public float screenToWorldY(float v) {
-        return Utility.lerp(x + halfSizeY, x - halfSizeY, screenToViewportY(v));
+        return Utility.lerp(getOwner().y + halfSizeY, getOwner().y - halfSizeY, screenToViewportY(v));
     }
 
     /**
@@ -126,6 +123,11 @@ public final class Camera {
      */
     public float getScreenHeight() {
         return graphics.getHeight();
+    }
+
+    @Override
+    public Type getType() {
+        return Type.DRAWABLE;
     }
 
 }

@@ -24,7 +24,7 @@ public abstract class Scene extends Screen {
 
     private World world;
     private CollisionListener collisionListener;
-    private Camera camera;
+    private GameObject camera;
 
     // TODO: check for possible better collection
     private final List<GameObject> gameObjects = new ArrayList<>(8);
@@ -50,8 +50,8 @@ public abstract class Scene extends Screen {
         world = new World(GRAVITY_X, GRAVITY_Y);
         world.setContactListener(collisionListener);
 
-        camera = new Camera(game.getGraphics());
-        Camera.instance = camera;
+        camera = GameObject.create(this, new Camera(game.getGraphics()));
+        camera.initialize();
 
         sceneToBeLoaded = null;
     }
@@ -161,6 +161,7 @@ public abstract class Scene extends Screen {
         gameObjectsToAdd.clear();
         gameObjectsToRemove.clear();
 
+        camera.dispose();
         camera = null;
     }
 
@@ -214,6 +215,9 @@ public abstract class Scene extends Screen {
      * @param gameObject GameObject to remove
      */
     public final void removeGameObject(GameObject gameObject) {
+        if (gameObject == camera)
+            throw new RuntimeException();
+
         if (gameObject != null)
             gameObjectsToRemove.add(gameObject);
     }

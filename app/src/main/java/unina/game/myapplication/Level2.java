@@ -113,15 +113,18 @@ public class Level2 extends Scene {
         platformDragged2RenderComponent.color = Color.GOLD;
         platformDragged2RenderComponent.width = dragPlatform2Width;
         platformDragged2RenderComponent.height = dragPlatform2Height;
-//        PlatformDraggingComponent platformDragging2Component = new PlatformDraggingComponent();
-//        platformDragging2Component.width = dragPlatformWidth;
-//        platformDragging2Component.height = dragPlatform2Height;
+        PlatformDraggingComponent platformDragging2Component = new PlatformDraggingComponent();
+        platformDragging2Component.width = 10;
+        platformDragging2Component.height = 10;
         RigidBody rigidDrag2 = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatform2Width, dragPlatform2Height));
         rigidDrag2.setSleepingAllowed(false);
-//        platformDragging2Component.rigidBody = rigidDrag2;
-        GameObject platformDragged2 = createGameObject(platformDragged2RenderComponent, rigidDrag2);
+        platformDragging2Component.rigidBody = rigidDrag2;
+        GameObject platformDragged2 = createGameObject(platformDragged2RenderComponent,platformDragging2Component, rigidDrag2);
         platformDragged2.x = -8;
         platformDragged2.y = 10;
+        platformDragging2Component.x0 = -8;
+        platformDragging2Component.y0 = 10;
+        platformDragging2Component.angle = 120;
         platformDragged2.angle = 140;
 
         //Ponte

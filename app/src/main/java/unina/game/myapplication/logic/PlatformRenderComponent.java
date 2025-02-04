@@ -12,6 +12,9 @@ public class PlatformRenderComponent extends RenderComponent {
     public float height;
     public int color;
 
+    private float startX, startY;
+    private float endX, endY;
+
     @Override
     public void render(float deltaTime, Graphics graphics) {
         float x = getOwner().x;
@@ -23,6 +26,21 @@ public class PlatformRenderComponent extends RenderComponent {
         y = camera.worldToScreenY(y);
         width = camera.worldToScreenSizeX(this.width);
         height = camera.worldToScreenSizeY(this.height);
+
+        graphics.drawLine(
+                camera.worldToScreenX(startX), camera.worldToScreenY(startY),
+                camera.worldToScreenX(endX), camera.worldToScreenY(endY), Color.WHITE);
         graphics.drawRect(x - width / 2, y - height / 2, width, height, getOwner().angle, color);
     }
+
+    public void setStart(float x, float y) {
+        startX = x;
+        startY = y;
+    }
+
+    public void setEnd(float x, float y) {
+        endX = x;
+        endY = y;
+    }
+
 }

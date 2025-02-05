@@ -6,6 +6,8 @@ import com.badlogic.androidgames.framework.Game;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
+import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
@@ -127,8 +129,10 @@ public class Level2 extends Scene {
         rigidDrag2.setSleepingAllowed(false);
         platformDragging2Component.rigidBody = rigidDrag2;
         GameObject platformDragged2 = createGameObject(platformDragged2RenderComponent, platformDragging2Component, rigidDrag2);
-        platformDragged2.x = -8;
-        platformDragged2.y = 10;
+        platformDragged2.x = -12;
+        platformDragged2.y = 14;
+        platformDragging2Component.setStart(-12,14);
+        platformDragging2Component.setEnd(-8,10);
 //        platformDragging2Component.x0 = -8;
 //        platformDragging2Component.y0 = 10;
 //        platformDragging2Component.angle = 120;
@@ -141,9 +145,9 @@ public class Level2 extends Scene {
         bridgeRenderComponent.color = Color.GOLD;
         bridgeRenderComponent.width = bridgeW;
         bridgeRenderComponent.height = bridgeH;
-        //RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(5,2));
+        AnimationSequence bridgeAnimation = AnimationSequence.build();
         PlatformBehaviourComponent bridgeBehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent);
+        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent, bridgeAnimation);
         //bridge.x = -1.35f;
         bridge.y = 0;
 
@@ -157,7 +161,7 @@ public class Level2 extends Scene {
         RigidBody phisicSensor = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisicW, phisicH, true));
         phisicSensor.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
-        physicsButton.onCollisionEnter = () -> move(phisicRenderComponent, phisicSensor, bridgeBehaviourComponent, Color.GREEN);
+        physicsButton.onCollisionEnter = () -> move(phisicRenderComponent, phisicSensor, bridgeAnimation, Color.GREEN);
         //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate = createGameObject(phisicRenderComponent, phisicSensor, physicsButton);
         //pressure_plate.x = -3;
@@ -178,12 +182,14 @@ public class Level2 extends Scene {
 
     }
 
-    public void move(PlatformRenderComponent prova, RigidBody prova2, PlatformBehaviourComponent bridge, int color) {
+    public void move(PlatformRenderComponent prova, RigidBody prova2, AnimationSequence bridge, int color) {
         if (!isPressed) {
             prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
             prova.color = color;
-            bridge.destY = -7;
-            bridge.hasToMove = true;
+            bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-7,1));
+            bridge.start();
+//            bridge.destY = -7;
+//            bridge.hasToMove = true;
             isPressed = true;
         }
     }

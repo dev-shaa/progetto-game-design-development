@@ -5,6 +5,9 @@ import com.badlogic.androidgames.framework.Game;
 
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
+import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.RotateToAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.logic.ButtonInputComponent;
@@ -46,9 +49,9 @@ public class Level1 extends Scene {
         bridgeRenderComponent.color = Color.GOLD;
         bridgeRenderComponent.width = 3f;
         bridgeRenderComponent.height = 0.7f;
-        //RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(5,2));
+        AnimationSequence bridgeAnimation = AnimationSequence.build();
         PlatformBehaviourComponent bridgeBehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent);
+        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent, bridgeAnimation);
         //bridge.x = -1.35f;
         bridge.y = -2.55f;
 
@@ -60,14 +63,15 @@ public class Level1 extends Scene {
         buttonRenderComponent.radius = 0.3f;
         buttonInputComponent.width = 1;
         buttonInputComponent.height = 1;
-        buttonInputComponent.runnable = () -> move(bridgeBehaviourComponent, -4.55f);
+        buttonInputComponent.runnable = () -> move(bridgeAnimation, -4.55f);
         GameObject button = createGameObject(buttonRenderComponent, buttonInputComponent);
         button.y = 5;
     }
 
 
-    public void move(PlatformBehaviourComponent bridge, float y) {
-        bridge.destY = y - 1.8f;
-        bridge.hasToMove = true;
+    public void move(AnimationSequence bridge, float y) {
+        float dest = y - 1.8f;
+        bridge.add(MoveToAnimation.build(bridge.getOwner(),0,dest,1));
+        bridge.start();
     }
 }

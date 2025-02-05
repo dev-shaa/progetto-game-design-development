@@ -127,7 +127,7 @@ public final class Camera extends Component {
 
     @Override
     public Type getType() {
-        return Type.DRAWABLE;
+        return Type.RENDER;
     }
 
 }

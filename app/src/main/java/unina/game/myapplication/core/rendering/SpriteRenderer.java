@@ -1,15 +1,21 @@
-package unina.game.myapplication.core;
+package unina.game.myapplication.core.rendering;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Pool;
 
+import unina.game.myapplication.core.Camera;
+import unina.game.myapplication.core.RenderComponent;
+
 public class SpriteRenderer extends RenderComponent {
 
-    private static final Pool<SpriteRenderer> pool = new Pool<>(SpriteRenderer::new, 32);
+    private static Pool<SpriteRenderer> pool;
 
-    public static SpriteRenderer build(Pixmap image, float width, float height) {
+    public synchronized static SpriteRenderer build(Pixmap image, float width, float height) {
+        if (pool == null)
+            pool = new Pool<>(SpriteRenderer::new, 16);
+
         SpriteRenderer renderer = pool.get();
         renderer.setImage(image);
         renderer.setSize(width, height);

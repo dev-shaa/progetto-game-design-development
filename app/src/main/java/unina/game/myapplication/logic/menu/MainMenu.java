@@ -4,21 +4,25 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Sound;
 
+import java.util.ArrayList;
+
 import unina.game.myapplication.Level1;
+import unina.game.myapplication.Level2;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
+import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.logic.ColorChangeAnimation;
 import unina.game.myapplication.logic.DebugRenderer;
-import unina.game.myapplication.core.animations.Animator;
-import unina.game.myapplication.logic.FullScreenColorRenderer;
+import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.FullScreenColorRenderer;
+import unina.game.myapplication.logic.common.LevelSaver;
 
 public class MainMenu extends Scene {
 
-    private Sound sound;
-    private Button selectLevelButton;
-    private Button levelButtons;
+    private Sound selectSound;
+    private LevelSaver levelSaver;
 
     public MainMenu(Game game) {
         super(game);
@@ -28,45 +32,67 @@ public class MainMenu extends Scene {
     public void initialize() {
         super.initialize();
 
-        DebugRenderer levelButtonRenderer = new DebugRenderer(2, 1);
-        levelButtons = new Button(2, 1);
-        levelButtons.interactable = false;
-        levelButtons.setOnClick(() -> {
-            Animator animator = new Animator();
-            FullScreenColorRenderer fullScreenColorRenderer = new FullScreenColorRenderer();
-            createGameObject(fullScreenColorRenderer);
+        levelSaver = new LevelSaver(game.getFileIO());
+        selectSound = game.getAudio().newSound("sounds/select_001.ogg");
 
-            animator.addAnimation(
-                    new ColorChangeAnimation(Color.TRANSPARENT, Color.BLACK, 0.333f, fullScreenColorRenderer::setColor),
-                    () -> loadScene(Level1.class));
+        Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
-            createGameObject(animator);
-        });
-        GameObject go = createGameObject(levelButtons, levelButtonRenderer);
-        go.x = 2;
-        go.y = -10;
+        FullScreenColorRenderer fadeRenderer = FullScreenColorRenderer.build();
+        fadeRenderer.setColor(Color.TRANSPARENT);
+        fadeRenderer.setLayer(Short.MAX_VALUE);
+        createGameObject(fadeRenderer);
 
+        AnimationSequence sequence = AnimationSequence.build();
+        createGameObject(sequence);
 
         DebugRenderer selectLevelButtonRenderer = new DebugRenderer(2, 1);
-        selectLevelButton = new Button(2, 1);
-        selectLevelButton.interactable = true;
+        Button selectLevelButton = new Button(2, 1);
         createGameObject(selectLevelButton, selectLevelButtonRenderer);
 
         selectLevelButton.setOnClick(() -> {
-            selectLevelButton.interactable = false;
+            selectSound.play(1);
 
-            Animator animator = new Animator();
-            animator.addAnimation(
-                    MoveToAnimation.build(Camera.getInstance().getOwner(), go.x, go.y, 0.75f, MoveToAnimation.EaseFunction.CUBIC_IN_OUT),
-                    () -> levelButtons.interactable = true);
-
-            createGameObject(animator);
+            sequence.clear();
+            sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, -20, 1f, MoveToAnimation.EaseFunction.CUBIC_IN_OUT));
+            sequence.start();
         });
+
+        for (int i = 0; i < levelSaver.getLevelsCount(); i++) {
+            final Class<? extends Scene> level = levelSaver.getLevel(i);
+
+            DebugRenderer buttonRenderer = new DebugRenderer(2, 1);
+            Button button = new Button(2, 1);
+            GameObject buttonGameObject = createGameObject(button, buttonRenderer);
+            buttonGameObject.y = -20 - i * 1.5f;
+
+            if (i <= levelSaver.getLatestCompletedLevel()) {
+                button.interactable = true;
+                buttonRenderer.color = Color.BLUE;
+            } else {
+                button.interactable = false;
+                buttonRenderer.color = Color.GREY;
+            }
+
+            button.setOnClick(() -> {
+                selectSound.play(1);
+
+                for (Button levelButton : levelButtons)
+                    levelButton.interactable = false;
+
+                sequence.clear();
+                sequence.add(FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 1f), () -> loadScene(level));
+                sequence.start();
+            });
+
+            levelButtons[i] = button;
+        }
     }
 
     @Override
     public void dispose() {
         super.dispose();
+
+        selectSound.dispose();
     }
 
 }

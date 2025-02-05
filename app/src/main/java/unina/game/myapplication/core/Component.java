@@ -3,7 +3,7 @@ package unina.game.myapplication.core;
 public abstract class Component {
 
     public enum Type {
-        PHYSICS, INPUT, ANIMATION, DRAWABLE, BEHAVIOUR
+        PHYSICS, INPUT, ANIMATION, RENDER, BEHAVIOUR
     }
 
     GameObject owner;

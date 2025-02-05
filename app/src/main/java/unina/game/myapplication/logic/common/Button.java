@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic.menu;
+package unina.game.myapplication.logic.common;
 
 import unina.game.myapplication.logic.PressableComponent;
 

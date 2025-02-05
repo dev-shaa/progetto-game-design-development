@@ -9,7 +9,7 @@ public abstract class RenderComponent extends Component {
 
     @Override
     public final Type getType() {
-        return Type.DRAWABLE;
+        return Type.RENDER;
     }
 
     @Override

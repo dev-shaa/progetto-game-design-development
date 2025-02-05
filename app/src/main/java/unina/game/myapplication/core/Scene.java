@@ -241,7 +241,7 @@ public abstract class Scene extends Screen {
                     case INPUT:
                         inputComponents.add((InputComponent) component);
                         break;
-                    case DRAWABLE:
+                    case RENDER:
                         ((RenderComponent) component).scene = this;
                         renderComponents.add((RenderComponent) component);
                         layerDirty = true;
@@ -274,7 +274,7 @@ public abstract class Scene extends Screen {
                     case INPUT:
                         inputComponents.remove((InputComponent) component);
                         break;
-                    case DRAWABLE:
+                    case RENDER:
                         renderComponents.remove((RenderComponent) component);
                         layerDirty = true;
                         break;

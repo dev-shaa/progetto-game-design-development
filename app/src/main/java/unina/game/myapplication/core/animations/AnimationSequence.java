@@ -53,23 +53,43 @@ public class AnimationSequence extends AnimationComponent {
         }
     }
 
+    /**
+     * Start or resume the animation sequence.
+     */
     public void start() {
         stopped = false;
     }
 
+    /**
+     * Stop the animation sequence.
+     */
     public void stop() {
         stopped = true;
     }
 
+    /**
+     * Add an animation to the sequence.
+     *
+     * @param animation animation to add
+     */
     public void add(Animation animation) {
         add(animation, null);
     }
 
+    /**
+     * Add an animation to the sequence and an event that will be run at the end.
+     *
+     * @param animation animation to add
+     * @param onEnd     event to run at the end
+     */
     public void add(Animation animation, Runnable onEnd) {
         animations.add(animation);
         events.add(onEnd);
     }
 
+    /**
+     * Stop and remove all animations from the sequence.
+     */
     public void clear() {
         if (!animations.isEmpty()) {
             for (Animation animation : animations)

@@ -6,7 +6,7 @@ public class WaitAnimation implements Animation {
 
     private static Pool<WaitAnimation> pool;
 
-    public static WaitAnimation build(float duration) {
+    public synchronized static WaitAnimation build(float duration) {
         if (pool == null)
             pool = new Pool<>(WaitAnimation::new, 8);
 

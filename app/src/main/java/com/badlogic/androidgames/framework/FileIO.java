@@ -12,4 +12,6 @@ public interface FileIO {
 
     OutputStream writeFile(String fileName) throws IOException;
 
+    String getPersistentDataPath();
+
 }

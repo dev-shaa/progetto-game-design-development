@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic;
+package unina.game.myapplication.logic.common;
 
 import com.badlogic.androidgames.framework.Graphics;
 
@@ -6,7 +6,15 @@ import unina.game.myapplication.core.RenderComponent;
 
 public class FullScreenColorRenderer extends RenderComponent {
 
+    public synchronized static FullScreenColorRenderer build() {
+        return new FullScreenColorRenderer();
+    }
+
     public int color;
+
+    private FullScreenColorRenderer() {
+
+    }
 
     @Override
     public void render(float deltaTime, Graphics graphics) {

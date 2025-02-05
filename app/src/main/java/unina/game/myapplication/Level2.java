@@ -1,5 +1,7 @@
 package unina.game.myapplication;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
@@ -12,10 +14,11 @@ import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
+import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
+import unina.game.myapplication.logic.TestingRender;
 
 public class Level2 extends Scene {
 
@@ -98,9 +101,6 @@ public class Level2 extends Scene {
         PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
         platformDraggingComponent.width = 10;
         platformDraggingComponent.height = 10;
-//        platformDraggingComponent.x0 = 3;
-//        platformDraggingComponent.y0 = 14;
-//        platformDraggingComponent.angle = 120;
         platformDraggingComponent.setStart(3, 14);
         platformDraggingComponent.setEnd(5, 5);
 
@@ -133,9 +133,6 @@ public class Level2 extends Scene {
         platformDragged2.y = 14;
         platformDragging2Component.setStart(-12,14);
         platformDragging2Component.setEnd(-8,10);
-//        platformDragging2Component.x0 = -8;
-//        platformDragging2Component.y0 = 10;
-//        platformDragging2Component.angle = 120;
         platformDragged2.angle = 140;
 
         //Ponte
@@ -146,9 +143,7 @@ public class Level2 extends Scene {
         bridgeRenderComponent.width = bridgeW;
         bridgeRenderComponent.height = bridgeH;
         AnimationSequence bridgeAnimation = AnimationSequence.build();
-        PlatformBehaviourComponent bridgeBehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeBehaviourComponent, bridgeAnimation);
-        //bridge.x = -1.35f;
+        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeAnimation);
         bridge.y = 0;
 
         //Pulsante a pressione
@@ -180,6 +175,19 @@ public class Level2 extends Scene {
         //platform3.x = -10;
         platform3.y = 4;
 
+        //Personaggio
+        float pgW = 2;
+        float pgH = 2;
+        TestingRender characterRender = new TestingRender();
+        characterRender.width = pgW;
+        characterRender.height = pgH;
+        RigidBody characterSensor = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(pgW,pgH,true));
+        characterSensor.setSleepingAllowed(false);
+        PhysicsButton characterBehaviour = PhysicsButton.build();
+        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent,platformDragging2Component);
+        GameObject character = createGameObject(characterRender,characterSensor, characterBehaviour);
+        character.x = -6;
+        character.y = -5.5f;
     }
 
     public void move(PlatformRenderComponent prova, RigidBody prova2, AnimationSequence bridge, int color) {
@@ -188,9 +196,14 @@ public class Level2 extends Scene {
             prova.color = color;
             bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-7,1));
             bridge.start();
-//            bridge.destY = -7;
-//            bridge.hasToMove = true;
             isPressed = true;
+        }
+    }
+
+    public void gameOver(PressableComponent... components) {
+        Log.d("Game Over","HAI PERSO");
+        for (PressableComponent component : components) {
+            component.interactable = false;
         }
     }
 }

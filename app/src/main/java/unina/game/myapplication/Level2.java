@@ -13,12 +13,15 @@ import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
+import unina.game.myapplication.logic.ButtonRenderComponent;
+import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
+import unina.game.myapplication.logic.common.Button;
 
 public class Level2 extends Scene {
 
@@ -205,5 +208,15 @@ public class Level2 extends Scene {
         for (PressableComponent component : components) {
             component.interactable = false;
         }
+        DebugRenderer buttonRenderComponent = new DebugRenderer(6,3);
+        Button buttonRetray = new Button(6,3);
+        AnimationSequence buttonAnimation = AnimationSequence.build();
+        GameObject retray = createGameObject(buttonRenderComponent,buttonRetray,buttonAnimation);
+        retray.y = -21;
+        buttonAnimation.add(MoveToAnimation.build(retray,0,1,0.5f));
+        buttonAnimation.add(MoveToAnimation.build(retray,0,2,0.05f));
+        buttonAnimation.add(MoveToAnimation.build(retray,0,0,0.25f));
+        buttonAnimation.start();
+
     }
 }

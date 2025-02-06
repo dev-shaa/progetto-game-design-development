@@ -10,10 +10,10 @@ import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
-import unina.game.myapplication.logic.ButtonRenderComponent;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
@@ -149,6 +149,26 @@ public class Level2 extends Scene {
         GameObject bridge = createGameObject(bridgeRenderComponent, bridgeAnimation);
         bridge.y = 0;
 
+        //Personaggio
+        float pgW = 2;
+        float pgH = 2;
+        TestingRender characterRender = new TestingRender();
+        characterRender.width = pgW;
+        characterRender.height = pgH;
+        AnimationSequence characterAnimation = AnimationSequence.build();
+        GameObject character = createGameObject(characterRender,characterAnimation);
+        character.x = -6;
+        character.y = -5.5f;
+
+        //Sensore Personaggio
+        RigidBody characterBody = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(pgW,pgH,true));
+        characterBody.setSleepingAllowed(false);
+        PhysicsButton characterBehaviour = PhysicsButton.build();
+        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent,platformDragging2Component);
+        GameObject characterSensor = createGameObject(characterBehaviour,characterBody);
+        characterSensor.x = -6;
+        characterSensor.y = -5.5f;
+
         //Pulsante a pressione
         float phisicW = 3;
         float phisicH = 1;
@@ -159,7 +179,7 @@ public class Level2 extends Scene {
         RigidBody phisicSensor = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisicW, phisicH, true));
         phisicSensor.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
-        physicsButton.onCollisionEnter = () -> move(phisicRenderComponent, phisicSensor, bridgeAnimation, Color.GREEN);
+        physicsButton.onCollisionEnter = () -> move(phisicRenderComponent, phisicSensor, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
         //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate = createGameObject(phisicRenderComponent, phisicSensor, physicsButton);
         //pressure_plate.x = -3;
@@ -177,29 +197,48 @@ public class Level2 extends Scene {
         GameObject platform3 = createGameObject(platformRenderComponent5, rigidPlatform3);
         //platform3.x = -10;
         platform3.y = 4;
-
-        //Personaggio
-        float pgW = 2;
-        float pgH = 2;
-        TestingRender characterRender = new TestingRender();
-        characterRender.width = pgW;
-        characterRender.height = pgH;
-        RigidBody characterSensor = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(pgW,pgH,true));
-        characterSensor.setSleepingAllowed(false);
-        PhysicsButton characterBehaviour = PhysicsButton.build();
-        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent,platformDragging2Component);
-        GameObject character = createGameObject(characterRender,characterSensor, characterBehaviour);
-        character.x = -6;
-        character.y = -5.5f;
     }
 
-    public void move(PlatformRenderComponent prova, RigidBody prova2, AnimationSequence bridge, int color) {
+    public void move(PlatformRenderComponent prova, RigidBody prova2, AnimationSequence bridge, int color, AnimationSequence character, GameObject characterSensor) {
         if (!isPressed) {
             prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
             prova.color = color;
             bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-7,1));
             bridge.start();
             isPressed = true;
+
+            removeGameObject(characterSensor);
+            character.add(WaitAnimation.build(1.5f));
+            character.add(MoveToAnimation.build(character.getOwner(),6,-5.5f,1));
+            character.start();
+
+            //Tasto per riprovare
+            DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
+            Button buttonRetray = new Button(6,3);
+            buttonRetray.setOnClick(this::retray);
+            AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
+            GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
+            retray.x = -4;
+            retray.y = -24;
+            buttonRetrayAnimation.add(WaitAnimation.build(3));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,1,0.5f));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,2,0.05f));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,0,0.25f));
+            buttonRetrayAnimation.start();
+
+            //Tasto per avanzare
+            DebugRenderer buttonNextRenderComponent = new DebugRenderer(6,3);
+            Button buttonNext = new Button(6,3);
+            //buttonNext.setOnClick(this::nextLevel);
+            AnimationSequence buttonNextAnimation = AnimationSequence.build();
+            GameObject toMenu = createGameObject(buttonNextRenderComponent, buttonNext, buttonNextAnimation);
+            toMenu.x = 4;
+            toMenu.y = -24;
+            buttonNextAnimation.add(WaitAnimation.build(3));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,1,0.5f));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,2,0.05f));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,0,0.25f));
+            buttonNextAnimation.start();
         }
     }
 
@@ -208,15 +247,39 @@ public class Level2 extends Scene {
         for (PressableComponent component : components) {
             component.interactable = false;
         }
-        DebugRenderer buttonRenderComponent = new DebugRenderer(6,3);
-        Button buttonRetray = new Button(6,3);
-        AnimationSequence buttonAnimation = AnimationSequence.build();
-        GameObject retray = createGameObject(buttonRenderComponent,buttonRetray,buttonAnimation);
-        retray.y = -21;
-        buttonAnimation.add(MoveToAnimation.build(retray,0,1,0.5f));
-        buttonAnimation.add(MoveToAnimation.build(retray,0,2,0.05f));
-        buttonAnimation.add(MoveToAnimation.build(retray,0,0,0.25f));
-        buttonAnimation.start();
 
+        //Tasto per riprovare
+        DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
+        Button buttonRetray = new Button(6,3);
+        buttonRetray.setOnClick(this::retray);
+        AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
+        GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
+        retray.x = 4;
+        retray.y = -21;
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,1,0.5f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,2,0.05f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,0,0.25f));
+        buttonRetrayAnimation.start();
+
+        //Tasto per tornare al menu
+        DebugRenderer buttonMenuRenderComponent = new DebugRenderer(6,3);
+        Button buttonMenu = new Button(6,3);
+        buttonMenu.setOnClick(this::toMenu);
+        AnimationSequence buttonMenuAnimation = AnimationSequence.build();
+        GameObject toMenu = createGameObject(buttonMenuRenderComponent, buttonMenu, buttonMenuAnimation);
+        toMenu.x = -4;
+        toMenu.y = -21;
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,1,0.5f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,2,0.05f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,0,0.25f));
+        buttonMenuAnimation.start();
+    }
+
+    public void retray() {
+        loadScene(Level2.class);
+    }
+
+    public void  toMenu() {
+        loadScene(Level1.class);
     }
 }

@@ -91,7 +91,7 @@ public class Level1 extends Scene {
     }
 
 
-    public void move(AnimationSequence bridge, AnimationSequence character, float y) {
+    public void move (AnimationSequence bridge, AnimationSequence character, float y) {
         float dest = y - 1.8f;
         bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-7,1));
         bridge.start();

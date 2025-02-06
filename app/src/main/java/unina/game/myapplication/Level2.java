@@ -98,7 +98,7 @@ public class Level2 extends Scene {
         float dragPlatformWidth = 7.5f;
         float dragPlatformHeight = 0.5f;
         PlatformRenderComponent platformDraggedRenderComponent = new PlatformRenderComponent();
-        platformDraggedRenderComponent.color = Color.GOLD;
+        platformDraggedRenderComponent.color = Color.DARKCYAN;
         platformDraggedRenderComponent.width = dragPlatformWidth;
         platformDraggedRenderComponent.height = dragPlatformHeight;
         PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
@@ -122,7 +122,7 @@ public class Level2 extends Scene {
         float dragPlatform2Width = 7.5f;
         float dragPlatform2Height = 0.5f;
         PlatformRenderComponent platformDragged2RenderComponent = new PlatformRenderComponent();
-        platformDragged2RenderComponent.color = Color.GOLD;
+        platformDragged2RenderComponent.color = Color.DARKCYAN;
         platformDragged2RenderComponent.width = dragPlatform2Width;
         platformDragged2RenderComponent.height = dragPlatform2Height;
         PlatformDraggingComponent platformDragging2Component = new PlatformDraggingComponent();

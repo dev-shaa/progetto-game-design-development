@@ -1,13 +1,25 @@
 package unina.game.myapplication.logic.common;
 
 import com.badlogic.androidgames.framework.Color;
+import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.animations.Animation;
 
 public class FadeAnimation implements Animation {
 
+    private static Pool<FadeAnimation> pool;
+
     public synchronized static FadeAnimation build(FullScreenColorRenderer fullScreenColorRenderer, int startColor, int endColor, float duration) {
-        return new FadeAnimation(fullScreenColorRenderer, startColor, endColor, duration);
+        if (pool == null)
+            pool = new Pool<>(FadeAnimation::new, 2);
+
+        FadeAnimation fade = pool.get();
+        fade.fullScreenColorRenderer = fullScreenColorRenderer;
+        fade.startColor = startColor;
+        fade.endColor = endColor;
+        fade.duration = duration;
+
+        return fade;
     }
 
     private FullScreenColorRenderer fullScreenColorRenderer;
@@ -15,11 +27,8 @@ public class FadeAnimation implements Animation {
     private float duration;
     private float current;
 
-    private FadeAnimation(FullScreenColorRenderer fullScreenColorRenderer, int startColor, int endColor, float duration) {
-        this.fullScreenColorRenderer = fullScreenColorRenderer;
-        this.startColor = startColor;
-        this.endColor = endColor;
-        this.duration = duration;
+    private FadeAnimation() {
+
     }
 
     @Override
@@ -30,6 +39,8 @@ public class FadeAnimation implements Animation {
     @Override
     public void dispose() {
         fullScreenColorRenderer = null;
+
+        pool.free(this);
     }
 
     @Override

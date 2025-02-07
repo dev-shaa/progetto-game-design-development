@@ -8,13 +8,14 @@ import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
-import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.ButtonRenderComponent;
+import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformBehaviourComponent;
+import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
@@ -82,8 +83,8 @@ public class Level3 extends Scene {
         //Masso
         RockRenderComponent rockRenderComponent = new RockRenderComponent();
         rockRenderComponent.color = Color.GREY;
-        rockRenderComponent.radius = 2;
-        RigidBody rigidRock = RigidBody.build(RigidBody.Type.DYNAMIC, CircleCollider.build(2));
+        rockRenderComponent.radius = 1;
+        RigidBody rigidRock = RigidBody.build(RigidBody.Type.DYNAMIC, CircleCollider.build(1));
         GameObject rock = createGameObject(rockRenderComponent, rigidRock);
         rock.x = -5;
         rock.y = 16;
@@ -91,15 +92,28 @@ public class Level3 extends Scene {
         //Piattaforma 1
         float platW = 8;
         float platH = 0.7f;
-        PlatformRenderComponent platformRenderComponent1 = new PlatformRenderComponent();
-        platformRenderComponent1.color = Color.GREY;
-        platformRenderComponent1.width = platW;
-        platformRenderComponent1.height = platH;
+        PlatformRenderComponent platform1RenderComponent = new PlatformRenderComponent();
+        platform1RenderComponent.color = Color.GREY;
+        platform1RenderComponent.width = platW;
+        platform1RenderComponent.height = platH;
         RigidBody rigidPlatform1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(platW, platH));
-        GameObject platform = createGameObject(platformRenderComponent1, rigidPlatform1);
+        GameObject platform = createGameObject(platform1RenderComponent, rigidPlatform1);
         platform.x = -4;
         platform.y = 13;
         platform.angle = 140;
+
+        //Piattaforma 2
+        float plat2W = 17;
+        float plat2H = 0.7f;
+        PlatformRenderComponent platform2RenderComponent = new PlatformRenderComponent();
+        platform2RenderComponent.color = Color.GREY;
+        platform2RenderComponent.width = plat2W;
+        platform2RenderComponent.height = plat2H;
+        RigidBody rigidPlatform2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat2W, plat2H));
+        GameObject platform2 = createGameObject(platform2RenderComponent, rigidPlatform2);
+        platform2.x = 9;
+        platform2.y = 9;
+        platform2.angle = 90;
 
         //Ponte 3
         PlatformRenderComponent bridge3RenderComponent = new PlatformRenderComponent();
@@ -126,6 +140,87 @@ public class Level3 extends Scene {
         GameObject button = createGameObject(buttonRenderComponent, buttonInputComponent);
         button.x = -6;
         button.y = 5;
+
+        //Pulsante a pressione 1
+        float phisic1W = 2;
+        float phisic1H = 0.5f;
+        PlatformRenderComponent phisic1RenderComponent = new PlatformRenderComponent();
+        phisic1RenderComponent.color = Color.RED;
+        phisic1RenderComponent.height = phisic1H;
+        phisic1RenderComponent.width = phisic1W;
+        RigidBody phisicSensor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic1W, phisic1H, true));
+        phisicSensor1.setSleepingAllowed(false);
+        PhysicsButton physicsButton = PhysicsButton.build();
+        //physicsButton.onCollisionEnter = () -> move(phisic1RenderComponent, phisicSensor1, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
+        //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        GameObject pressure_plate1 = createGameObject(phisic1RenderComponent, phisicSensor1, physicsButton);
+        pressure_plate1.x = 1;
+        pressure_plate1.y = 1;
+
+        //Piattaforma sotto la pedana 1
+        float plat3W = 8;
+        float plat3H = 0.5f;
+        PlatformRenderComponent platformRenderComponent3 = new PlatformRenderComponent();
+        platformRenderComponent3.color = Color.GREY;
+        platformRenderComponent3.width = plat3W;
+        platformRenderComponent3.height = plat3H;
+        RigidBody rigidPlatform3 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat3W, plat3H));
+        GameObject platform3 = createGameObject(platformRenderComponent3, rigidPlatform3);
+        platform3.x = 3.5f;
+        platform3.y = 0.5f;
+
+        //Pulsante a pressione 2
+        float phisic2W = 2;
+        float phisic2H = 0.5f;
+        PlatformRenderComponent phisic2RenderComponent = new PlatformRenderComponent();
+        phisic2RenderComponent.color = Color.RED;
+        phisic2RenderComponent.height = phisic2H;
+        phisic2RenderComponent.width = phisic2W;
+        RigidBody phisicSensor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic2W, phisic2H, true));
+        phisicSensor2.setSleepingAllowed(false);
+        PhysicsButton physicsButton2 = PhysicsButton.build();
+        //physicsButton.onCollisionEnter = () -> move(phisic1RenderComponent, phisicSensor1, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
+        //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        GameObject pressure_plate2 = createGameObject(phisic2RenderComponent, phisicSensor2, physicsButton2);
+        pressure_plate2.x = 6;
+        pressure_plate2.y = 1;
+
+        //Piattaforma di divisione pedane
+        float plat4W = 7;
+        float plat4H = 0.7f;
+        PlatformRenderComponent platformRenderComponent4 = new PlatformRenderComponent();
+        platformRenderComponent4.color = Color.GREY;
+        platformRenderComponent4.width = plat4W;
+        platformRenderComponent4.height = plat4H;
+        RigidBody rigidPlatform4 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat4W, plat4H));
+        GameObject platform4 = createGameObject(platformRenderComponent4, rigidPlatform4);
+        platform4.x = 3.5f;
+        platform4.y = 4;
+        platform4.angle = 90;
+
+        //Piattaforma scorrevole
+        float dragPlatformWidth = 6;
+        float dragPlatformHeight = 0.5f;
+        PlatformRenderComponent platformDraggedRenderComponent = new PlatformRenderComponent();
+        platformDraggedRenderComponent.color = Color.DARKCYAN;
+        platformDraggedRenderComponent.width = dragPlatformWidth;
+        platformDraggedRenderComponent.height = dragPlatformHeight;
+        PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
+        platformDraggingComponent.width = 10;
+        platformDraggingComponent.height = 10;
+        platformDraggingComponent.setStart(-4, 13);
+        platformDraggingComponent.setEnd(5, 5);
+
+        platformDraggedRenderComponent.setStart(-4, 13);
+        platformDraggedRenderComponent.setEnd(5, 5);
+
+        RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
+        rigidDrag.setSleepingAllowed(false);
+        platformDraggingComponent.rigidBody = rigidDrag;
+        GameObject platformDragged = createGameObject(platformDraggedRenderComponent, platformDraggingComponent, rigidDrag);
+        platformDragged.x = -4;
+        platformDragged.y = 13;
+        platformDragged.angle = 140;
     }
 
     public void move1(AnimationSequence bridge, RigidBody rigidBridge) {

@@ -21,12 +21,12 @@ import com.badlogic.androidgames.framework.Pixmap;
 
 public class AndroidGraphics implements Graphics {
 
-    AssetManager assets;
-    Bitmap frameBuffer;
-    Canvas canvas;
-    Paint paint;
-    Rect srcRect = new Rect();
-    Rect dstRect = new Rect();
+    private final AssetManager assets;
+    private final Bitmap frameBuffer;
+    private final Canvas canvas;
+    private final Paint paint;
+    private final Rect srcRect = new Rect();
+    private final Rect dstRect = new Rect();
 
     private final float[] colorMatrixArray;
     private final ArrayMap<Integer, ColorMatrixColorFilter> filters;
@@ -158,6 +158,25 @@ public class AndroidGraphics implements Graphics {
     @Override
     public void drawPixmap(Pixmap pixmap, float x, float y) {
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, x, y, null);
+    }
+
+    @Override
+    public void drawText(String text, float x, float y, float size, Align align) {
+        paint.setTextSize(size);
+
+        switch (align) {
+            case LEFT:
+                paint.setTextAlign(Paint.Align.LEFT);
+                break;
+            case CENTER:
+                paint.setTextAlign(Paint.Align.CENTER);
+                break;
+            case RIGHT:
+                paint.setTextAlign(Paint.Align.RIGHT);
+                break;
+        }
+
+        canvas.drawText(text, x, y, paint);
     }
 
     @Override

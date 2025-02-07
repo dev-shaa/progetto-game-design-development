@@ -7,12 +7,13 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class AndroidFastRenderView extends SurfaceView implements Runnable {
+
     AndroidGame game;
     Bitmap framebuffer;
     Thread renderThread = null;
     SurfaceHolder holder;
     volatile boolean running = false;
-    
+
     public AndroidFastRenderView(AndroidGame game, Bitmap framebuffer) {
         super(game);
         this.game = game;
@@ -20,35 +21,35 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
         this.holder = getHolder();
     }
 
-    public void resume() { 
+    public void resume() {
         running = true;
         renderThread = new Thread(this);
-        renderThread.start();         
-    }      
-    
+        renderThread.start();
+    }
+
     public void run() {
         Rect dstRect = new Rect();
         long startTime = System.nanoTime();
-        while(running) {  
-            if(!holder.getSurface().isValid())
-                continue;           
-            
-            float deltaTime = (System.nanoTime()-startTime) / 1000000000.0f;
+        while (running) {
+            if (!holder.getSurface().isValid())
+                continue;
+
+            float deltaTime = (System.nanoTime() - startTime) / 1000000000.0f;
             startTime = System.nanoTime();
 
             game.getCurrentScreen().update(deltaTime);
             game.getCurrentScreen().present(deltaTime);
-            
+
             Canvas canvas = holder.lockCanvas();
             canvas.getClipBounds(dstRect);
-            canvas.drawBitmap(framebuffer, null, dstRect, null);                           
+            canvas.drawBitmap(framebuffer, null, dstRect, null);
             holder.unlockCanvasAndPost(canvas);
         }
     }
 
-    public void pause() {                        
-        running = false;                        
-        while(true) {
+    public void pause() {
+        running = false;
+        while (true) {
             try {
                 renderThread.join();
                 break;
@@ -56,5 +57,5 @@ public class AndroidFastRenderView extends SurfaceView implements Runnable {
                 // retry
             }
         }
-    }        
+    }
 }

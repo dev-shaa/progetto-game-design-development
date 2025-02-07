@@ -6,6 +6,10 @@ public interface Graphics {
         ARGB8888, RGB565
     }
 
+    enum Align {
+        LEFT, CENTER, RIGHT
+    }
+
     Pixmap newPixmap(String fileName, PixmapFormat format);
 
     void clear(int color);
@@ -54,6 +58,8 @@ public interface Graphics {
     void drawPixmap(Pixmap pixmap, float x, float y, int srcX, int srcY, int srcWidth, int srcHeight);
 
     void drawPixmap(Pixmap pixmap, float x, float y);
+
+    void drawText(String text, float x, float y, float size, Align align);
 
     int getWidth();
 

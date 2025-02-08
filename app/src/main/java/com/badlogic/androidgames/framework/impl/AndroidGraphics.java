@@ -27,6 +27,7 @@ public class AndroidGraphics implements Graphics {
     private final Paint paint;
     private final Rect srcRect = new Rect();
     private final Rect dstRect = new Rect();
+    private final Rect textRect = new Rect();
 
     private final float[] colorMatrixArray;
     private final ArrayMap<Integer, ColorMatrixColorFilter> filters;
@@ -161,18 +162,29 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawText(String text, float x, float y, float size, Align align) {
+    public void drawText(String text, float x, float y, float size, int color, Align horizontalAlign, Align verticalAlign) {
         paint.setTextSize(size);
+        paint.setColor(color);
 
-        switch (align) {
-            case LEFT:
+        switch (horizontalAlign) {
+            case START:
                 paint.setTextAlign(Paint.Align.LEFT);
                 break;
             case CENTER:
                 paint.setTextAlign(Paint.Align.CENTER);
                 break;
-            case RIGHT:
+            case END:
                 paint.setTextAlign(Paint.Align.RIGHT);
+                break;
+        }
+
+        switch (verticalAlign) {
+            case START:
+            case END:
+                break;
+            case CENTER:
+                paint.getTextBounds(text, 0, text.length(), textRect);
+                y -= textRect.centerY();
                 break;
         }
 

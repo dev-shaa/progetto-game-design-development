@@ -7,7 +7,7 @@ public interface Graphics {
     }
 
     enum Align {
-        LEFT, CENTER, RIGHT
+        START, CENTER, END
     }
 
     Pixmap newPixmap(String fileName, PixmapFormat format);
@@ -59,7 +59,7 @@ public interface Graphics {
 
     void drawPixmap(Pixmap pixmap, float x, float y);
 
-    void drawText(String text, float x, float y, float size, Align align);
+    void drawText(String text, float x, float y, float size, int color, Align horizontalAlign, Align verticalAlign);
 
     int getWidth();
 

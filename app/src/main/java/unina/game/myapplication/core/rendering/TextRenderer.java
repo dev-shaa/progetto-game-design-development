@@ -1,5 +1,6 @@
 package unina.game.myapplication.core.rendering;
 
+import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 
 import unina.game.myapplication.core.Camera;
@@ -13,7 +14,7 @@ public class TextRenderer extends RenderComponent {
 
     private String text;
     private float size = 11;
-    private Graphics.Align align = Graphics.Align.RIGHT;
+    private Graphics.Align align = Graphics.Align.END;
 
     private Camera camera;
 
@@ -38,7 +39,7 @@ public class TextRenderer extends RenderComponent {
         if (text != null) {
             float x = camera.worldToScreenX(getOwner().x);
             float y = camera.worldToScreenY(getOwner().y);
-            graphics.drawText(text, x, y, size, align);
+            graphics.drawText(text, x, y, size, Color.WHITE, align, Graphics.Align.START);
         }
     }
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Gioco</string>
+    <string name="placeholder">Ciao, mondo!</string>
+    <string name="menu_button_play">Gioca</string>
+</resources>

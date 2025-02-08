@@ -14,6 +14,7 @@ import com.badlogic.androidgames.framework.FileIO;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input;
+import com.badlogic.androidgames.framework.Localization;
 import com.badlogic.androidgames.framework.Screen;
 
 public abstract class AndroidGame extends Activity implements Game {
@@ -24,6 +25,7 @@ public abstract class AndroidGame extends Activity implements Game {
     private AndroidInput input;
     private FileIO fileIO;
     private Screen screen;
+    private AndroidLocalization localization;
 //    private WakeLock wakeLock;
 
     @Override
@@ -49,8 +51,7 @@ public abstract class AndroidGame extends Activity implements Game {
         fileIO = new AndroidFileIO(getAssets(), this);
         audio = new AndroidAudio(this);
         input = new AndroidInput(this, renderView, scaleX, scaleY);
-
-        onResourcesInitialized();
+        localization = new AndroidLocalization(this);
 
         setContentView(renderView);
 
@@ -103,6 +104,11 @@ public abstract class AndroidGame extends Activity implements Game {
     }
 
     @Override
+    public Localization getLocalization() {
+        return localization;
+    }
+
+    @Override
     public void setScreen(Screen screen) {
         if (screen == null)
             throw new IllegalArgumentException("Screen must not be null");
@@ -117,10 +123,6 @@ public abstract class AndroidGame extends Activity implements Game {
 
     public Screen getCurrentScreen() {
         return screen;
-    }
-
-    protected void onResourcesInitialized() {
-
     }
 
 }

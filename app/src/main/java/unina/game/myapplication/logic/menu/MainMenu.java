@@ -4,14 +4,11 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Sound;
 
-import java.util.ArrayList;
-
-import unina.game.myapplication.Level1;
-import unina.game.myapplication.Level2;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.common.Button;
@@ -20,6 +17,8 @@ import unina.game.myapplication.logic.common.FullScreenColorRenderer;
 import unina.game.myapplication.logic.common.LevelSaver;
 
 public class MainMenu extends Scene {
+
+    private static boolean firstTime = true;
 
     private Sound selectSound;
     private LevelSaver levelSaver;
@@ -53,9 +52,17 @@ public class MainMenu extends Scene {
             selectSound.play(1);
 
             sequence.clear();
-            sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, -20, 1f, MoveToAnimation.EaseFunction.CUBIC_IN_OUT));
+            sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, -20, 1f, EaseFunction.CUBIC_IN_OUT));
             sequence.start();
         });
+
+        // Skip the landing page if returning here from another scene
+        if (firstTime) {
+            Camera.getInstance().getOwner().setTransform(0, 0, 0);
+            firstTime = false;
+        } else {
+            Camera.getInstance().getOwner().setTransform(0, -20, 0);
+        }
 
         for (int i = 0; i < levelSaver.getLevelsCount(); i++) {
             final Class<? extends Scene> level = levelSaver.getLevel(i);

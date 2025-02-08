@@ -7,15 +7,6 @@ import unina.game.myapplication.core.Utility;
 
 public class MoveToAnimation implements Animation {
 
-    public interface EaseFunction {
-
-        EaseFunction LINEAR = x -> Utility.clamp(0, 1, x);
-        EaseFunction CUBIC_IN_OUT = x -> x < 0.5 ? 4 * x * x * x : (float) (1 - Math.pow(-2 * x + 2, 3) / 2);
-
-        float evaluate(float x);
-
-    }
-
     private static Pool<MoveToAnimation> pool;
 
     public static MoveToAnimation build(GameObject gameObject, float targetX, float targetY, float duration) {
@@ -39,7 +30,7 @@ public class MoveToAnimation implements Animation {
     private float startX, startY;
     private float targetX, targetY;
     private float duration;
-    private EaseFunction easeFunction = EaseFunction.LINEAR;
+    private EaseFunction easeFunction;
     private float current;
 
     private MoveToAnimation() {

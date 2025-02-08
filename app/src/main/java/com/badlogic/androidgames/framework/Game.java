@@ -10,6 +10,8 @@ public interface Game {
 
     Audio getAudio();
 
+    Localization getLocalization();
+
     void setScreen(Screen screen);
 
     Screen getCurrentScreen();

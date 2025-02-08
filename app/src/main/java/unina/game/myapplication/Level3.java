@@ -1,5 +1,7 @@
 package unina.game.myapplication;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
@@ -8,17 +10,21 @@ import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
+import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.ButtonRenderComponent;
+import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
+import unina.game.myapplication.logic.common.Button;
 
 public class Level3 extends Scene {
     public Level3(Game game) {
@@ -85,6 +91,7 @@ public class Level3 extends Scene {
         rockRenderComponent.color = Color.GREY;
         rockRenderComponent.radius = 1;
         RigidBody rigidRock = RigidBody.build(RigidBody.Type.DYNAMIC, CircleCollider.build(1));
+        rigidRock.setSleepingAllowed(false);
         GameObject rock = createGameObject(rockRenderComponent, rigidRock);
         rock.x = -5;
         rock.y = 16;
@@ -151,11 +158,27 @@ public class Level3 extends Scene {
         RigidBody phisicSensor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic1W, phisic1H, true));
         phisicSensor1.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
-        //physicsButton.onCollisionEnter = () -> move(phisic1RenderComponent, phisicSensor1, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
-        //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        physicsButton.onCollisionEnter = () -> moveRED(bridge2Animation, pgAnimation);
+//        physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate1 = createGameObject(phisic1RenderComponent, phisicSensor1, physicsButton);
         pressure_plate1.x = 1;
         pressure_plate1.y = 1;
+
+        //Pulsante a pressione 2
+        float phisic2W = 2;
+        float phisic2H = 0.5f;
+        PlatformRenderComponent phisic2RenderComponent = new PlatformRenderComponent();
+        phisic2RenderComponent.color = Color.BLUE;
+        phisic2RenderComponent.height = phisic2H;
+        phisic2RenderComponent.width = phisic2W;
+        RigidBody phisicSensor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic2W, phisic2H, true));
+        phisicSensor2.setSleepingAllowed(false);
+        PhysicsButton physicsButton2 = PhysicsButton.build();
+        physicsButton2.onCollisionEnter = () -> moveBLU(bridge1Animation, pgAnimation);
+        //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        GameObject pressure_plate2 = createGameObject(phisic2RenderComponent, phisicSensor2, physicsButton2);
+        pressure_plate2.x = 6;
+        pressure_plate2.y = 1;
 
         //Piattaforma sotto la pedana 1
         float plat3W = 8;
@@ -168,22 +191,6 @@ public class Level3 extends Scene {
         GameObject platform3 = createGameObject(platformRenderComponent3, rigidPlatform3);
         platform3.x = 3.5f;
         platform3.y = 0.5f;
-
-        //Pulsante a pressione 2
-        float phisic2W = 2;
-        float phisic2H = 0.5f;
-        PlatformRenderComponent phisic2RenderComponent = new PlatformRenderComponent();
-        phisic2RenderComponent.color = Color.RED;
-        phisic2RenderComponent.height = phisic2H;
-        phisic2RenderComponent.width = phisic2W;
-        RigidBody phisicSensor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic2W, phisic2H, true));
-        phisicSensor2.setSleepingAllowed(false);
-        PhysicsButton physicsButton2 = PhysicsButton.build();
-        //physicsButton.onCollisionEnter = () -> move(phisic1RenderComponent, phisicSensor1, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
-        //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
-        GameObject pressure_plate2 = createGameObject(phisic2RenderComponent, phisicSensor2, physicsButton2);
-        pressure_plate2.x = 6;
-        pressure_plate2.y = 1;
 
         //Piattaforma di divisione pedane
         float plat4W = 7;
@@ -230,5 +237,85 @@ public class Level3 extends Scene {
         float newY = (float) (oldY-4 * Math.sin(Math.toRadians(50)));
         bridge.add(MoveRigidBodyTo.build(rigidBridge, newX,newY, 0.5f));
         bridge.start();
+    }
+
+    public void moveRED(AnimationSequence bridge, AnimationSequence character) {
+        bridge.add(MoveToAnimation.build(bridge.getOwner(),-16,-17.5f,1));
+        bridge.start();
+
+        character.add(WaitAnimation.build(1.5f));
+        character.add(MoveToAnimation.build(character.getOwner(),-6,-25,1));
+        character.start();
+
+        //Tasto per riprovare
+        DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
+        Button buttonRetray = new Button(6,3);
+        buttonRetray.setOnClick(this::retray);
+        AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
+        GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
+        retray.x = 4;
+        retray.y = -21;
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,1,0.5f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,2,0.05f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,0,0.25f));
+        buttonRetrayAnimation.start();
+
+        //Tasto per tornare al menu
+        DebugRenderer buttonMenuRenderComponent = new DebugRenderer(6,3);
+        Button buttonMenu = new Button(6,3);
+        buttonMenu.setOnClick(this::toMenu);
+        AnimationSequence buttonMenuAnimation = AnimationSequence.build();
+        GameObject toMenu = createGameObject(buttonMenuRenderComponent, buttonMenu, buttonMenuAnimation);
+        toMenu.x = -4;
+        toMenu.y = -21;
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,1,0.5f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,2,0.05f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,0,0.25f));
+        buttonMenuAnimation.start();
+    }
+
+    public void moveBLU(AnimationSequence bridge, AnimationSequence character) {
+        bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-17.5f,1));
+        bridge.start();
+
+        character.add(WaitAnimation.build(1.5f));
+        character.add(MoveToAnimation.build(character.getOwner(),6,-16,1));
+        character.start();
+
+        //Tasto per riprovare
+        DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
+        Button buttonRetray = new Button(6,3);
+        buttonRetray.setOnClick(this::retray);
+        AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
+        GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
+        retray.x = -4;
+        retray.y = -24;
+        buttonRetrayAnimation.add(WaitAnimation.build(3));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,1,0.5f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,2,0.05f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,0,0.25f));
+        buttonRetrayAnimation.start();
+
+        //Tasto per avanzare
+        DebugRenderer buttonNextRenderComponent = new DebugRenderer(6,3);
+        Button buttonNext = new Button(6,3);
+        //buttonNext.setOnClick(this::nextLevel);
+        AnimationSequence buttonNextAnimation = AnimationSequence.build();
+        GameObject toMenu = createGameObject(buttonNextRenderComponent, buttonNext, buttonNextAnimation);
+        toMenu.x = 4;
+        toMenu.y = -24;
+        buttonNextAnimation.add(WaitAnimation.build(3));
+        buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,1,0.5f));
+        buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,2,0.05f));
+        buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,0,0.25f));
+        buttonNextAnimation.start();
+    }
+
+    public void retray() {
+        loadScene(Level3.class);
+    }
+
+    public void  toMenu() {
+        loadScene(Level2.class);
     }
 }

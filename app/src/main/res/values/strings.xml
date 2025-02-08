@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Progetto Game Design</string>
+    <string name="app_name">Game</string>
+    <string name="placeholder">Hello, world!</string>
+    <string name="menu_button_play">Play</string>
 </resources>

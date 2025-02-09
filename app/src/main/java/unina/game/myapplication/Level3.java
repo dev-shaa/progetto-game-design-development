@@ -1,7 +1,5 @@
 package unina.game.myapplication;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
@@ -22,6 +20,7 @@ import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
+import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
 import unina.game.myapplication.logic.common.Button;
@@ -135,6 +134,32 @@ public class Level3 extends Scene {
         bridge3.y = 14.5f;
         bridge3.angle = 50;
 
+        //Piattaforma scorrevole
+        float dragPlatformWidth = 6;
+        float dragPlatformHeight = 0.5f;
+        PlatformRenderComponent platformDraggedRenderComponent = new PlatformRenderComponent();
+        platformDraggedRenderComponent.color = Color.DARKCYAN;
+        platformDraggedRenderComponent.width = dragPlatformWidth;
+        platformDraggedRenderComponent.height = dragPlatformHeight;
+        PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
+        platformDraggingComponent.width = 10;
+        platformDraggingComponent.height = 10;
+
+        platformDraggingComponent.setStart(-4, 13);
+        platformDraggingComponent.setEnd(5, 5);
+
+        platformDraggedRenderComponent.setStart(-4, 13);
+        platformDraggedRenderComponent.setEnd(5, 5);
+
+        platformDraggingComponent.interactable = false;
+        RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
+        rigidDrag.setSleepingAllowed(false);
+        platformDraggingComponent.rigidBody = rigidDrag;
+        GameObject platformDragged = createGameObject(platformDraggedRenderComponent, platformDraggingComponent, rigidDrag);
+        platformDragged.x = -4;
+        platformDragged.y = 13;
+        platformDragged.angle = 140;
+
         //Pulsante
         ButtonRenderComponent buttonRenderComponent = new ButtonRenderComponent();
         ButtonInputComponent buttonInputComponent = new ButtonInputComponent();
@@ -143,7 +168,7 @@ public class Level3 extends Scene {
         buttonRenderComponent.radius = 0.6f;
         buttonInputComponent.width = 2;
         buttonInputComponent.height = 2;
-        buttonInputComponent.runnable = () -> move1(bridge3Animation,rigidBridge);
+        buttonInputComponent.runnable = () -> move1(bridge3Animation,rigidBridge,platformDraggingComponent);
         GameObject button = createGameObject(buttonRenderComponent, buttonInputComponent);
         button.x = -6;
         button.y = 5;
@@ -158,7 +183,7 @@ public class Level3 extends Scene {
         RigidBody phisicSensor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic1W, phisic1H, true));
         phisicSensor1.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
-        physicsButton.onCollisionEnter = () -> moveRED(bridge2Animation, pgAnimation);
+        physicsButton.onCollisionEnter = () -> moveRED(bridge2Animation, pgAnimation, platformDraggingComponent);
 //        physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate1 = createGameObject(phisic1RenderComponent, phisicSensor1, physicsButton);
         pressure_plate1.x = 1;
@@ -174,7 +199,7 @@ public class Level3 extends Scene {
         RigidBody phisicSensor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic2W, phisic2H, true));
         phisicSensor2.setSleepingAllowed(false);
         PhysicsButton physicsButton2 = PhysicsButton.build();
-        physicsButton2.onCollisionEnter = () -> moveBLU(bridge1Animation, pgAnimation);
+        physicsButton2.onCollisionEnter = () -> moveBLU(bridge1Animation, pgAnimation, platformDraggingComponent);
         //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate2 = createGameObject(phisic2RenderComponent, phisicSensor2, physicsButton2);
         pressure_plate2.x = 6;
@@ -204,42 +229,23 @@ public class Level3 extends Scene {
         platform4.x = 3.5f;
         platform4.y = 4;
         platform4.angle = 90;
-
-        //Piattaforma scorrevole
-        float dragPlatformWidth = 6;
-        float dragPlatformHeight = 0.5f;
-        PlatformRenderComponent platformDraggedRenderComponent = new PlatformRenderComponent();
-        platformDraggedRenderComponent.color = Color.DARKCYAN;
-        platformDraggedRenderComponent.width = dragPlatformWidth;
-        platformDraggedRenderComponent.height = dragPlatformHeight;
-        PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
-        platformDraggingComponent.width = 10;
-        platformDraggingComponent.height = 10;
-        platformDraggingComponent.setStart(-4, 13);
-        platformDraggingComponent.setEnd(5, 5);
-
-        platformDraggedRenderComponent.setStart(-4, 13);
-        platformDraggedRenderComponent.setEnd(5, 5);
-
-        RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
-        rigidDrag.setSleepingAllowed(false);
-        platformDraggingComponent.rigidBody = rigidDrag;
-        GameObject platformDragged = createGameObject(platformDraggedRenderComponent, platformDraggingComponent, rigidDrag);
-        platformDragged.x = -4;
-        platformDragged.y = 13;
-        platformDragged.angle = 140;
     }
 
-    public void move1(AnimationSequence bridge, RigidBody rigidBridge) {
+    public void move1(AnimationSequence bridge, RigidBody rigidBridge, PlatformDraggingComponent platform) {
         float oldX = -2.5f;
         float oldY = 14.5f;
         float newX = (float) (oldX-4 * Math.cos(Math.toRadians(50)));
         float newY = (float) (oldY-4 * Math.sin(Math.toRadians(50)));
+
+        platform.interactable = true;
         bridge.add(MoveRigidBodyTo.build(rigidBridge, newX,newY, 0.5f));
         bridge.start();
     }
 
-    public void moveRED(AnimationSequence bridge, AnimationSequence character) {
+    public void moveRED(AnimationSequence bridge, AnimationSequence character, PressableComponent platform) {
+
+        platform.interactable =false;
+
         bridge.add(MoveToAnimation.build(bridge.getOwner(),-16,-17.5f,1));
         bridge.start();
 
@@ -274,7 +280,10 @@ public class Level3 extends Scene {
         buttonMenuAnimation.start();
     }
 
-    public void moveBLU(AnimationSequence bridge, AnimationSequence character) {
+    public void moveBLU(AnimationSequence bridge, AnimationSequence character, PressableComponent platform) {
+
+        platform.interactable = false;
+
         bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-17.5f,1));
         bridge.start();
 

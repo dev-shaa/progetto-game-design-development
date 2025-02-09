@@ -52,6 +52,9 @@ public class MoveToAnimation implements Animation {
 
     @Override
     public void process(float deltaTime) {
+        if (isFinished())
+            return;
+
         current = Math.min(current + deltaTime, duration);
         float t = easeFunction.evaluate(current / duration);
 

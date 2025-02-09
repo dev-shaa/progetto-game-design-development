@@ -41,10 +41,8 @@ public final class CompositeAnimation implements Animation {
 
     @Override
     public void process(float deltaTime) {
-        for (Animation animation : animations) {
-            if (!animation.isFinished())
-                animation.process(deltaTime);
-        }
+        for (Animation animation : animations)
+            animation.process(deltaTime);
     }
 
     @Override

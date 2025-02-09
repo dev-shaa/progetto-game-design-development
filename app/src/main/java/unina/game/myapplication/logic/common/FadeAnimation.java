@@ -39,12 +39,14 @@ public class FadeAnimation implements Animation {
     @Override
     public void dispose() {
         fullScreenColorRenderer = null;
-
         pool.free(this);
     }
 
     @Override
     public void process(float deltaTime) {
+        if (isFinished())
+            return;
+
         current = Math.min(current + deltaTime, duration);
         fullScreenColorRenderer.color = Color.lerp(startColor, endColor, current / duration);
     }

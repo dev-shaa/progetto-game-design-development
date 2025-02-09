@@ -33,6 +33,9 @@ public class RotateToAnimation implements Animation {
 
     @Override
     public void process(float deltaTime) {
+        if (isFinished())
+            return;
+
         currentTime = Math.min(currentTime + deltaTime, duration);
         float t = currentTime / duration;
 

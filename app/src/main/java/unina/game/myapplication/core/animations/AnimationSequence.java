@@ -4,6 +4,9 @@ import java.util.LinkedList;
 
 import unina.game.myapplication.core.AnimationComponent;
 
+/**
+ * A component which executes animations in sequence.
+ */
 public class AnimationSequence extends AnimationComponent {
 
     public static AnimationSequence build() {

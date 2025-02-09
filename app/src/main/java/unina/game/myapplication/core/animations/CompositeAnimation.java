@@ -5,10 +5,19 @@ import com.badlogic.androidgames.framework.Pool;
 import java.util.Arrays;
 import java.util.HashSet;
 
+/**
+ * A wrapper to execute multiple animations at the same time.
+ */
 public final class CompositeAnimation implements Animation {
 
     private static Pool<CompositeAnimation> pool;
 
+    /**
+     * Creates a new composite animation.
+     *
+     * @param animations animations to execute simultaneously.
+     * @return a composite animation
+     */
     public synchronized static CompositeAnimation build(Animation... animations) {
         if (pool == null)
             pool = new Pool<>(CompositeAnimation::new, 8);

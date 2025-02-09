@@ -3,6 +3,7 @@ package unina.game.myapplication.core.physics;
 import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
+import com.google.fpl.liquidfun.Fixture;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.Vec2;
 
@@ -56,6 +57,7 @@ public final class RigidBody extends PhysicsComponent {
     }
 
     Body body;
+    private Fixture fixture;
     private Type type;
     private Collider collider;
     private boolean sleepingAllowed;
@@ -90,7 +92,7 @@ public final class RigidBody extends PhysicsComponent {
 
         if (collider != null) {
             FixtureDef fixtureDef = collider.createFixture();
-            body.createFixture(fixtureDef);
+            fixture = body.createFixture(fixtureDef);
 
             fixtureDef.getShape().delete();
             fixtureDef.delete();
@@ -110,6 +112,7 @@ public final class RigidBody extends PhysicsComponent {
         world.destroyBody(body);
         world = null;
         body = null;
+        fixture = null;
         sleepingAllowed = true;
 
         pool.free(this);
@@ -147,6 +150,46 @@ public final class RigidBody extends PhysicsComponent {
     public void setTransform(float x, float y) {
         if (body != null)
             body.setTransform(x, y, body.getAngle());
+    }
+
+    public void setCollider(Collider collider) {
+        if (body == null) {
+            this.collider = collider;
+        } else {
+            if (fixture != null) {
+                body.destroyFixture(fixture);
+                fixture = null;
+            }
+
+            if (collider != null) {
+                FixtureDef fixtureDef = collider.createFixture();
+                fixture = body.createFixture(fixtureDef);
+
+                fixtureDef.getShape().delete();
+                fixtureDef.delete();
+
+                collider.dispose();
+            }
+        }
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+
+        if (body != null) {
+            switch (type) {
+                case KINEMATIC:
+                    body.setType(com.google.fpl.liquidfun.BodyType.kinematicBody);
+                    break;
+                case DYNAMIC:
+                    body.setType(com.google.fpl.liquidfun.BodyType.dynamicBody);
+                    break;
+                case STATIC:
+                default:
+                    body.setType(com.google.fpl.liquidfun.BodyType.staticBody);
+                    break;
+            }
+        }
     }
 
     public void setSleepingAllowed(boolean sleepingAllowed) {

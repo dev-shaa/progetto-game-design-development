@@ -10,10 +10,11 @@ import com.badlogic.androidgames.framework.Screen;
 import com.google.fpl.liquidfun.World;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 
 import unina.game.myapplication.core.physics.CollisionListener;
 
@@ -27,7 +28,7 @@ public abstract class Scene extends Screen {
     private GameObject camera;
 
     // TODO: check for possible better collection
-    private final List<GameObject> gameObjects = new ArrayList<>(8);
+    private final HashSet<GameObject> gameObjects = new HashSet<>(8);
     private final List<InputComponent> inputComponents = new ArrayList<>(4);
     private final Collection<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final Collection<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
@@ -35,8 +36,8 @@ public abstract class Scene extends Screen {
     private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
 
     private Scene sceneToBeLoaded;
-    private final ArrayList<GameObject> gameObjectsToAdd = new ArrayList<>();
-    private final ArrayList<GameObject> gameObjectsToRemove = new ArrayList<>();
+    private final ArrayList<GameObject> gameObjectsToOperate = new ArrayList<>();
+    private final BitSet gameObjectsOperations = new BitSet();
     boolean layerDirty = false;
 
     public Scene(Game game) {
@@ -143,10 +144,7 @@ public abstract class Scene extends Screen {
         for (GameObject gameObject : gameObjects)
             gameObject.dispose();
 
-        for (GameObject gameObject : gameObjectsToAdd)
-            gameObject.dispose();
-
-        for (GameObject gameObject : gameObjectsToRemove)
+        for (GameObject gameObject : gameObjectsToOperate)
             gameObject.dispose();
 
         world.delete();
@@ -158,8 +156,8 @@ public abstract class Scene extends Screen {
         animationComponents.clear();
 
         gameObjects.clear();
-        gameObjectsToAdd.clear();
-        gameObjectsToRemove.clear();
+        gameObjectsToOperate.clear();
+        gameObjectsOperations.clear();
 
         camera.dispose();
         camera = null;
@@ -192,7 +190,10 @@ public abstract class Scene extends Screen {
      */
     public final GameObject createGameObject() {
         GameObject gameObject = GameObject.create(this);
-        gameObjectsToAdd.add(gameObject);
+
+        gameObjectsOperations.set(gameObjectsToOperate.size());
+        gameObjectsToOperate.add(gameObject);
+
         return gameObject;
     }
 
@@ -203,9 +204,11 @@ public abstract class Scene extends Screen {
      * @return the created GameObject
      */
     public final GameObject createGameObject(Component... components) {
-        Objects.requireNonNull(components);
         GameObject gameObject = GameObject.create(this, components);
-        gameObjectsToAdd.add(gameObject);
+
+        gameObjectsOperations.set(gameObjectsToOperate.size());
+        gameObjectsToOperate.add(gameObject);
+
         return gameObject;
     }
 
@@ -218,79 +221,77 @@ public abstract class Scene extends Screen {
         if (gameObject == camera)
             throw new RuntimeException();
 
-        if (gameObject != null)
-            gameObjectsToRemove.add(gameObject);
+        if (gameObject != null && gameObject.scene == this) {
+            gameObjectsOperations.clear(gameObjectsToOperate.size());
+            gameObjectsToOperate.add(gameObject);
+        }
     }
 
     private void applySceneChanges() {
-        for (int i = 0; i < gameObjectsToAdd.size(); i++) {
-            GameObject gameObject = gameObjectsToAdd.get(i);
+        for (int i = 0; i < gameObjectsToOperate.size(); i++) {
+            GameObject gameObject = gameObjectsToOperate.get(i);
+            boolean add = gameObjectsOperations.get(i);
 
-            if (!gameObjects.add(gameObject))
-                continue;
+            if (add) {
+                if (!gameObjects.add(gameObject))
+                    continue;
 
-            for (Component component : gameObject.getComponents()) {
-                switch (component.getType()) {
-                    case PHYSICS:
-                        physicsComponents.add((PhysicsComponent) component);
-                        ((PhysicsComponent) component).world = world;
-                        break;
-                    case BEHAVIOUR:
-                        behaviourComponents.add((BehaviourComponent) component);
-                        break;
-                    case INPUT:
-                        inputComponents.add((InputComponent) component);
-                        break;
-                    case RENDER:
-                        ((RenderComponent) component).scene = this;
-                        renderComponents.add((RenderComponent) component);
-                        layerDirty = true;
-                        break;
-                    case ANIMATION:
-                        animationComponents.add((AnimationComponent) component);
-                        break;
-                    default:
-                        break;
+                for (Component component : gameObject.getComponents()) {
+                    switch (component.getType()) {
+                        case PHYSICS:
+                            physicsComponents.add((PhysicsComponent) component);
+                            ((PhysicsComponent) component).world = world;
+                            break;
+                        case BEHAVIOUR:
+                            behaviourComponents.add((BehaviourComponent) component);
+                            break;
+                        case INPUT:
+                            inputComponents.add((InputComponent) component);
+                            break;
+                        case RENDER:
+                            ((RenderComponent) component).scene = this;
+                            renderComponents.add((RenderComponent) component);
+                            layerDirty = true;
+                            break;
+                        case ANIMATION:
+                            animationComponents.add((AnimationComponent) component);
+                            break;
+                        default:
+                            break;
+                    }
                 }
-            }
 
-            gameObject.initialize();
+                gameObject.initialize();
+            } else if (gameObjects.remove(gameObject)) {
+                for (Component component : gameObject.getComponents()) {
+                    switch (component.getType()) {
+                        case PHYSICS:
+                            physicsComponents.remove((PhysicsComponent) component);
+                            break;
+                        case BEHAVIOUR:
+                            behaviourComponents.remove((BehaviourComponent) component);
+                            break;
+                        case INPUT:
+                            inputComponents.remove((InputComponent) component);
+                            break;
+                        case RENDER:
+                            renderComponents.remove((RenderComponent) component);
+                            layerDirty = true;
+                            break;
+                        case ANIMATION:
+                            animationComponents.remove((AnimationComponent) component);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                gameObject.dispose();
+            }
         }
 
-        for (int i = 0; i < gameObjectsToRemove.size(); i++) {
-            GameObject gameObject = gameObjectsToRemove.get(i);
-
-            if (!gameObjects.remove(gameObject))
-                continue;
-
-            for (Component component : gameObject.getComponents()) {
-                switch (component.getType()) {
-                    case PHYSICS:
-                        physicsComponents.remove((PhysicsComponent) component);
-                        break;
-                    case BEHAVIOUR:
-                        behaviourComponents.remove((BehaviourComponent) component);
-                        break;
-                    case INPUT:
-                        inputComponents.remove((InputComponent) component);
-                        break;
-                    case RENDER:
-                        renderComponents.remove((RenderComponent) component);
-                        layerDirty = true;
-                        break;
-                    case ANIMATION:
-                        animationComponents.remove((AnimationComponent) component);
-                        break;
-                    default:
-                        break;
-                }
-            }
-
-            gameObject.dispose();
-        }
-
-        gameObjectsToAdd.clear();
-        gameObjectsToRemove.clear();
+        gameObjectsToOperate.clear();
+        gameObjectsOperations.clear();
     }
 
 }

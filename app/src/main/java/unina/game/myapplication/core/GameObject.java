@@ -58,14 +58,14 @@ public final class GameObject {
      */
     public float angle;
 
-    private Scene scene;
+    Scene scene;
 
     private final EnumMap<Component.Type, Component> components = new EnumMap<>(Component.Type.class);
 
     /**
      * Creates an empty GameObject.
      */
-    private GameObject() {
+    GameObject() {
         this.x = this.y = this.angle = 0;
     }
 

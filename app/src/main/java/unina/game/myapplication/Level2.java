@@ -229,7 +229,7 @@ public class Level2 extends Scene {
             //Tasto per avanzare
             DebugRenderer buttonNextRenderComponent = new DebugRenderer(6,3);
             Button buttonNext = new Button(6,3);
-            //buttonNext.setOnClick(this::nextLevel);
+            buttonNext.setOnClick(this::nextLevel);
             AnimationSequence buttonNextAnimation = AnimationSequence.build();
             GameObject toMenu = createGameObject(buttonNextRenderComponent, buttonNext, buttonNextAnimation);
             toMenu.x = 4;
@@ -281,5 +281,9 @@ public class Level2 extends Scene {
 
     public void  toMenu() {
         loadScene(Level1.class);
+    }
+
+    public void nextLevel() {
+        loadScene(Level3.class);
     }
 }

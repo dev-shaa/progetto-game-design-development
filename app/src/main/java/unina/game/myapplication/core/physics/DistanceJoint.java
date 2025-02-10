@@ -10,12 +10,14 @@ public class DistanceJoint extends PhysicsComponent {
 
     private static final Pool<DistanceJoint> pool = new Pool<>(DistanceJoint::new, 16);
 
-    public static DistanceJoint build(RigidBody a, RigidBody b, float length) {
+    public static DistanceJoint build(RigidBody a, RigidBody b, float length, float dampingRatio, float frequency) {
         DistanceJoint joint = pool.get();
 
+        joint.dampingRadio = dampingRatio;
         joint.a = a;
         joint.b = b;
         joint.length = length;
+        joint.frequency = frequency;
 
         return joint;
     }
@@ -23,6 +25,8 @@ public class DistanceJoint extends PhysicsComponent {
     private RigidBody a;
     private RigidBody b;
     private float length;
+    private float dampingRadio;
+    private float frequency;
     private Joint joint;
 
     private DistanceJoint() {
@@ -39,6 +43,8 @@ public class DistanceJoint extends PhysicsComponent {
         def.setLocalAnchorA(0, 0);
         def.setLocalAnchorB(0, 0);
         def.setLength(length);
+        def.setDampingRatio(dampingRadio);
+        def.setFrequencyHz(frequency);
 
         joint = world.createJoint(def);
 

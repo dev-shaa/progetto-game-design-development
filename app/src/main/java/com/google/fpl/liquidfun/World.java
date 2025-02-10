@@ -82,6 +82,21 @@ public class World {
     return (cPtr == 0) ? null : new Joint(cPtr, false);
   }
 
+  public MouseJoint createMouseJoint(MouseJointDef def) {
+    long cPtr = liquidfunJNI.World_createMouseJoint(swigCPtr, this, MouseJointDef.getCPtr(def), def);
+    return (cPtr == 0) ? null : new MouseJoint(cPtr, false);
+  }
+
+  public DistanceJoint createDistanceJoint(DistanceJointDef def) {
+    long cPtr = liquidfunJNI.World_createDistanceJoint(swigCPtr, this, DistanceJointDef.getCPtr(def), def);
+    return (cPtr == 0) ? null : new DistanceJoint(cPtr, false);
+  }
+
+  public RopeJoint createRopeJoint(RopeJointDef def) {
+    long cPtr = liquidfunJNI.World_createRopeJoint(swigCPtr, this, RopeJointDef.getCPtr(def), def);
+    return (cPtr == 0) ? null : new RopeJoint(cPtr, false);
+  }
+
   public void destroyJoint(Joint joint) {
     liquidfunJNI.World_destroyJoint(swigCPtr, this, Joint.getCPtr(joint), joint);
   }

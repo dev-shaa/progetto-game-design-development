@@ -250,6 +250,9 @@ public class liquidfunJNI {
   public final static native long World_createBody(long jarg1, World jarg1_, long jarg2, BodyDef jarg2_);
   public final static native void World_destroyBody(long jarg1, World jarg1_, long jarg2, Body jarg2_);
   public final static native long World_createJoint(long jarg1, World jarg1_, long jarg2, JointDef jarg2_);
+  public final static native long World_createMouseJoint(long jarg1, World jarg1_, long jarg2, MouseJointDef jarg2_);
+  public final static native long World_createDistanceJoint(long jarg1, World jarg1_, long jarg2, DistanceJointDef jarg2_);
+  public final static native long World_createRopeJoint(long jarg1, World jarg1_, long jarg2, RopeJointDef jarg2_);
   public final static native void World_destroyJoint(long jarg1, World jarg1_, long jarg2, Joint jarg2_);
   public final static native long World_createParticleSystem(long jarg1, World jarg1_, long jarg2, ParticleSystemDef jarg2_);
   public final static native void World_destroyParticleSystem(long jarg1, World jarg1_, long jarg2, ParticleSystem jarg2_);

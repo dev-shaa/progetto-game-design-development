@@ -61,6 +61,7 @@ public final class RigidBody extends PhysicsComponent {
     private Type type;
     private Collider collider;
     private boolean sleepingAllowed;
+    private float linearDamping = 0;
 
     private RigidBody() {
         // Private constructor to avoid manual instantiation
@@ -102,6 +103,7 @@ public final class RigidBody extends PhysicsComponent {
         }
 
         body.setUserData(this);
+        body.setLinearDamping(linearDamping);
         body.setSleepingAllowed(sleepingAllowed);
     }
 
@@ -197,6 +199,13 @@ public final class RigidBody extends PhysicsComponent {
 
         if (body != null)
             body.setSleepingAllowed(sleepingAllowed);
+    }
+
+    public void setLinearDamping(float linearDamping) {
+        this.linearDamping = linearDamping;
+
+        if (body != null)
+            body.setLinearDamping(linearDamping);
     }
 
     public void addForce(float forceX, float forceY) {

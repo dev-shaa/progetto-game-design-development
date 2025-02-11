@@ -47,6 +47,10 @@ public class CursorJoint extends PhysicsComponent {
         x = y = maxForce = 0;
     }
 
+    public RigidBody getRigidBody() {
+        return rigidBody;
+    }
+
     /**
      * Sets the RigidBody affected by this joint.
      *

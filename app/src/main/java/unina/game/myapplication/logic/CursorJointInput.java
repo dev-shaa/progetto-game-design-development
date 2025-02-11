@@ -6,6 +6,8 @@ public class CursorJointInput extends PressableComponent {
 
     private CursorJoint joint;
 
+    private float maxForce;
+
     @Override
     public void onInitialize() {
         super.onInitialize();
@@ -15,7 +17,7 @@ public class CursorJointInput extends PressableComponent {
     @Override
     protected void onPointerDown(int pointer, float x, float y) {
         super.onPointerDown(pointer, x, y);
-        joint.setMaxForce(5000);
+        joint.setMaxForce(maxForce);
     }
 
     @Override
@@ -39,5 +41,9 @@ public class CursorJointInput extends PressableComponent {
         float x = joint.getRigidBody().getOwner().x;
         float y = joint.getRigidBody().getOwner().y;
         return (pointerX > x - width / 2 && pointerX < x + width / 2 && pointerY < y + height / 2 && pointerY > y - height / 2);
+    }
+
+    public void setMaxForce(float maxForce) {
+        this.maxForce = maxForce;
     }
 }

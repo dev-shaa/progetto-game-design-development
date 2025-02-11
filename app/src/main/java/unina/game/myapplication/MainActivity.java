@@ -5,6 +5,8 @@ import android.os.Bundle;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.impl.AndroidGame;
 
+import unina.game.myapplication.logic.menu.MainMenu;
+
 public class MainActivity extends AndroidGame {
 
     @Override
@@ -17,7 +19,7 @@ public class MainActivity extends AndroidGame {
 
     @Override
     public Screen getStartScreen() {
-        return new Level1(this);
+        return new MainMenu(this);
     }
 
     // public Screen getStartScreen() {

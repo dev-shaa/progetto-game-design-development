@@ -32,7 +32,7 @@ public class MainMenu extends Scene {
         super.initialize();
 
         levelSaver = new LevelSaver(game.getFileIO());
-        selectSound = game.getAudio().newSound("sounds/select_001.ogg");
+        //selectSound = game.getAudio().newSound("sounds/select_001.ogg");
 
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
@@ -49,7 +49,7 @@ public class MainMenu extends Scene {
         createGameObject(selectLevelButton, selectLevelButtonRenderer);
 
         selectLevelButton.setOnClick(() -> {
-            selectSound.play(1);
+//            selectSound.play(1);
 
             sequence.clear();
             sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, -20, 1f, EaseFunction.CUBIC_IN_OUT));
@@ -81,7 +81,7 @@ public class MainMenu extends Scene {
             }
 
             button.setOnClick(() -> {
-                selectSound.play(1);
+//                selectSound.play(1);
 
                 for (Button levelButton : levelButtons)
                     levelButton.interactable = false;
@@ -99,7 +99,7 @@ public class MainMenu extends Scene {
     public void dispose() {
         super.dispose();
 
-        selectSound.dispose();
+        //selectSound.dispose();
     }
 
 }

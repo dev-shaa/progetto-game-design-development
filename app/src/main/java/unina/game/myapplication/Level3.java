@@ -24,6 +24,7 @@ import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
 import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level3 extends Scene {
     public Level3(Game game) {
@@ -151,7 +152,6 @@ public class Level3 extends Scene {
         platformDraggedRenderComponent.setStart(-4, 13);
         platformDraggedRenderComponent.setEnd(5, 5);
 
-        platformDraggingComponent.interactable = false;
         RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
         rigidDrag.setSleepingAllowed(false);
         platformDraggingComponent.rigidBody = rigidDrag;
@@ -168,7 +168,7 @@ public class Level3 extends Scene {
         buttonRenderComponent.radius = 0.6f;
         buttonInputComponent.width = 2;
         buttonInputComponent.height = 2;
-        buttonInputComponent.runnable = () -> move1(bridge3Animation,rigidBridge,platformDraggingComponent);
+        buttonInputComponent.runnable = () -> move1(bridge3Animation,rigidBridge);
         GameObject button = createGameObject(buttonRenderComponent, buttonInputComponent);
         button.x = -6;
         button.y = 5;
@@ -231,13 +231,12 @@ public class Level3 extends Scene {
         platform4.angle = 90;
     }
 
-    public void move1(AnimationSequence bridge, RigidBody rigidBridge, PlatformDraggingComponent platform) {
+    public void move1(AnimationSequence bridge, RigidBody rigidBridge) {
         float oldX = -2.5f;
         float oldY = 14.5f;
         float newX = (float) (oldX-4 * Math.cos(Math.toRadians(50)));
         float newY = (float) (oldY-4 * Math.sin(Math.toRadians(50)));
 
-        platform.interactable = true;
         bridge.add(MoveRigidBodyTo.build(rigidBridge, newX,newY, 0.5f));
         bridge.start();
     }
@@ -308,7 +307,7 @@ public class Level3 extends Scene {
         //Tasto per avanzare
         DebugRenderer buttonNextRenderComponent = new DebugRenderer(6,3);
         Button buttonNext = new Button(6,3);
-        //buttonNext.setOnClick(this::nextLevel);
+        buttonNext.setOnClick(this::nextLevel);
         AnimationSequence buttonNextAnimation = AnimationSequence.build();
         GameObject toMenu = createGameObject(buttonNextRenderComponent, buttonNext, buttonNextAnimation);
         toMenu.x = 4;
@@ -325,6 +324,10 @@ public class Level3 extends Scene {
     }
 
     public void  toMenu() {
-        loadScene(Level2.class);
+        loadScene(MainMenu.class);
+    }
+
+    public void nextLevel() {
+        loadScene(TestingScene.class);
     }
 }

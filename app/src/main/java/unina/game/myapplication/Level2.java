@@ -22,6 +22,7 @@ import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
 import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level2 extends Scene {
 
@@ -280,7 +281,7 @@ public class Level2 extends Scene {
     }
 
     public void  toMenu() {
-        loadScene(Level1.class);
+        loadScene(MainMenu.class);
     }
 
     public void nextLevel() {

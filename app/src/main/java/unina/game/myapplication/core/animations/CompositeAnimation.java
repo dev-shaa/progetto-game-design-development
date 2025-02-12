@@ -18,11 +18,12 @@ public final class CompositeAnimation implements Animation {
      * @param animations animations to execute simultaneously.
      * @return a composite animation
      */
-    public synchronized static CompositeAnimation build(Animation... animations) {
+    public synchronized static CompositeAnimation build(Animation animation, Animation... animations) {
         if (pool == null)
             pool = new Pool<>(CompositeAnimation::new, 8);
 
         CompositeAnimation compositeAnimation = pool.get();
+        compositeAnimation.animations.add(animation);
         compositeAnimation.animations.addAll(Arrays.asList(animations));
         return compositeAnimation;
     }

@@ -6,11 +6,8 @@ public class Button extends PressableComponent {
 
     private Runnable onClick;
 
-    public static Button build(float width, float height, Runnable onClick) {
-        Button button = new Button();
-        button.setSize(width, height);
-        button.setOnClick(onClick);
-        return button;
+    public static Button build() {
+        return new Button();
     }
 
     private Button() {

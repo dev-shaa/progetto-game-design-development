@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic;
+package unina.game.myapplication.logic.common;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
@@ -6,17 +6,22 @@ import com.badlogic.androidgames.framework.Graphics;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
-public class DebugRenderer extends RenderComponent {
+public class RectRenderer extends RenderComponent {
+
+    public static RectRenderer build() {
+        return new RectRenderer();
+    }
 
     public float width, height;
-    public int color = Color.RED;
     public float pivotX, pivotY;
+    public int color;
 
     private Camera camera;
 
-    public DebugRenderer(float width, float height) {
-        this.width = width;
-        this.height = height;
+    private RectRenderer() {
+        this.width = 1;
+        this.height = 1;
+        this.color = Color.WHITE;
         this.pivotX = this.pivotY = 0.5f;
     }
 
@@ -39,9 +44,21 @@ public class DebugRenderer extends RenderComponent {
         float x = camera.worldToScreenX(getOwner().x) - pivotX * w;
         float y = camera.worldToScreenY(getOwner().y) - pivotY * h;
 
-        graphics.drawRect(x, y, w, h, getOwner().angle, x, y, color);
-//        graphics.drawLine(graphics.getWidth() / 2, 0, graphics.getWidth() / 2, graphics.getHeight(), Color.BLUE);
-//        graphics.drawLine(0, graphics.getHeight() / 2, graphics.getWidth(), graphics.getHeight() / 2, Color.BLUE);
+        graphics.drawRect(x, y, w, h, color);
+    }
+
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setPivot(float pivotX, float pivotY) {
+        this.pivotX = pivotX;
+        this.pivotY = pivotY;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
 }

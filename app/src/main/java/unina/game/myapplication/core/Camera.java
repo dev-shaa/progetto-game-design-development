@@ -43,6 +43,14 @@ public final class Camera extends Component {
         this.halfSizeY = size / (2 * graphics.getAspectRatio());
     }
 
+    public float getSizeX() {
+        return halfSizeX * 2;
+    }
+
+    public float getSizeY() {
+        return halfSizeY * 2;
+    }
+
     /**
      * Converts the x coordinate from world space to screen space.
      *

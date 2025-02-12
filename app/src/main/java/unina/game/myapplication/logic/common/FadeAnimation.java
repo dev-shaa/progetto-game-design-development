@@ -9,12 +9,13 @@ public class FadeAnimation implements Animation {
 
     private static Pool<FadeAnimation> pool;
 
-    public synchronized static FadeAnimation build(FullScreenColorRenderer fullScreenColorRenderer, int startColor, int endColor, float duration) {
+    public synchronized static FadeAnimation build(RectRenderer fullScreenColorRenderer, int startColor, int endColor, float duration) {
         if (pool == null)
             pool = new Pool<>(FadeAnimation::new, 2);
 
         FadeAnimation fade = pool.get();
-        fade.fullScreenColorRenderer = fullScreenColorRenderer;
+
+        fade.rectRenderer = fullScreenColorRenderer;
         fade.startColor = startColor;
         fade.endColor = endColor;
         fade.duration = duration;
@@ -22,7 +23,7 @@ public class FadeAnimation implements Animation {
         return fade;
     }
 
-    private FullScreenColorRenderer fullScreenColorRenderer;
+    private RectRenderer rectRenderer;
     private int startColor, endColor;
     private float duration;
     private float current;
@@ -38,7 +39,7 @@ public class FadeAnimation implements Animation {
 
     @Override
     public void dispose() {
-        fullScreenColorRenderer = null;
+        rectRenderer = null;
         pool.free(this);
     }
 
@@ -48,7 +49,7 @@ public class FadeAnimation implements Animation {
             return;
 
         current = Math.min(current + deltaTime, duration);
-        fullScreenColorRenderer.color = Color.lerp(startColor, endColor, current / duration);
+        rectRenderer.color = Color.lerp(startColor, endColor, current / duration);
     }
 
     @Override

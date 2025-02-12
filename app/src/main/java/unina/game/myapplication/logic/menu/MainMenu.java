@@ -13,8 +13,8 @@ import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.FullScreenColorRenderer;
 import unina.game.myapplication.logic.common.LevelSaver;
+import unina.game.myapplication.logic.common.RectRenderer;
 
 public class MainMenu extends Scene {
 
@@ -36,7 +36,8 @@ public class MainMenu extends Scene {
 
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
-        FullScreenColorRenderer fadeRenderer = FullScreenColorRenderer.build();
+        RectRenderer fadeRenderer = RectRenderer.build();
+        fadeRenderer.setSize(100, 100);
         fadeRenderer.setColor(Color.TRANSPARENT);
         fadeRenderer.setLayer(Short.MAX_VALUE);
         createGameObject(fadeRenderer);

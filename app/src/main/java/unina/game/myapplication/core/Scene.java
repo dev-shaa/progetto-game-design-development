@@ -124,7 +124,8 @@ public abstract class Scene extends Screen {
         }
 
         // Render each component
-        renderComponents.forEach(component -> component.render(deltaTime, graphics));
+        for (int i = 0; i < renderComponents.size(); i++)
+            renderComponents.get(i).render(deltaTime, graphics);
     }
 
     @Override
@@ -209,6 +210,13 @@ public abstract class Scene extends Screen {
         gameObjectsOperations.set(gameObjectsToOperate.size());
         gameObjectsToOperate.add(gameObject);
 
+        return gameObject;
+    }
+
+    public final GameObject createGameObject(float x, float y, Component... components) {
+        GameObject gameObject = createGameObject(components);
+        gameObject.x = x;
+        gameObject.y = y;
         return gameObject;
     }
 

@@ -10,7 +10,9 @@ public class ButtonInputComponent extends PressableComponent {
         super.onPointerDown(pointer, x, y);
 
         if (runnable != null) {
-            buttonRenderComponent.buttonPressed = !buttonRenderComponent.buttonPressed;
+            if (buttonRenderComponent != null)
+                buttonRenderComponent.buttonPressed = !buttonRenderComponent.buttonPressed;
+
             runnable.run();
         }
     }

@@ -107,7 +107,7 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
-        if (color == Color.WHITE) {
+        if (color != Color.WHITE) {
             ColorMatrixColorFilter filter = filters.get(color);
 
             if (filter == null) {
@@ -121,6 +121,8 @@ public class AndroidGraphics implements Graphics {
             }
 
             paint.setColorFilter(filter);
+        } else {
+            paint.setColor(Color.WHITE);
         }
 
         drawPixmap(pixmap, x, y, angle, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);

@@ -42,237 +42,268 @@ public class Level2 extends Scene {
         float floorH = 15;
 
         //Piattaforma 1
-        PlatformRenderComponent platformRenderComponent1 = new PlatformRenderComponent();
+        GameObject floor1 = createGameObject(-6, -14);
+
+        PlatformRenderComponent platformRenderComponent1 = floor1.addComponent(PlatformRenderComponent.class);
         platformRenderComponent1.color = Color.GREY;
         platformRenderComponent1.width = floorW;
         platformRenderComponent1.height = floorH;
-        RigidBody rigidFloor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(floorW, floorH));
-        GameObject floor1 = createGameObject(platformRenderComponent1, rigidFloor1);
-        floor1.x = -6;
-        floor1.y = -14;
+
+        RigidBody rigidFloor1 = floor1.addComponent(RigidBody.class);
+        rigidFloor1.setType(RigidBody.Type.STATIC);
+        rigidFloor1.setCollider(BoxCollider.build(floorW, floorH));
 
         //Piattaforma 2
-        PlatformRenderComponent platformRenderComponent2 = new PlatformRenderComponent();
+        GameObject floor2 = createGameObject(6, -14);
+
+        PlatformRenderComponent platformRenderComponent2 = floor2.addComponent(PlatformRenderComponent.class);
         platformRenderComponent2.color = Color.GREY;
         platformRenderComponent2.width = floorW;
         platformRenderComponent2.height = floorH;
-        RigidBody rigidFloor2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(floorW, floorH));
-        GameObject floor2 = createGameObject(platformRenderComponent2, rigidFloor2);
-        floor2.x = 6;
-        floor2.y = -14;
+
+        RigidBody rigidFloor2 = floor2.addComponent(RigidBody.class);
+        rigidFloor2.setType(RigidBody.Type.STATIC);
+        rigidFloor2.setCollider(BoxCollider.build(floorW, floorH));
 
         //Piattaforma 3
+        GameObject platform = createGameObject(4, 13, 30);
+
         float platW = 10;
         float platH = 0.5f;
-        PlatformRenderComponent platformRenderComponent3 = new PlatformRenderComponent();
+        PlatformRenderComponent platformRenderComponent3 = platform.addComponent(PlatformRenderComponent.class);
         platformRenderComponent3.color = Color.GREY;
         platformRenderComponent3.width = platW;
         platformRenderComponent3.height = platH;
-        RigidBody rigidPlatform = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(platW, platH));
-        GameObject platform = createGameObject(platformRenderComponent3, rigidPlatform);
-        platform.x = 4;
-        platform.y = 13;
-        platform.angle = 30;
+
+        RigidBody rigidPlatform = platform.addComponent(RigidBody.class);
+        rigidPlatform.setType(RigidBody.Type.STATIC);
+        rigidPlatform.setCollider(BoxCollider.build(platW, platH));
+
 
         //Piattaforma 4
         float plat2W = 1;
         float plat2H = 8;
-        PlatformRenderComponent platformRenderComponent4 = new PlatformRenderComponent();
+
+        GameObject platform2 = createGameObject(-10, 5);
+
+        PlatformRenderComponent platformRenderComponent4 = platform2.addComponent(PlatformRenderComponent.class);
         platformRenderComponent4.color = Color.GREY;
         platformRenderComponent4.width = plat2W;
         platformRenderComponent4.height = plat2H;
-        RigidBody rigidPlatform2 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat2W, plat2H));
-        GameObject platform2 = createGameObject(platformRenderComponent4, rigidPlatform2);
-        platform2.x = -10;
-        platform2.y = 5;
+
+        RigidBody rigidPlatform2 = platform2.addComponent(RigidBody.class);
+        rigidPlatform2.setType(RigidBody.Type.STATIC);
+        rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
 
         //Masso
-        RockRenderComponent rockRenderComponent = new RockRenderComponent();
+        GameObject rock = createGameObject(4, 18);
+
+        RockRenderComponent rockRenderComponent = rock.addComponent(RockRenderComponent.class);
         rockRenderComponent.color = Color.GREY;
         rockRenderComponent.radius = 2;
-        RigidBody rigidRock = RigidBody.build(RigidBody.Type.DYNAMIC, CircleCollider.build(2));
-        GameObject rock = createGameObject(rockRenderComponent, rigidRock);
-        rock.x = 4;
-        rock.y = 18;
+        RigidBody rigidRock = rock.addComponent(RigidBody.class);
+        rigidRock.setType(RigidBody.Type.DYNAMIC);
+        rigidRock.setCollider(CircleCollider.build(2));
 
         //Piattaforma scorrevole
         float dragPlatformWidth = 7.5f;
         float dragPlatformHeight = 0.5f;
-        PlatformRenderComponent platformDraggedRenderComponent = new PlatformRenderComponent();
+
+        GameObject platformDragged = createGameObject(3, 14, 120);
+
+        RigidBody rigidDrag = platformDragged.addComponent(RigidBody.class);
+        rigidDrag.setType(RigidBody.Type.KINEMATIC);
+        rigidDrag.setCollider(BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
+        rigidDrag.setSleepingAllowed(false);
+
+        PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
+        platformDraggedRenderComponent.setStart(3, 14);
+        platformDraggedRenderComponent.setEnd(5, 5);
         platformDraggedRenderComponent.color = Color.DARKCYAN;
         platformDraggedRenderComponent.width = dragPlatformWidth;
         platformDraggedRenderComponent.height = dragPlatformHeight;
-        PlatformDraggingComponent platformDraggingComponent = new PlatformDraggingComponent();
+
+        PlatformDraggingComponent platformDraggingComponent = platformDragged.addComponent(PlatformDraggingComponent.class);
         platformDraggingComponent.width = 10;
         platformDraggingComponent.height = 10;
         platformDraggingComponent.setStart(3, 14);
         platformDraggingComponent.setEnd(5, 5);
-
-        platformDraggedRenderComponent.setStart(3, 14);
-        platformDraggedRenderComponent.setEnd(5, 5);
-
-        RigidBody rigidDrag = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
-        rigidDrag.setSleepingAllowed(false);
         platformDraggingComponent.rigidBody = rigidDrag;
-        GameObject platformDragged = createGameObject(platformDraggedRenderComponent, platformDraggingComponent, rigidDrag);
-        platformDragged.x = 3;
-        platformDragged.y = 14;
-        platformDragged.angle = 120;
 
         //Piattaforma scorrevole2
         float dragPlatform2Width = 7.5f;
         float dragPlatform2Height = 0.5f;
-        PlatformRenderComponent platformDragged2RenderComponent = new PlatformRenderComponent();
+
+        GameObject platformDragged2 = createGameObject(-12, 14, 140);
+
+        RigidBody rigidDrag2 = platformDragged2.addComponent(RigidBody.class);
+        rigidDrag2.setType(RigidBody.Type.KINEMATIC);
+        rigidDrag2.setCollider(BoxCollider.build(dragPlatform2Width, dragPlatform2Height));
+        rigidDrag2.setSleepingAllowed(false);
+
+        PlatformRenderComponent platformDragged2RenderComponent = platformDragged2.addComponent(PlatformRenderComponent.class);
         platformDragged2RenderComponent.color = Color.DARKCYAN;
         platformDragged2RenderComponent.width = dragPlatform2Width;
         platformDragged2RenderComponent.height = dragPlatform2Height;
-        PlatformDraggingComponent platformDragging2Component = new PlatformDraggingComponent();
+
+        PlatformDraggingComponent platformDragging2Component = platformDragged2.addComponent(PlatformDraggingComponent.class);
         platformDragging2Component.width = 10;
         platformDragging2Component.height = 10;
-        RigidBody rigidDrag2 = RigidBody.build(RigidBody.Type.KINEMATIC, BoxCollider.build(dragPlatform2Width, dragPlatform2Height));
-        rigidDrag2.setSleepingAllowed(false);
         platformDragging2Component.rigidBody = rigidDrag2;
-        GameObject platformDragged2 = createGameObject(platformDragged2RenderComponent, platformDragging2Component, rigidDrag2);
-        platformDragged2.x = -12;
-        platformDragged2.y = 14;
-        platformDragging2Component.setStart(-12,14);
-        platformDragging2Component.setEnd(-8,10);
-        platformDragged2.angle = 140;
+        platformDragging2Component.setStart(-12, 14);
+        platformDragging2Component.setEnd(-8, 10);
 
         //Ponte
         float bridgeW = 6;
         float bridgeH = 1;
-        PlatformRenderComponent bridgeRenderComponent = new PlatformRenderComponent();
+
+        GameObject bridge = createGameObject();
+
+        PlatformRenderComponent bridgeRenderComponent = bridge.addComponent(PlatformRenderComponent.class);
         bridgeRenderComponent.color = Color.GOLD;
         bridgeRenderComponent.width = bridgeW;
         bridgeRenderComponent.height = bridgeH;
-        AnimationSequence bridgeAnimation = AnimationSequence.build();
-        GameObject bridge = createGameObject(bridgeRenderComponent, bridgeAnimation);
-        bridge.y = 0;
+        AnimationSequence bridgeAnimation = bridge.addComponent(AnimationSequence.class);
 
         //Personaggio
         float pgW = 2;
         float pgH = 2;
-        TestingRender characterRender = new TestingRender();
+
+        GameObject character = createGameObject(-6, -5.5f);
+
+        TestingRender characterRender = character.addComponent(TestingRender.class);
         characterRender.width = pgW;
         characterRender.height = pgH;
-        AnimationSequence characterAnimation = AnimationSequence.build();
-        GameObject character = createGameObject(characterRender,characterAnimation);
-        character.x = -6;
-        character.y = -5.5f;
+        AnimationSequence characterAnimation = character.addComponent(AnimationSequence.class);
 
         //Sensore Personaggio
-        RigidBody characterBody = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(pgW,pgH,true));
+        GameObject characterSensor = createGameObject(-6, -5.5f);
+        RigidBody characterBody = characterSensor.addComponent(RigidBody.class);
+        characterBody.setType(RigidBody.Type.STATIC);
+        characterBody.setCollider(BoxCollider.build(pgW, pgH, true));
         characterBody.setSleepingAllowed(false);
-        PhysicsButton characterBehaviour = PhysicsButton.build();
-        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent,platformDragging2Component);
-        GameObject characterSensor = createGameObject(characterBehaviour,characterBody);
-        characterSensor.x = -6;
-        characterSensor.y = -5.5f;
+        PhysicsButton characterBehaviour = characterSensor.addComponent(PhysicsButton.class);
+        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent, platformDragging2Component);
 
         //Pulsante a pressione
         float phisicW = 3;
         float phisicH = 1;
-        PlatformRenderComponent phisicRenderComponent = new PlatformRenderComponent();
+        GameObject pressure_plate = createGameObject(0, 5);
+
+        PlatformRenderComponent phisicRenderComponent = pressure_plate.addComponent(PlatformRenderComponent.class);
         phisicRenderComponent.color = Color.RED;
         phisicRenderComponent.height = phisicH;
         phisicRenderComponent.width = phisicW;
-        RigidBody phisicSensor = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisicW, phisicH, true));
+        RigidBody phisicSensor = pressure_plate.addComponent(RigidBody.class);
+        phisicSensor.setType(RigidBody.Type.STATIC);
+        phisicSensor.setCollider(BoxCollider.build(phisicW, phisicH, true));
         phisicSensor.setSleepingAllowed(false);
-        PhysicsButton physicsButton = PhysicsButton.build();
+        PhysicsButton physicsButton = pressure_plate.addComponent(PhysicsButton.class);
         physicsButton.onCollisionEnter = () -> move(phisicRenderComponent, phisicSensor, bridgeAnimation, Color.GREEN, characterAnimation, characterSensor);
         //physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
-        GameObject pressure_plate = createGameObject(phisicRenderComponent, phisicSensor, physicsButton);
-        //pressure_plate.x = -3;
-        //pressure_plate.y = -1;
-        pressure_plate.y = 5;
 
         //Piattaforma sotto la pedana
         float plat3W = 4;
         float plat3H = 1;
-        PlatformRenderComponent platformRenderComponent5 = new PlatformRenderComponent();
+        GameObject platform3 = createGameObject(0, 4);
+
+        PlatformRenderComponent platformRenderComponent5 = platform3.addComponent(PlatformRenderComponent.class);
         platformRenderComponent5.color = Color.GREY;
         platformRenderComponent5.width = plat3W;
         platformRenderComponent5.height = plat3H;
-        RigidBody rigidPlatform3 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat3W, plat3H));
-        GameObject platform3 = createGameObject(platformRenderComponent5, rigidPlatform3);
-        //platform3.x = -10;
-        platform3.y = 4;
+        RigidBody rigidPlatform3 = platform3.addComponent(RigidBody.class);
+        rigidPlatform3.setType(RigidBody.Type.STATIC);
+        rigidPlatform3.setCollider(BoxCollider.build(plat3W, plat3H));
+
     }
 
     public void move(PlatformRenderComponent prova, RigidBody prova2, AnimationSequence bridge, int color, AnimationSequence character, GameObject characterSensor) {
         if (!isPressed) {
             prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
             prova.color = color;
-            bridge.add(MoveToAnimation.build(bridge.getOwner(),0,-7,1));
+            bridge.add(MoveToAnimation.build(bridge.getOwner(), 0, -7, 1));
             bridge.start();
             isPressed = true;
 
             removeGameObject(characterSensor);
             character.add(WaitAnimation.build(1.5f));
-            character.add(MoveToAnimation.build(character.getOwner(),6,-5.5f,1));
+            character.add(MoveToAnimation.build(character.getOwner(), 6, -5.5f, 1));
             character.start();
 
             //Tasto per riprovare
-            DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
-            Button buttonRetray = new Button(6,3);
+            GameObject retray = createGameObject(-4, -24);
+
+            DebugRenderer buttonRetrayRenderComponent = retray.addComponent(DebugRenderer.class);
+            buttonRetrayRenderComponent.setSize(6, 3);
+
+            Button buttonRetray = retray.addComponent(Button.class);
+            buttonRetray.setSize(6, 3);
             buttonRetray.setOnClick(this::retray);
-            AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
-            GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
-            retray.x = -4;
-            retray.y = -24;
+
+            AnimationSequence buttonRetrayAnimation = retray.addComponent(AnimationSequence.class);
             buttonRetrayAnimation.add(WaitAnimation.build(3));
-            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,1,0.5f));
-            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,2,0.05f));
-            buttonRetrayAnimation.add(MoveToAnimation.build(retray,-4,0,0.25f));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray, -4, 1, 0.5f));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray, -4, 2, 0.05f));
+            buttonRetrayAnimation.add(MoveToAnimation.build(retray, -4, 0, 0.25f));
             buttonRetrayAnimation.start();
 
             //Tasto per avanzare
-            DebugRenderer buttonNextRenderComponent = new DebugRenderer(6,3);
-            Button buttonNext = new Button(6,3);
-            buttonNext.setOnClick(this::nextLevel);
-            AnimationSequence buttonNextAnimation = AnimationSequence.build();
-            GameObject toMenu = createGameObject(buttonNextRenderComponent, buttonNext, buttonNextAnimation);
+            GameObject toMenu = createGameObject(4, -24);
             toMenu.x = 4;
             toMenu.y = -24;
+
+            DebugRenderer buttonNextRenderComponent = toMenu.addComponent(DebugRenderer.class);
+            buttonNextRenderComponent.setSize(6, 3);
+
+            Button buttonNext = toMenu.addComponent(Button.class);
+            buttonNext.setSize(6, 3);
+            buttonNext.setOnClick(this::nextLevel);
+
+            AnimationSequence buttonNextAnimation = toMenu.addComponent(AnimationSequence.class);
             buttonNextAnimation.add(WaitAnimation.build(3));
-            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,1,0.5f));
-            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,2,0.05f));
-            buttonNextAnimation.add(MoveToAnimation.build(toMenu,4,0,0.25f));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu, 4, 1, 0.5f));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu, 4, 2, 0.05f));
+            buttonNextAnimation.add(MoveToAnimation.build(toMenu, 4, 0, 0.25f));
             buttonNextAnimation.start();
         }
     }
 
     public void gameOver(PressableComponent... components) {
-        Log.d("Game Over","HAI PERSO");
+        Log.d("Game Over", "HAI PERSO");
         for (PressableComponent component : components) {
             component.interactable = false;
         }
 
         //Tasto per riprovare
-        DebugRenderer buttonRetrayRenderComponent = new DebugRenderer(6,3);
-        Button buttonRetray = new Button(6,3);
+        GameObject retray = createGameObject(4, -21);
+
+        DebugRenderer buttonRetrayRenderComponent = retray.addComponent(DebugRenderer.class);
+        buttonRetrayRenderComponent.setSize(6, 3);
+
+        Button buttonRetray = retray.addComponent(Button.class);
+        buttonRetray.setSize(6, 3);
         buttonRetray.setOnClick(this::retray);
-        AnimationSequence buttonRetrayAnimation = AnimationSequence.build();
-        GameObject retray = createGameObject(buttonRetrayRenderComponent,buttonRetray, buttonRetrayAnimation);
-        retray.x = 4;
-        retray.y = -21;
-        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,1,0.5f));
-        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,2,0.05f));
-        buttonRetrayAnimation.add(MoveToAnimation.build(retray,4,0,0.25f));
+
+        AnimationSequence buttonRetrayAnimation = retray.addComponent(AnimationSequence.class);
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray, 4, 1, 0.5f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray, 4, 2, 0.05f));
+        buttonRetrayAnimation.add(MoveToAnimation.build(retray, 4, 0, 0.25f));
         buttonRetrayAnimation.start();
 
         //Tasto per tornare al menu
-        DebugRenderer buttonMenuRenderComponent = new DebugRenderer(6,3);
-        Button buttonMenu = new Button(6,3);
+        GameObject toMenu = createGameObject(-4, -21);
+
+        DebugRenderer buttonMenuRenderComponent = toMenu.addComponent(DebugRenderer.class);
+        buttonMenuRenderComponent.setSize(6, 3);
+
+        Button buttonMenu = toMenu.addComponent(Button.class);
+        buttonMenu.setSize(6, 3);
         buttonMenu.setOnClick(this::toMenu);
-        AnimationSequence buttonMenuAnimation = AnimationSequence.build();
-        GameObject toMenu = createGameObject(buttonMenuRenderComponent, buttonMenu, buttonMenuAnimation);
-        toMenu.x = -4;
-        toMenu.y = -21;
-        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,1,0.5f));
-        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,2,0.05f));
-        buttonMenuAnimation.add(MoveToAnimation.build(toMenu,-4,0,0.25f));
+
+        AnimationSequence buttonMenuAnimation = toMenu.addComponent(AnimationSequence.class);
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu, -4, 1, 0.5f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu, -4, 2, 0.05f));
+        buttonMenuAnimation.add(MoveToAnimation.build(toMenu, -4, 0, 0.25f));
         buttonMenuAnimation.start();
     }
 
@@ -280,7 +311,7 @@ public class Level2 extends Scene {
         loadScene(Level2.class);
     }
 
-    public void  toMenu() {
+    public void toMenu() {
         loadScene(MainMenu.class);
     }
 

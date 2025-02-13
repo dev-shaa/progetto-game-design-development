@@ -3,17 +3,11 @@ package unina.game.myapplication;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
-import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.physics.BoxCollider;
-import unina.game.myapplication.core.physics.CircleCollider;
-import unina.game.myapplication.core.physics.CursorJoint;
-import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
-import unina.game.myapplication.logic.CursorJointInput;
-import unina.game.myapplication.logic.PlatformRenderComponent;
-import unina.game.myapplication.logic.RockRenderComponent;
+import unina.game.myapplication.logic.common.RectRenderer;
 
 public class TestingScene extends Scene {
 
@@ -25,75 +19,15 @@ public class TestingScene extends Scene {
     public void initialize() {
         super.initialize();
 
+        GameObject gameObject = createGameObject();
 
-        Camera.getInstance().setSize(20);
-        RockRenderComponent rockRenderComponent = new RockRenderComponent();
-        rockRenderComponent.radius = 2;
-        rockRenderComponent.color = Color.GREY;
-        RigidBody rigidRock = RigidBody.build(RigidBody.Type.DYNAMIC, CircleCollider.build(2,10,1,1,false));
-        rigidRock.setLinearDamping(0.2f);
-        GameObject rock = createGameObject(rockRenderComponent, rigidRock);
-        rock.y = 0;
+        RigidBody rigidBody = gameObject.addComponent(RigidBody.class);
+        rigidBody.setType(RigidBody.Type.STATIC);
+        rigidBody.setCollider(BoxCollider.build(1, 1));
 
-        PlatformRenderComponent platformRenderComponent = new PlatformRenderComponent();
-        platformRenderComponent.height = 1;
-        platformRenderComponent.width = 2;
-        platformRenderComponent.color = Color.GREY;
-        RigidBody platform = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(2,1));
-        GameObject platformGO = createGameObject(platformRenderComponent,platform);
-        platformGO.y = 10;
-
-//        PlatformRenderComponent ropeRenderComponent = new PlatformRenderComponent();
-//        ropeRenderComponent.height = 1;
-//        ropeRenderComponent.width = 1;
-//        ropeRenderComponent.color = Color.GREY;
-//        RigidBody rigidRope = RigidBody.build(RigidBody.Type.DYNAMIC, BoxCollider.build(2,1));
-//        GameObject rope = createGameObject(ropeRenderComponent, rigidRope);
-//        rope.y = -3;
-
-        CursorJoint cursorJoint = CursorJoint.build();
-        cursorJoint.setRigidBody(rigidRock);
-
-        CursorJointInput cursorJointInput = new CursorJointInput();
-        cursorJointInput.setJoint(cursorJoint);
-        cursorJointInput.setSize(4,4);
-        cursorJointInput.setMaxForce(9000);
-        createGameObject(cursorJointInput,cursorJoint);
-
-        DistanceJoint rockPlatform = DistanceJoint.build(platform, rigidRock,10,1,10);
-        createGameObject(rockPlatform);
-//        DistanceJoint ropeRock = DistanceJoint.build(rigidRope, rigidRock,1,1,1);
-//        DistanceJoint ropePlatform = DistanceJoint.build(rigidRope,platform,1,1,1);
-
-//        createGameObject(ropePlatform);
-//        createGameObject(ropeRock);
-
-//        int max = 10;
-//
-//        ArrayList <RigidBody> rigidRopes = new ArrayList<>();
-//        for (int i = 0; i < max; i++) {
-//            float radius = 0.2f;
-//            RockRenderComponent render = new RockRenderComponent();
-//            render.radius = 0.2f;
-//            render.color = Color.GREY;
-//            RigidBody rigid = RigidBody.build(RigidBody.Type.DYNAMIC,CircleCollider.build(radius));
-//            GameObject rope = createGameObject(render,rigid);
-//            rope.y = 10 - i;
-//            rigidRopes.add(rigid);
-//            if (i == 0) {
-//                DistanceJoint ropePlatform = DistanceJoint.build(rigid,platform,0.2f,1,-1);
-//                createGameObject(ropePlatform);
-//            } else if (i == max-1) {
-//                DistanceJoint ropeRope = DistanceJoint.build(rigid,rigidRopes.get(i-1),0.2f,1,-1);
-//                createGameObject(ropeRope);
-//                DistanceJoint ropeRock = DistanceJoint.build(rigid,rigidRock,0.2f,1,-1);
-//                createGameObject(ropeRock);
-//            } else {
-//                DistanceJoint ropeRope = DistanceJoint.build(rigid,rigidRopes.get(i-1),0.2f,1,-1);
-//                createGameObject(ropeRope);
-//            }
-//        }
-
+        RectRenderer renderer = gameObject.addComponent(RectRenderer.class);
+        renderer.setSize(1, 1);
+        renderer.setColor(Color.RED);
     }
 
 }

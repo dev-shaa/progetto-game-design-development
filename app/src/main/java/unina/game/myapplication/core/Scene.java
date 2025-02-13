@@ -210,6 +210,16 @@ public abstract class Scene extends Screen {
         return gameObject;
     }
 
+    public final GameObject createGameObject(float x, float y, float angle) {
+        GameObject gameObject = createGameObject();
+
+        gameObject.x = x;
+        gameObject.y = y;
+        gameObject.angle = angle;
+
+        return gameObject;
+    }
+
     /**
      * Enqueues a GameObject to be removed from the scene at the start of the next frame.
      *

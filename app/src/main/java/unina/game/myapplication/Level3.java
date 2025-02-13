@@ -17,7 +17,6 @@ import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.ButtonRenderComponent;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.PressableComponent;
@@ -40,7 +39,7 @@ public class Level3 extends Scene {
         float floorW = 6;
         float floorH = 10;
 
-        //Piattaforma 1
+        //Pavimento
         PlatformRenderComponent floorRenderComponent1 = new PlatformRenderComponent();
         floorRenderComponent1.color = Color.GREY;
         floorRenderComponent1.width = floorW;
@@ -59,8 +58,7 @@ public class Level3 extends Scene {
         bridge1RenderComponent.width = bridgeW;
         bridge1RenderComponent.height = bridgeH;
         AnimationSequence bridge1Animation = AnimationSequence.build();
-        PlatformBehaviourComponent bridge1BehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge1 = createGameObject(bridge1RenderComponent, bridge1BehaviourComponent, bridge1Animation);
+        GameObject bridge1 = createGameObject(bridge1RenderComponent, bridge1Animation);
         //bridge.x = -1.35f;
         bridge1.y = -10;
 
@@ -70,8 +68,7 @@ public class Level3 extends Scene {
         bridge2RenderComponent.width = bridgeW;
         bridge2RenderComponent.height = bridgeH;
         AnimationSequence bridge2Animation = AnimationSequence.build();
-        PlatformBehaviourComponent bridge2BehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge2 = createGameObject(bridge2RenderComponent, bridge2BehaviourComponent, bridge2Animation);
+        GameObject bridge2 = createGameObject(bridge2RenderComponent, bridge2Animation);
         bridge2.x = -6;
         bridge2.y = -17.5f;
 
@@ -129,8 +126,7 @@ public class Level3 extends Scene {
         bridge3RenderComponent.height = 0.7f;
         RigidBody rigidBridge = RigidBody.build(RigidBody.Type.KINEMATIC,BoxCollider.build(4,0.7f));
         AnimationSequence bridge3Animation = AnimationSequence.build();
-        PlatformBehaviourComponent bridge3BehaviourComponent = new PlatformBehaviourComponent();
-        GameObject bridge3 = createGameObject(bridge3RenderComponent,rigidBridge, bridge3BehaviourComponent, bridge3Animation);
+        GameObject bridge3 = createGameObject(bridge3RenderComponent,rigidBridge, bridge3Animation);
         bridge3.x = -2.5f;
         bridge3.y = 14.5f;
         bridge3.angle = 50;
@@ -184,7 +180,6 @@ public class Level3 extends Scene {
         phisicSensor1.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
         physicsButton.onCollisionEnter = () -> moveRED(bridge2Animation, pgAnimation, platformDraggingComponent);
-//        physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
         GameObject pressure_plate1 = createGameObject(phisic1RenderComponent, phisicSensor1, physicsButton);
         pressure_plate1.x = 1;
         pressure_plate1.y = 1;

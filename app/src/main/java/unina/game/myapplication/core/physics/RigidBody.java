@@ -1,6 +1,5 @@
 package unina.game.myapplication.core.physics;
 
-import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.Fixture;
@@ -16,56 +15,12 @@ public final class RigidBody extends PhysicsComponent {
         KINEMATIC, DYNAMIC, STATIC
     }
 
-    private static Pool<RigidBody> pool;
-
-    /**
-     * Creates a static RigidBody without a collider.
-     *
-     * @return a static RigidBody without a collider
-     */
-    public static RigidBody build() {
-        return build(null);
-    }
-
-    /**
-     * Creates a static RigidBody with the given collider.
-     *
-     * @param collider collider of the RigidBody
-     * @return a static RigidBody with the given collider
-     */
-    public static RigidBody build(Collider collider) {
-        return build(Type.STATIC, collider);
-    }
-
-    /**
-     * Creates a RigidBody of the given type with the given collider.
-     *
-     * @param type     type of the RigidBody
-     * @param collider collider of the RigidBody
-     * @return a RigidBody of the given type and with the given collider
-     */
-    public static RigidBody build(Type type, Collider collider) {
-        if (pool == null)
-            pool = new Pool<>(RigidBody::new, 16);
-
-        RigidBody component = pool.get();
-
-        component.type = type;
-        component.collider = collider;
-
-        return component;
-    }
-
     Body body;
     private Fixture fixture;
     private Type type;
     private Collider collider;
     private boolean sleepingAllowed;
     private float linearDamping = 0;
-
-    private RigidBody() {
-        // Private constructor to avoid manual instantiation
-    }
 
     @Override
     public void onInitialize() {
@@ -113,11 +68,11 @@ public final class RigidBody extends PhysicsComponent {
 
         world.destroyBody(body);
         world = null;
+
+        collider = null;
         body = null;
         fixture = null;
         sleepingAllowed = true;
-
-        pool.free(this);
     }
 
     @Override

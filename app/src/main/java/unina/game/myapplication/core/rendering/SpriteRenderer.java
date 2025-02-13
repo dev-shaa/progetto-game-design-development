@@ -12,13 +12,12 @@ public class SpriteRenderer extends RenderComponent {
 
     private static Pool<SpriteRenderer> pool;
 
-    public synchronized static SpriteRenderer build(Pixmap image, float width, float height) {
+    public synchronized static SpriteRenderer build() {
         if (pool == null)
             pool = new Pool<>(SpriteRenderer::new, 16);
 
         SpriteRenderer renderer = pool.get();
-        renderer.setImage(image);
-        renderer.setSize(width, height);
+        renderer.setPivot(0.5f, 0.5f);
         return renderer;
     }
 
@@ -29,6 +28,7 @@ public class SpriteRenderer extends RenderComponent {
 
     private Pixmap image;
     private float pivotX, pivotY;
+    private Camera camera;
 
     private SpriteRenderer() {
         this.color = Color.WHITE;
@@ -66,9 +66,17 @@ public class SpriteRenderer extends RenderComponent {
     }
 
     @Override
+    public void onInitialize() {
+        super.onInitialize();
+        camera = Camera.getInstance();
+    }
+
+    @Override
     public void onRemove() {
         super.onRemove();
         image = null;
+        camera = null;
+        color = Color.WHITE;
         pool.free(this);
     }
 
@@ -77,12 +85,10 @@ public class SpriteRenderer extends RenderComponent {
         if (image == null)
             return;
 
-        Camera camera = Camera.getInstance();
-
-        float screenX = camera.worldToScreenX(getOwner().x - pivotX * width);
-        float screenY = camera.worldToScreenY(getOwner().y + pivotY * height);
         float screenWidth = camera.worldToScreenSizeX(width);
         float screenHeight = camera.worldToScreenSizeY(height);
+        float screenX = camera.worldToScreenX(getOwner().x) - pivotX * screenWidth;
+        float screenY = camera.worldToScreenY(getOwner().y) - pivotY * screenHeight;
 
         graphics.drawPixmap(image, screenX, screenY, getOwner().angle, screenWidth, screenHeight, srcX, srcY, srcWidth, srcHeight, color);
     }

@@ -8,6 +8,10 @@ public interface Pixmap {
 
     int getHeight();
 
+    default float getAspectRatio() {
+        return (float) getWidth() / getHeight();
+    }
+
     PixmapFormat getFormat();
 
     void dispose();

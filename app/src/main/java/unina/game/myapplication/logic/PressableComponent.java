@@ -63,6 +63,10 @@ public abstract class PressableComponent extends InputComponent {
         this.height = height;
     }
 
+    public void setInteractable(boolean interactable) {
+        this.interactable = interactable;
+    }
+
     protected void onPointerDown(int pointer, float x, float y) {
 
     }

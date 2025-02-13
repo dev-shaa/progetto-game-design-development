@@ -6,6 +6,15 @@ public class Button extends PressableComponent {
 
     private Runnable onClick;
 
+    public static Button build() {
+        return new Button();
+    }
+
+    private Button() {
+
+    }
+
+    @Deprecated
     public Button(float width, float height) {
         setSize(width, height);
     }

@@ -10,15 +10,12 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.CompositeAnimation;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.core.animations.Sequence;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.common.CircleRenderer;
-import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
@@ -136,7 +133,7 @@ public class Level1 extends Scene {
         menuButton.setOnClick(() -> {
             menuButton.setInteractable(false);
             buttonInputComponent.setInteractable(false);
-            
+
             animator.clear();
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
@@ -212,7 +209,7 @@ public class Level1 extends Scene {
         lineRenderer.setPointB(-1f, bridge.y);
 
         animator = AnimationSequence.build();
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                         FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.4f),
                         MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT)
                 ),

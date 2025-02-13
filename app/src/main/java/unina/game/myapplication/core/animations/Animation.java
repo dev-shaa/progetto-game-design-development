@@ -1,13 +1,13 @@
 package unina.game.myapplication.core.animations;
 
-public interface Animation {
+public abstract class Animation {
 
-    void start();
+    public abstract void start();
 
-    void dispose();
+    public abstract void dispose();
 
-    void process(float deltaTime);
+    public abstract void process(float deltaTime);
 
-    boolean isFinished();
+    public abstract boolean isFinished();
 
 }

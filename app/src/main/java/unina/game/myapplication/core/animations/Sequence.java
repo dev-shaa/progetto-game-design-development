@@ -2,7 +2,7 @@ package unina.game.myapplication.core.animations;
 
 import java.util.LinkedList;
 
-public class Sequence implements Animation {
+public final class Sequence extends Animation {
 
     public static Sequence build() {
         return new Sequence();

@@ -5,7 +5,7 @@ import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.animations.Animation;
 
-public class FadeAnimation implements Animation {
+public class FadeAnimation extends Animation {
 
     private static Pool<FadeAnimation> pool;
 

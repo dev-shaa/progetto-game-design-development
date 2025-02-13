@@ -8,9 +8,9 @@ import java.util.HashSet;
 /**
  * A wrapper to execute multiple animations at the same time.
  */
-public final class CompositeAnimation implements Animation {
+public final class ParallelAnimation extends Animation {
 
-    private static Pool<CompositeAnimation> pool;
+    private static Pool<ParallelAnimation> pool;
 
     /**
      * Creates a new composite animation.
@@ -18,19 +18,19 @@ public final class CompositeAnimation implements Animation {
      * @param animations animations to execute simultaneously.
      * @return a composite animation
      */
-    public synchronized static CompositeAnimation build(Animation animation, Animation... animations) {
+    public synchronized static ParallelAnimation build(Animation animation, Animation... animations) {
         if (pool == null)
-            pool = new Pool<>(CompositeAnimation::new, 8);
+            pool = new Pool<>(ParallelAnimation::new, 8);
 
-        CompositeAnimation compositeAnimation = pool.get();
-        compositeAnimation.animations.add(animation);
-        compositeAnimation.animations.addAll(Arrays.asList(animations));
-        return compositeAnimation;
+        ParallelAnimation parallelAnimation = pool.get();
+        parallelAnimation.animations.add(animation);
+        parallelAnimation.animations.addAll(Arrays.asList(animations));
+        return parallelAnimation;
     }
 
     private final HashSet<Animation> animations = new HashSet<>();
 
-    private CompositeAnimation() {
+    private ParallelAnimation() {
 
     }
 

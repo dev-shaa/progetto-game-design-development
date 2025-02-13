@@ -8,7 +8,7 @@ import unina.game.myapplication.core.Utility;
 /**
  * An animation which moves a GameObject from its current position to a target position.
  */
-public class MoveToAnimation implements Animation {
+public final class MoveToAnimation extends Animation {
 
     private static Pool<MoveToAnimation> pool;
 

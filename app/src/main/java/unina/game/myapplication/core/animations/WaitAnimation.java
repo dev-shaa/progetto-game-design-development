@@ -2,7 +2,7 @@ package unina.game.myapplication.core.animations;
 
 import com.badlogic.androidgames.framework.Pool;
 
-public class WaitAnimation implements Animation {
+public final class WaitAnimation extends Animation {
 
     private static Pool<WaitAnimation> pool;
 

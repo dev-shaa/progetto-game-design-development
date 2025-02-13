@@ -6,7 +6,7 @@ import java.util.function.IntConsumer;
 
 import unina.game.myapplication.core.animations.Animation;
 
-public class ColorAnimation implements Animation {
+public class ColorAnimation extends Animation {
 
     public static ColorAnimation build() {
         return new ColorAnimation();

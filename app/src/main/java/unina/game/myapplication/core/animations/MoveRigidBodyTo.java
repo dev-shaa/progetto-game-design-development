@@ -5,7 +5,7 @@ import com.badlogic.androidgames.framework.Pool;
 import unina.game.myapplication.core.Utility;
 import unina.game.myapplication.core.physics.RigidBody;
 
-public class MoveRigidBodyTo implements Animation {
+public final class MoveRigidBodyTo extends Animation {
 
     private static Pool<MoveRigidBodyTo> pool;
 

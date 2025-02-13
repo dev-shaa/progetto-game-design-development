@@ -42,4 +42,8 @@ public abstract class Component {
      */
     public abstract Type getType();
 
+    public int getComponentPoolSize() {
+        return 3;
+    }
+
 }

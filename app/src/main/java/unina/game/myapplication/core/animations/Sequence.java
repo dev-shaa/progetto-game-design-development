@@ -1,11 +1,18 @@
 package unina.game.myapplication.core.animations;
 
+import com.badlogic.androidgames.framework.Pool;
+
 import java.util.LinkedList;
 
 public class Sequence implements Animation {
 
+    private static Pool<Sequence> pool;
+
     public static Sequence build() {
-        return new Sequence();
+        if (pool == null)
+            pool = new Pool<>(Sequence::new, 8);
+
+        return pool.get();
     }
 
     private final LinkedList<Animation> animations;

@@ -14,6 +14,10 @@ public class DebugRenderer extends RenderComponent {
 
     private Camera camera;
 
+    public DebugRenderer() {
+        this(1, 1);
+    }
+
     public DebugRenderer(float width, float height) {
         this.width = width;
         this.height = height;
@@ -44,4 +48,13 @@ public class DebugRenderer extends RenderComponent {
 //        graphics.drawLine(0, graphics.getHeight() / 2, graphics.getWidth(), graphics.getHeight() / 2, Color.BLUE);
     }
 
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+    
 }

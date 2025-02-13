@@ -20,10 +20,6 @@ public class DottedLineRenderer extends RenderComponent {
 
     private Camera camera;
 
-    private DottedLineRenderer() {
-
-    }
-
     @Override
     public void onInitialize() {
         super.onInitialize();

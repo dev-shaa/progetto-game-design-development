@@ -18,7 +18,7 @@ public class RectRenderer extends RenderComponent {
 
     private Camera camera;
 
-    private RectRenderer() {
+    public RectRenderer() {
         this.width = 1;
         this.height = 1;
         this.color = Color.WHITE;
@@ -35,6 +35,9 @@ public class RectRenderer extends RenderComponent {
     public void onRemove() {
         super.onRemove();
         camera = null;
+        width = height = 1;
+        pivotX = pivotY = 0.5f;
+        color = Color.WHITE;
     }
 
     @Override

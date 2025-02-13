@@ -16,21 +16,30 @@ public final class Camera extends Component {
     }
 
     private float halfSizeX, halfSizeY;
-    private final Graphics graphics;
+    private Graphics graphics;
 
-    Camera(Graphics graphics) {
-        if (instance != null)
-            throw new RuntimeException();
+    public Camera() {
+        if (instance == null)
+            instance = this;
+    }
 
-        instance = this;
-        this.graphics = graphics;
-        setSize(10);
+    @Override
+    public void onInitialize() {
+        super.onInitialize();
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
-        instance = null;
+
+        graphics = null;
+
+        if (instance == this)
+            instance = null;
+    }
+
+    void setGraphics(Graphics graphics) {
+        this.graphics = graphics;
     }
 
     /**
@@ -136,6 +145,11 @@ public final class Camera extends Component {
     @Override
     public Type getType() {
         return Type.RENDER;
+    }
+
+    @Override
+    public int getComponentPoolSize() {
+        return 0;
     }
 
 }

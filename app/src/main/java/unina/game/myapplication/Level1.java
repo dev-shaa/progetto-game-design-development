@@ -10,20 +10,16 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.CompositeAnimation;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.core.animations.Sequence;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.common.CircleRenderer;
-import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.Button;
-import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level1 extends Scene {
 
@@ -170,15 +166,13 @@ public class Level1 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 4f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> {
-                loadScene(Level2.class);
-            });
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
             animator.start();
         });
 
         GameObject animatorGO = createGameObject();
         animator = animatorGO.addComponent(AnimationSequence.class);
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                         FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.4f),
                         MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT)
                 ),

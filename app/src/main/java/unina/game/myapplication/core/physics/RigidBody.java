@@ -171,4 +171,9 @@ public final class RigidBody extends PhysicsComponent {
         }
     }
 
+    @Override
+    public int getComponentPoolSize() {
+        return 16;
+    }
+    
 }

@@ -7,9 +7,8 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.CompositeAnimation;
 import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
@@ -253,15 +252,15 @@ public class Level2 extends Scene {
         AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
         animator.add(MoveToAnimation.build(bridge, 0, -7, 1));
         animator.add(MoveToAnimation.build(character, 6, -5.5f, 1));
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),
                 MoveToAnimation.build(nextLevelButtonGO, 4, 1, 0.5f)
         ));
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, -4, 2, 0.05f),
                 MoveToAnimation.build(nextLevelButtonGO, 4, 2, 0.05f)
         ));
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, -4, 0, 0.25f),
                 MoveToAnimation.build(nextLevelButtonGO, 4, 0, 0.25f)
         ));
@@ -295,15 +294,15 @@ public class Level2 extends Scene {
         // Animator
         GameObject animatorGO = createGameObject();
         AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, 4, 1, 0.5f),
                 MoveToAnimation.build(menuButtonGO, -4, 1, 0.5f)
         ));
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, 4, 2, 0.05f),
                 MoveToAnimation.build(menuButtonGO, -4, 2, 0.05f)
         ));
-        animator.add(CompositeAnimation.build(
+        animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, 4, 0, 0.25f),
                 MoveToAnimation.build(menuButtonGO, -4, 0, 0.25f)
         ));

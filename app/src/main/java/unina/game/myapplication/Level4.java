@@ -1,5 +1,7 @@
 package unina.game.myapplication;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 
@@ -50,6 +52,17 @@ public class Level4 extends Scene {
         float plat2W = 6;
         float plat2H = 1;
 
+        //Personaggio
+        float pgW = 2;
+        float pgH = 2;
+        TestingRender characterRender = new TestingRender();
+        characterRender.width = pgW;
+        characterRender.height = pgH;
+        AnimationSequence characterAnimation = AnimationSequence.build();
+        GameObject character = createGameObject(characterRender,characterAnimation);
+        character.x = -8;
+        character.y = -24;
+
         //Pavimento
         PlatformRenderComponent floorRenderComponent1 = new PlatformRenderComponent();
         floorRenderComponent1.color = Color.GREY;
@@ -60,7 +73,7 @@ public class Level4 extends Scene {
         floor1.x = 8;
         floor1.y = -30;
 
-        //Ponte 1
+        //Ponte 1 (sotto il personaggio)
         PlatformRenderComponent bridge1RenderComponent = new PlatformRenderComponent();
         bridge1RenderComponent.color = Color.GOLD;
         bridge1RenderComponent.width = bridgeW;
@@ -70,6 +83,15 @@ public class Level4 extends Scene {
         GameObject bridge1 = createGameObject(bridge1RenderComponent, rigidBridge1, bridge1Animation);
         bridge1.x = -8;
         bridge1.y = -25.5f;
+
+        //Sensore ponte
+        RigidBody rigidSensorBridge1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(bridgeW,bridgeH,true));
+        rigidSensorBridge1.setSleepingAllowed(false);
+        PhysicsButton sensorBridgeBehaevour1 = PhysicsButton.build();
+        sensorBridgeBehaevour1.onCollisionEnter = () -> moveLose(bridge1Animation,rigidBridge1,characterAnimation);
+        GameObject sensorBridge1 = createGameObject(rigidSensorBridge1,sensorBridgeBehaevour1);
+        sensorBridge1.x = -8;
+        sensorBridge1.y = -25.5f;
 
         //Ponte 2
         PlatformRenderComponent bridge2RenderComponent = new PlatformRenderComponent();
@@ -135,16 +157,16 @@ public class Level4 extends Scene {
         platform2.y = 2;
         platform2.angle = 160;
 
-        //Piattaforma Prova
-        PlatformRenderComponent platformPRenderComponent = new PlatformRenderComponent();
-        platformPRenderComponent.color = Color.WHITE;
-        platformPRenderComponent.width = platW;
-        platformPRenderComponent.height = platH;
-        RigidBody rigidPlatformP = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(platW, platH));
-        GameObject platformP = createGameObject(platformPRenderComponent, rigidPlatformP);
-        platformP.x = -2;
-        platformP.y = 4.5f;
-        platformP.angle = 160;
+//        //Piattaforma Prova
+//        PlatformRenderComponent platformPRenderComponent = new PlatformRenderComponent();
+//        platformPRenderComponent.color = Color.WHITE;
+//        platformPRenderComponent.width = platW;
+//        platformPRenderComponent.height = platH;
+//        RigidBody rigidPlatformP = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(platW, platH));
+//        GameObject platformP = createGameObject(platformPRenderComponent, rigidPlatformP);
+//        platformP.x = -2;
+//        platformP.y = 4.5f;
+//        platformP.angle = 160;
 
         //Piattaforma 3
         PlatformRenderComponent platform3RenderComponent = new PlatformRenderComponent();
@@ -168,6 +190,17 @@ public class Level4 extends Scene {
         platform4.y = -2;
         platform4.angle = 90;
 
+        //Piattaforma 5
+        PlatformRenderComponent platform5RenderComponent = new PlatformRenderComponent();
+        platform5RenderComponent.color = Color.GREY;
+        platform5RenderComponent.width = platW;
+        platform5RenderComponent.height = platH;
+        RigidBody rigidPlatform5 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(platW, platH));
+        GameObject platform5 = createGameObject(platform5RenderComponent, rigidPlatform5);
+        platform5.x = -14;
+        platform5.y = -14;
+        platform5.angle = 90;
+
         //Masso
         RockRenderComponent rockRenderComponent = new RockRenderComponent();
         rockRenderComponent.color = Color.GREY;
@@ -178,26 +211,6 @@ public class Level4 extends Scene {
         rock.x = -10;
         rock.y = 9;
 
-        //Personaggio
-        float pgW = 2;
-        float pgH = 2;
-        TestingRender characterRender = new TestingRender();
-        characterRender.width = pgW;
-        characterRender.height = pgH;
-        AnimationSequence characterAnimation = AnimationSequence.build();
-        GameObject character = createGameObject(characterRender,characterAnimation);
-        character.x = -8;
-        character.y = -24;
-
-        //Sensore Personaggio
-        RigidBody characterBody = RigidBody.build(RigidBody.Type.STATIC,BoxCollider.build(pgW,pgH,true));
-        characterBody.setSleepingAllowed(false);
-        PhysicsButton characterBehaviour = PhysicsButton.build();
-//        characterBehaviour.onCollisionEnter = () -> gameOver(platformDraggingComponent,platformDragging2Component);
-        GameObject characterSensor = createGameObject(characterBehaviour,characterBody);
-        characterSensor.x = -8;
-        characterSensor.y = -24;
-
         //Pulsante a pressione 1
         PlatformRenderComponent phisic1RenderComponent = new PlatformRenderComponent();
         phisic1RenderComponent.color = Color.RED;
@@ -206,20 +219,20 @@ public class Level4 extends Scene {
         RigidBody phisicSensor1 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(phisic1W, phisic1H, true));
         phisicSensor1.setSleepingAllowed(false);
         PhysicsButton physicsButton = PhysicsButton.build();
-        physicsButton.onCollisionEnter = () -> moveWin(bridge2Animation, rigidBridge2, characterAnimation, characterSensor);
+        physicsButton.onCollisionEnter = () -> moveWin(bridge2Animation, rigidBridge2, characterAnimation);
         GameObject pressure_plate1 = createGameObject(phisic1RenderComponent, phisicSensor1, physicsButton);
         pressure_plate1.x = 11.5f;
         pressure_plate1.y = -4;
 
         //Piattaforma sotto la pedana
-        PlatformRenderComponent platform5RenderComponent = new PlatformRenderComponent();
-        platform5RenderComponent.color = Color.GREY;
-        platform5RenderComponent.width = plat2W;
-        platform5RenderComponent.height = plat2H;
-        RigidBody rigidPlatform5 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat2W, plat2H));
-        GameObject platform5 = createGameObject(platform5RenderComponent, rigidPlatform5);
-        platform5.x = 11.5f;
-        platform5.y = -5;
+        PlatformRenderComponent platform6RenderComponent = new PlatformRenderComponent();
+        platform6RenderComponent.color = Color.GREY;
+        platform6RenderComponent.width = plat2W;
+        platform6RenderComponent.height = plat2H;
+        RigidBody rigidPlatform6 = RigidBody.build(RigidBody.Type.STATIC, BoxCollider.build(plat2W, plat2H));
+        GameObject platform6 = createGameObject(platform6RenderComponent, rigidPlatform6);
+        platform6.x = 11.5f;
+        platform6.y = -5;
 
         //Ponte 3
         float bridge3W = 4;
@@ -260,14 +273,21 @@ public class Level4 extends Scene {
         bridge.start();
     }
 
-    public void moveWin(AnimationSequence bridge, RigidBody rigidBridge, AnimationSequence character, GameObject sensorCharacter) {
-        removeGameObject(sensorCharacter);
-
+    public void moveWin(AnimationSequence bridge, RigidBody rigidBridge, AnimationSequence character) {
         bridge.add(MoveRigidBodyTo.build(rigidBridge,0,-25.5f,1));
         bridge.start();
 
         character.add(WaitAnimation.build(1.2f));
         character.add(MoveToAnimation.build(character.getOwner(),8,-24,1));
+        character.start();
+    }
+
+    public void moveLose(AnimationSequence bridge, RigidBody rigidBridge, AnimationSequence character) {
+        bridge.add(MoveRigidBodyTo.build(rigidBridge,-8,-40,1));
+        bridge.start();
+
+        character.add(WaitAnimation.build(0.5f));
+        character.add(MoveToAnimation.build(character.getOwner(),-8,-40,1));
         character.start();
     }
 }

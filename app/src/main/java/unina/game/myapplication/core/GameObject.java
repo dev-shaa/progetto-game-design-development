@@ -2,7 +2,6 @@ package unina.game.myapplication.core;
 
 import android.util.ArrayMap;
 
-import com.badlogic.androidgames.framework.Pool;
 import com.badlogic.androidgames.framework.PoolManual;
 
 import java.util.EnumMap;
@@ -20,30 +19,6 @@ public final class GameObject {
         GameObject go = new GameObject();
         go.scene = scene;
         return go;
-    }
-
-    /**
-     * Creates a GameObject with the specified components.
-     *
-     * @param components components to add
-     * @return a GameObject with the given components
-     */
-    static GameObject create(Scene scene, Component... components) {
-        return null;
-//        GameObject gameObject = create(scene);
-//
-//        for (Component component : components) {
-//            if (component.owner != null)
-//                throw new RuntimeException("Component is already owned by another GameObject");
-//
-//            if (gameObject.hasComponent(component.getType()))
-//                throw new RuntimeException("GameObject already has a component of the same type");
-//
-//            component.owner = gameObject;
-//            gameObject.components.put(component.getType(), component);
-//        }
-//
-//        return gameObject;
     }
 
     /**
@@ -137,15 +112,24 @@ public final class GameObject {
         return components.values();
     }
 
+    /**
+     * Adds a component of the given type to this GameObject.
+     *
+     * @param type class of the component to add
+     * @param <T>  type of the component to add
+     * @return the added component
+     * @throws IllegalStateException if the GameObject has already been initialized
+     * @throws RuntimeException      if the GameObject already has a component of the same type, or if the desired component doesn't have a public no-arg constructor
+     */
     public <T extends Component> T addComponent(Class<T> type) {
         if (initialized)
             throw new IllegalStateException("GameObject was already initialized");
 
         try {
             PoolManual<Component> pool = componentPools.get(type);
-            T component = pool == null || pool.isEmpty() ?
-                    type.getConstructor().newInstance() :
-                    (T) pool.get();
+
+            @SuppressWarnings("unchecked")
+            T component = pool == null || pool.isEmpty() ? type.getConstructor().newInstance() : (T) pool.get();
 
             if (component.owner != null)
                 throw new RuntimeException("Component is already owned by another GameObject");
@@ -158,7 +142,7 @@ public final class GameObject {
 
             return component;
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Could not create instance of component, make sure it has a public no-args constructor", e);
         }
     }
 

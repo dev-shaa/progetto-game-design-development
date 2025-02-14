@@ -31,8 +31,8 @@ public abstract class Scene extends Screen {
     private final HashSet<GameObject> gameObjects = new HashSet<>(8);
     private final List<InputComponent> inputComponents = new ArrayList<>(4);
     private final Collection<PhysicsComponent> physicsComponents = new ArraySet<>(4);
-    private final Collection<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
-    private final Collection<AnimationComponent> animationComponents = new ArraySet<>(4);
+    private final ArraySet<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
+    private final ArraySet<AnimationComponent> animationComponents = new ArraySet<>(4);
     private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
 
     private Scene sceneToBeLoaded;
@@ -110,8 +110,11 @@ public abstract class Scene extends Screen {
                 inputComponents.get(j).process(event);
         }
 
-        behaviourComponents.forEach(component -> component.update(deltaTime));
-        animationComponents.forEach(component -> component.update(deltaTime));
+        for (int i = 0; i < behaviourComponents.size(); i++)
+            behaviourComponents.valueAt(i).update(deltaTime);
+
+        for (int i = 0; i < animationComponents.size(); i++)
+            animationComponents.valueAt(i).update(deltaTime);
     }
 
     @Override
@@ -201,6 +204,13 @@ public abstract class Scene extends Screen {
         return gameObject;
     }
 
+    /**
+     * Creates a new GameObject which will be added in the scene at the start of the next frame.
+     *
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return the created GameObject placed at the given position
+     */
     public final GameObject createGameObject(float x, float y) {
         GameObject gameObject = createGameObject();
 
@@ -210,6 +220,14 @@ public abstract class Scene extends Screen {
         return gameObject;
     }
 
+    /**
+     * Creates a new GameObject which will be added in the scene at the start of the next frame.
+     *
+     * @param x     x coordinate
+     * @param y     y coordinate
+     * @param angle rotation in degrees
+     * @return the created GameObject placed at the given position and rotation
+     */
     public final GameObject createGameObject(float x, float y, float angle) {
         GameObject gameObject = createGameObject();
 

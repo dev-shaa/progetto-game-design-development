@@ -17,7 +17,7 @@ public class CursorJoint extends PhysicsComponent {
     private MouseJoint joint;
     private float x, y, maxForce;
 
-    private CursorJoint() {
+    public CursorJoint() {
 
     }
 

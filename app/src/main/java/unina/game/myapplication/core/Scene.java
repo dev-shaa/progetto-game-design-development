@@ -36,9 +36,10 @@ public abstract class Scene extends Screen {
     private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
 
     private Scene sceneToBeLoaded;
-    private final ArrayList<GameObject> gameObjectsToOperate = new ArrayList<>();
-    private final BitSet gameObjectsOperations = new BitSet();
     boolean layerDirty = false;
+
+    private final BitSet gameObjectsOperations = new BitSet();
+    private final ArrayList<GameObject> gameObjectsToOperate = new ArrayList<>();
 
     public Scene(Game game) {
         super(game);
@@ -51,7 +52,10 @@ public abstract class Scene extends Screen {
         world = new World(GRAVITY_X, GRAVITY_Y);
         world.setContactListener(collisionListener);
 
-        camera = GameObject.create(this, new Camera(game.getGraphics()));
+        camera = GameObject.create(this);
+        Camera cameraComponent = camera.addComponent(Camera.class);
+        cameraComponent.setGraphics(game.getGraphics());
+        cameraComponent.setSize(10);
         camera.initialize();
 
         sceneToBeLoaded = null;
@@ -161,7 +165,6 @@ public abstract class Scene extends Screen {
         gameObjectsOperations.clear();
 
         camera.dispose();
-        camera = null;
     }
 
     /**
@@ -198,25 +201,22 @@ public abstract class Scene extends Screen {
         return gameObject;
     }
 
-    /**
-     * Creates a new GameObject which will be added in the scene at the start of the next frame.
-     *
-     * @param components components of the GameObject
-     * @return the created GameObject
-     */
-    public final GameObject createGameObject(Component... components) {
-        GameObject gameObject = GameObject.create(this, components);
+    public final GameObject createGameObject(float x, float y) {
+        GameObject gameObject = createGameObject();
 
-        gameObjectsOperations.set(gameObjectsToOperate.size());
-        gameObjectsToOperate.add(gameObject);
+        gameObject.x = x;
+        gameObject.y = y;
 
         return gameObject;
     }
 
-    public final GameObject createGameObject(float x, float y, Component... components) {
-        GameObject gameObject = createGameObject(components);
+    public final GameObject createGameObject(float x, float y, float angle) {
+        GameObject gameObject = createGameObject();
+
         gameObject.x = x;
         gameObject.y = y;
+        gameObject.angle = angle;
+
         return gameObject;
     }
 
@@ -227,7 +227,7 @@ public abstract class Scene extends Screen {
      */
     public final void removeGameObject(GameObject gameObject) {
         if (gameObject == camera)
-            throw new RuntimeException();
+            throw new RuntimeException("Can't remove Camera");
 
         if (gameObject != null && gameObject.scene == this) {
             gameObjectsOperations.clear(gameObjectsToOperate.size());

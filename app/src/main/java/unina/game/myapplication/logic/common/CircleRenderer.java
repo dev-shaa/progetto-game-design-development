@@ -12,14 +12,10 @@ public class CircleRenderer extends RenderComponent {
         return new CircleRenderer();
     }
 
-    public float radius;
-    public int color;
+    public float radius = 0.5f;
+    public int color = Color.WHITE;
 
     private Camera camera;
-
-    private CircleRenderer() {
-        this.color = Color.WHITE;
-    }
 
     @Override
     public void onInitialize() {
@@ -31,6 +27,8 @@ public class CircleRenderer extends RenderComponent {
     public void onRemove() {
         super.onRemove();
         camera = null;
+        color = Color.WHITE;
+        radius = 0.5f;
     }
 
     @Override

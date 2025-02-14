@@ -10,15 +10,8 @@ import unina.game.myapplication.core.RenderComponent;
 
 public class SpriteRenderer extends RenderComponent {
 
-    private static Pool<SpriteRenderer> pool;
-
     public synchronized static SpriteRenderer build() {
-        if (pool == null)
-            pool = new Pool<>(SpriteRenderer::new, 16);
-
-        SpriteRenderer renderer = pool.get();
-        renderer.setPivot(0.5f, 0.5f);
-        return renderer;
+        return new SpriteRenderer();
     }
 
     public int srcX, srcY;
@@ -30,7 +23,7 @@ public class SpriteRenderer extends RenderComponent {
     private float pivotX, pivotY;
     private Camera camera;
 
-    private SpriteRenderer() {
+    public SpriteRenderer() {
         this.color = Color.WHITE;
         this.width = this.height = 1;
         this.pivotX = this.pivotY = 0.5f;
@@ -77,7 +70,7 @@ public class SpriteRenderer extends RenderComponent {
         image = null;
         camera = null;
         color = Color.WHITE;
-        pool.free(this);
+        this.pivotX = this.pivotY = 0.5f;
     }
 
     @Override

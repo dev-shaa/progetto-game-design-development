@@ -7,17 +7,11 @@ import unina.game.myapplication.core.physics.RigidBody;
 
 public final class PhysicsButton extends BehaviourComponent {
 
-    private static final Pool<PhysicsButton> pool = new Pool<>(PhysicsButton::new, 8);
-
-    public static PhysicsButton build() {
-        return pool.get();
-    }
-
     private int counter;
     public Runnable onCollisionEnter;
     public Runnable onCollisionExit;
 
-    private PhysicsButton() {
+    public PhysicsButton() {
 
     }
 
@@ -30,9 +24,7 @@ public final class PhysicsButton extends BehaviourComponent {
     @Override
     public void onRemove() {
         super.onRemove();
-
         onCollisionEnter = onCollisionExit = null;
-        pool.free(this);
     }
 
     @Override

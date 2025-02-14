@@ -1,12 +1,15 @@
 package unina.game.myapplication.core;
 
+import android.util.ArrayMap;
+
 import com.badlogic.androidgames.framework.Pool;
+import com.badlogic.androidgames.framework.PoolManual;
 
 import java.util.EnumMap;
 
 public final class GameObject {
 
-    private static final Pool<GameObject> pool = new Pool<>(GameObject::new, 32);
+    private static final ArrayMap<Class<?>, PoolManual<Component>> componentPools = new ArrayMap<>();
 
     /**
      * Creates a GameObject without components.
@@ -14,9 +17,8 @@ public final class GameObject {
      * @return an empty GameObject
      */
     static GameObject create(Scene scene) {
-        GameObject go = pool.get();
+        GameObject go = new GameObject();
         go.scene = scene;
-        go.setTransform(0, 0, 0);
         return go;
     }
 
@@ -27,20 +29,21 @@ public final class GameObject {
      * @return a GameObject with the given components
      */
     static GameObject create(Scene scene, Component... components) {
-        GameObject gameObject = create(scene);
-
-        for (Component component : components) {
-            if (component.owner != null)
-                throw new RuntimeException("Component is already owned by another GameObject");
-
-            if (gameObject.hasComponent(component.getType()))
-                throw new RuntimeException("GameObject already has a component of the same type");
-
-            component.owner = gameObject;
-            gameObject.components.put(component.getType(), component);
-        }
-
-        return gameObject;
+        return null;
+//        GameObject gameObject = create(scene);
+//
+//        for (Component component : components) {
+//            if (component.owner != null)
+//                throw new RuntimeException("Component is already owned by another GameObject");
+//
+//            if (gameObject.hasComponent(component.getType()))
+//                throw new RuntimeException("GameObject already has a component of the same type");
+//
+//            component.owner = gameObject;
+//            gameObject.components.put(component.getType(), component);
+//        }
+//
+//        return gameObject;
     }
 
     /**
@@ -61,6 +64,7 @@ public final class GameObject {
     Scene scene;
 
     private final EnumMap<Component.Type, Component> components = new EnumMap<>(Component.Type.class);
+    private boolean initialized;
 
     /**
      * Creates an empty GameObject.
@@ -75,6 +79,8 @@ public final class GameObject {
     void initialize() {
         for (Component component : getComponents())
             component.onInitialize();
+
+        initialized = true;
     }
 
     /**
@@ -82,11 +88,11 @@ public final class GameObject {
      */
     void dispose() {
         for (Component component : getComponents())
-            component.onRemove();
+            disposeComponent(component);
 
         components.clear();
         scene = null;
-        pool.free(this);
+        initialized = false;
     }
 
     /**
@@ -129,6 +135,47 @@ public final class GameObject {
      */
     public Iterable<Component> getComponents() {
         return components.values();
+    }
+
+    public <T extends Component> T addComponent(Class<T> type) {
+        if (initialized)
+            throw new IllegalStateException("GameObject was already initialized");
+
+        try {
+            PoolManual<Component> pool = componentPools.get(type);
+            T component = pool == null || pool.isEmpty() ?
+                    type.getConstructor().newInstance() :
+                    (T) pool.get();
+
+            if (component.owner != null)
+                throw new RuntimeException("Component is already owned by another GameObject");
+
+            if (hasComponent(component.getType()))
+                throw new RuntimeException("GameObject already has a component of the same type");
+
+            component.owner = this;
+            components.put(component.getType(), component);
+
+            return component;
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void disposeComponent(Component component) {
+        component.onRemove();
+
+        if (component.getComponentPoolSize() > 0) {
+            Class<?> type = component.getClass();
+            PoolManual<Component> pool = componentPools.get(type);
+
+            if (pool == null) {
+                pool = new PoolManual<>(component.getComponentPoolSize());
+                componentPools.put(type, pool);
+            }
+
+            pool.free(component);
+        }
     }
 
 }

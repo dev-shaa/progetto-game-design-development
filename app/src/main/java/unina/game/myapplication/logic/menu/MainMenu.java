@@ -36,18 +36,20 @@ public class MainMenu extends Scene {
 
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
-        RectRenderer fadeRenderer = RectRenderer.build();
+        GameObject fadeGO = createGameObject();
+        RectRenderer fadeRenderer = fadeGO.addComponent(RectRenderer.class);
         fadeRenderer.setSize(100, 100);
         fadeRenderer.setColor(Color.TRANSPARENT);
         fadeRenderer.setLayer(Short.MAX_VALUE);
-        createGameObject(fadeRenderer);
 
-        AnimationSequence sequence = AnimationSequence.build();
-        createGameObject(sequence);
 
-        DebugRenderer selectLevelButtonRenderer = new DebugRenderer(2, 1);
-        Button selectLevelButton = new Button(2, 1);
-        createGameObject(selectLevelButton, selectLevelButtonRenderer);
+        AnimationSequence sequence = createGameObject().addComponent(AnimationSequence.class);
+
+        GameObject selectLevelButtonGO = createGameObject();
+        DebugRenderer selectLevelButtonRenderer = selectLevelButtonGO.addComponent(DebugRenderer.class);
+        selectLevelButtonRenderer.setSize(2, 1);
+        Button selectLevelButton = selectLevelButtonGO.addComponent(Button.class);
+        selectLevelButton.setSize(2, 1);
 
         selectLevelButton.setOnClick(() -> {
 //            selectSound.play(1);
@@ -68,10 +70,11 @@ public class MainMenu extends Scene {
         for (int i = 0; i < levelSaver.getLevelsCount(); i++) {
             final Class<? extends Scene> level = levelSaver.getLevel(i);
 
-            DebugRenderer buttonRenderer = new DebugRenderer(2, 1);
-            Button button = new Button(2, 1);
-            GameObject buttonGameObject = createGameObject(button, buttonRenderer);
-            buttonGameObject.y = -20 - i * 1.5f;
+            GameObject buttonGameObject = createGameObject(0, -20 - i * 1.5f);
+            DebugRenderer buttonRenderer = buttonGameObject.addComponent(DebugRenderer.class);
+            buttonRenderer.setSize(2, 1);
+            Button button = buttonGameObject.addComponent(Button.class);
+            button.setSize(2, 1);
 
             if (i <= levelSaver.getLatestCompletedLevel()) {
                 button.interactable = true;

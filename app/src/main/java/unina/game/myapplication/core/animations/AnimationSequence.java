@@ -19,7 +19,7 @@ public class AnimationSequence extends AnimationComponent {
     private Animation currentAnimation = null;
     private boolean stopped = true;
 
-    private AnimationSequence() {
+    public AnimationSequence() {
 
     }
 

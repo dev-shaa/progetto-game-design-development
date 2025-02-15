@@ -4,11 +4,13 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
+import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
@@ -16,6 +18,7 @@ import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.core.rendering.TextRenderer;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
@@ -28,6 +31,14 @@ import unina.game.myapplication.logic.common.RectRenderer;
 
 public class Level2 extends Scene {
 
+    private static final int PALETTE_BACKGROUND = 0xff005387;
+    private static final int PALETTE_PRIMARY = 0xffECECE7;
+
+    private Sound buttonSound;
+    private Sound buttonsAppearSound;
+    private Sound movingPlatformSound;
+    private Sound winSound;
+    
     private boolean isPressed = false;
 
     private Pixmap elementsImage;
@@ -48,7 +59,20 @@ public class Level2 extends Scene {
 //        backgroundImage = game.getGraphics().newPixmap("graphics/background-level1.png",Graphics.PixmapFormat.ARGB8888);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
 
+        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
+        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
+        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+
         Camera.getInstance().setSize(20);
+
+        //Background
+        GameObject background = createGameObject();
+        RectRenderer backgroundRender = background.addComponent(RectRenderer.class);
+        backgroundRender.setSize(20,80);
+        backgroundRender.setColor(PALETTE_BACKGROUND);
+        backgroundRender.setLayer(-10);
+
 
 
         // Transition panel
@@ -72,7 +96,7 @@ public class Level2 extends Scene {
 
         RectRenderer leftFloorRenderer = leftFloor.addComponent(RectRenderer.class);
         leftFloorRenderer.setSize(floorW, floorH);
-        leftFloorRenderer.setColor(Color.GREY);
+        leftFloorRenderer.setColor(PALETTE_PRIMARY);
 
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
@@ -82,7 +106,7 @@ public class Level2 extends Scene {
         GameObject rightFloor = createGameObject(6, -14);
 
         PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
-        rightFloorRenderer.color = Color.GREY;
+        rightFloorRenderer.color = PALETTE_PRIMARY;
         rightFloorRenderer.width = floorW;
         rightFloorRenderer.height = floorH;
 
@@ -96,7 +120,7 @@ public class Level2 extends Scene {
         float platW = 10;
         float platH = 0.5f;
         PlatformRenderComponent platformRenderComponent3 = platform.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent3.color = Color.GREY;
+        platformRenderComponent3.color = PALETTE_PRIMARY;
         platformRenderComponent3.width = platW;
         platformRenderComponent3.height = platH;
 
@@ -111,7 +135,7 @@ public class Level2 extends Scene {
         GameObject platform2 = createGameObject(-10, 5);
 
         PlatformRenderComponent platformRenderComponent4 = platform2.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent4.color = Color.GREY;
+        platformRenderComponent4.color = PALETTE_PRIMARY;
         platformRenderComponent4.width = plat2W;
         platformRenderComponent4.height = plat2H;
 
@@ -123,7 +147,7 @@ public class Level2 extends Scene {
         GameObject rock = createGameObject(4, 18);
 
         RockRenderComponent rockRenderComponent = rock.addComponent(RockRenderComponent.class);
-        rockRenderComponent.color = Color.GREY;
+        rockRenderComponent.color = PALETTE_PRIMARY;
         rockRenderComponent.radius = 2;
         RigidBody rigidRock = rock.addComponent(RigidBody.class);
         rigidRock.setType(RigidBody.Type.DYNAMIC);
@@ -256,7 +280,45 @@ public class Level2 extends Scene {
         pressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
-        pressurePlate.setOnCollisionEnter(() -> move(pressurePlateRenderer, pressurePlateRigidBody, bridge, character, gameOverTriggerGO));
+        pressurePlate.setOnCollisionEnter(() -> {
+            if (isPressed)
+                return;
+
+            isPressed = true;
+
+            buttonSound.play(1);
+            pressurePlateRenderer.color = Color.GREEN;
+            pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y-0.5f);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveToAnimation.build(bridge, 3, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
+            animator.add(WaitAnimation.build(0.2f), () -> {
+                characterRenderer.setSrcPosition(128, 128);
+                winSound.play(1);
+            });
+            animator.add(MoveToAnimation.build(character, 6f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
+            animator.start();
+//            animator.add(ParallelAnimation.build(
+//                    MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),
+//                    MoveToAnimation.build(nextLevelButtonGO, 4, 1, 0.5f)
+//            ));
+//            animator.add(ParallelAnimation.build(
+//                    MoveToAnimation.build(retryButtonGO, -4, 2, 0.05f),
+//                    MoveToAnimation.build(nextLevelButtonGO, 4, 2, 0.05f)
+//            ));
+//            animator.add(ParallelAnimation.build(
+//                    MoveToAnimation.build(retryButtonGO, -4, 0, 0.25f),
+//                    MoveToAnimation.build(nextLevelButtonGO, 4, 0, 0.25f)
+//            ));
+            animator.start();
+
+
+
+//            prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
+
+                });
 
         // Pressure plate platform
         float pressurePlatePlatformWidth = 4;
@@ -264,7 +326,7 @@ public class Level2 extends Scene {
         GameObject pressurePlatePlatformGO = createGameObject(0, 4);
 
         PlatformRenderComponent pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(PlatformRenderComponent.class);
-        pressurePlatePlatformRenderer.color = Color.GREY;
+        pressurePlatePlatformRenderer.color = PALETTE_PRIMARY;
         pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
         pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
 
@@ -340,6 +402,10 @@ public class Level2 extends Scene {
         for (PressableComponent component : interactableComponents)
             component.interactable = false;
 
+
+//        TextRenderer prova = TextRenderer.build();
+//        prova.setText("Sei Morto");
+//        prova.setSize(20);
         // Retry button
 //        GameObject retryButtonGO = createGameObject(4, -21);
 //

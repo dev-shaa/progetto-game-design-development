@@ -9,7 +9,6 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
@@ -23,11 +22,9 @@ import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
-import unina.game.myapplication.logic.TestingRender;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level2 extends Scene {
 
@@ -48,9 +45,11 @@ public class Level2 extends Scene {
     public void initialize() {
         super.initialize();
 
+//        backgroundImage = game.getGraphics().newPixmap("graphics/background-level1.png",Graphics.PixmapFormat.ARGB8888);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
 
         Camera.getInstance().setSize(20);
+
 
         // Transition panel
         GameObject fade = createGameObject();
@@ -141,12 +140,18 @@ public class Level2 extends Scene {
         rigidDrag.setCollider(BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
         rigidDrag.setSleepingAllowed(false);
 
-        PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
-        platformDraggedRenderComponent.setStart(3, 14);
-        platformDraggedRenderComponent.setEnd(5, 5);
-        platformDraggedRenderComponent.color = Color.DARKCYAN;
-        platformDraggedRenderComponent.width = dragPlatformWidth;
-        platformDraggedRenderComponent.height = dragPlatformHeight;
+        SpriteRenderer platformDraggedRenderComponent = platformDragged.addComponent(SpriteRenderer.class);
+        platformDraggedRenderComponent.setImage(elementsImage);
+        platformDraggedRenderComponent.setSrcPosition(128,48);
+        platformDraggedRenderComponent.setSrcSize(128,32);
+        platformDraggedRenderComponent.setSize(dragPlatformWidth,dragPlatformHeight);
+
+//        PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
+//        platformDraggedRenderComponent.setStart(3, 14);
+//        platformDraggedRenderComponent.setEnd(5, 5);
+//        platformDraggedRenderComponent.color = Color.DARKCYAN;
+//        platformDraggedRenderComponent.width = dragPlatformWidth;
+//        platformDraggedRenderComponent.height = dragPlatformHeight;
 
         PlatformDraggingComponent platformDraggingComponent = platformDragged.addComponent(PlatformDraggingComponent.class);
         platformDraggingComponent.width = 10;
@@ -166,12 +171,19 @@ public class Level2 extends Scene {
         rigidDrag2.setCollider(BoxCollider.build(dragPlatform2Width, dragPlatform2Height));
         rigidDrag2.setSleepingAllowed(false);
 
-        PlatformRenderComponent platformDragged2RenderComponent = platformDragged2.addComponent(PlatformRenderComponent.class);
-        platformDragged2RenderComponent.color = Color.DARKCYAN;
-        platformDragged2RenderComponent.width = dragPlatform2Width;
-        platformDragged2RenderComponent.height = dragPlatform2Height;
-        platformDragged2RenderComponent.setStart(-12, 14);
-        platformDragged2RenderComponent.setEnd(-8, 10);
+        SpriteRenderer platformDraggedR2enderComponent = platformDragged2.addComponent(SpriteRenderer.class);
+        platformDraggedR2enderComponent.setImage(elementsImage);
+        platformDraggedR2enderComponent.setSrcPosition(128,48);
+        platformDraggedR2enderComponent.setSrcSize(128,32);
+        platformDraggedR2enderComponent.setSize(dragPlatformWidth,dragPlatformHeight);
+
+
+//        PlatformRenderComponent platformDragged2RenderComponent = platformDragged2.addComponent(PlatformRenderComponent.class);
+//        platformDragged2RenderComponent.color = Color.DARKCYAN;
+//        platformDragged2RenderComponent.width = dragPlatform2Width;
+//        platformDragged2RenderComponent.height = dragPlatform2Height;
+//        platformDragged2RenderComponent.setStart(-12, 14);
+//        platformDragged2RenderComponent.setEnd(-8, 10);
 
         PlatformDraggingComponent platformDragging2Component = platformDragged2.addComponent(PlatformDraggingComponent.class);
         platformDragging2Component.width = 10;
@@ -373,9 +385,9 @@ public class Level2 extends Scene {
         loadScene(Level2.class);
     }
 
-    private void toMenu() {
-        loadScene(MainMenu.class);
-    }
+//    private void toMenu() {
+//        loadScene(MainMenu.class);
+//    }
 
     private void nextLevel() {
         loadScene(Level3.class);

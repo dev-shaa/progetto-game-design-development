@@ -48,7 +48,7 @@ public class Level1 extends Scene {
 
         backgroundImage = game.getGraphics().newPixmap("graphics/background-level1.png", Graphics.PixmapFormat.ARGB8888);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
-//
+
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
         movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
@@ -196,6 +196,8 @@ public class Level1 extends Scene {
         buttonsAppearSound.dispose();
         movingPlatformSound.dispose();
         winSound.dispose();
+
+        animator = null;
     }
 
 }

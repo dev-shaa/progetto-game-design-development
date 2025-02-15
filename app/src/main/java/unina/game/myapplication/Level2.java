@@ -2,16 +2,21 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
+import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Pixmap;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
+import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
+import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
@@ -20,11 +25,20 @@ import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
 import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level2 extends Scene {
 
     private boolean isPressed = false;
+
+    private Pixmap elementsImage;
+
+    private RectRenderer fullScreenRenderer;
+    private AnimationSequence animator;
+
+    private SpriteRenderer characterRenderer;
 
     public Level2(Game game) {
         super(game);
@@ -34,7 +48,22 @@ public class Level2 extends Scene {
     public void initialize() {
         super.initialize();
 
+        elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
+
         Camera.getInstance().setSize(20);
+
+        // Transition panel
+        GameObject fade = createGameObject();
+        fullScreenRenderer = fade.addComponent(RectRenderer.class);
+        fullScreenRenderer.setSize(50, 50);
+        fullScreenRenderer.setLayer(Integer.MAX_VALUE);
+        fullScreenRenderer.setColor(Color.TRANSPARENT);
+
+        // Animator
+        GameObject animatorGO = createGameObject();
+        animator = animatorGO.addComponent(AnimationSequence.class);
+        animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
+        animator.start();
 
         float floorW = 6;
         float floorH = 15;
@@ -42,10 +71,9 @@ public class Level2 extends Scene {
         // Left floor
         GameObject leftFloor = createGameObject(-6, -14);
 
-        PlatformRenderComponent leftFloorRenderer = leftFloor.addComponent(PlatformRenderComponent.class);
-        leftFloorRenderer.color = Color.GREY;
-        leftFloorRenderer.width = floorW;
-        leftFloorRenderer.height = floorH;
+        RectRenderer leftFloorRenderer = leftFloor.addComponent(RectRenderer.class);
+        leftFloorRenderer.setSize(floorW, floorH);
+        leftFloorRenderer.setColor(Color.GREY);
 
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
@@ -77,7 +105,6 @@ public class Level2 extends Scene {
         rigidPlatform.setType(RigidBody.Type.STATIC);
         rigidPlatform.setCollider(BoxCollider.build(platW, platH));
 
-
         //Piattaforma 4
         float plat2W = 1;
         float plat2H = 8;
@@ -93,7 +120,7 @@ public class Level2 extends Scene {
         rigidPlatform2.setType(RigidBody.Type.STATIC);
         rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
 
-        //Masso
+        // Rock
         GameObject rock = createGameObject(4, 18);
 
         RockRenderComponent rockRenderComponent = rock.addComponent(RockRenderComponent.class);
@@ -101,13 +128,13 @@ public class Level2 extends Scene {
         rockRenderComponent.radius = 2;
         RigidBody rigidRock = rock.addComponent(RigidBody.class);
         rigidRock.setType(RigidBody.Type.DYNAMIC);
-        rigidRock.setCollider(CircleCollider.build(2));
+        rigidRock.setCollider(CircleCollider.build(2, 100, 0, 1, false));
 
         //Piattaforma scorrevole
         float dragPlatformWidth = 7.5f;
         float dragPlatformHeight = 0.5f;
 
-        GameObject platformDragged = createGameObject(3, 14, 120);
+        GameObject platformDragged = createGameObject(3, 14, 102.5f);
 
         RigidBody rigidDrag = platformDragged.addComponent(RigidBody.class);
         rigidDrag.setType(RigidBody.Type.KINEMATIC);
@@ -143,6 +170,8 @@ public class Level2 extends Scene {
         platformDragged2RenderComponent.color = Color.DARKCYAN;
         platformDragged2RenderComponent.width = dragPlatform2Width;
         platformDragged2RenderComponent.height = dragPlatform2Height;
+        platformDragged2RenderComponent.setStart(-12, 14);
+        platformDragged2RenderComponent.setEnd(-8, 10);
 
         PlatformDraggingComponent platformDragging2Component = platformDragged2.addComponent(PlatformDraggingComponent.class);
         platformDragging2Component.width = 10;
@@ -152,36 +181,53 @@ public class Level2 extends Scene {
         platformDragging2Component.setEnd(-8, 10);
 
         // Bridge
-        float bridgeWidth = 6;
-        float bridgeHeight = 1;
+        GameObject bridge = createGameObject(-2.5f, -6.6f);
 
-        GameObject bridge = createGameObject();
-
-        PlatformRenderComponent bridgeRenderComponent = bridge.addComponent(PlatformRenderComponent.class);
-        bridgeRenderComponent.color = Color.GOLD;
-        bridgeRenderComponent.width = bridgeWidth;
-        bridgeRenderComponent.height = bridgeHeight;
+        SpriteRenderer bridgeRenderComponent = bridge.addComponent(SpriteRenderer.class);
+        bridgeRenderComponent.setImage(elementsImage);
+        bridgeRenderComponent.setSrcPosition(128, 48);
+        bridgeRenderComponent.setSrcSize(128, 32);
+        bridgeRenderComponent.setSize(6.4f, 1);
+        bridgeRenderComponent.setPivot(1f, 0f);
+        bridgeRenderComponent.setLayer(-3);
 
         // Character
-        float characterWidth = 2;
-        float characterHeight = 2;
+        GameObject character = createGameObject(-6, -6.5f);
 
-        GameObject character = createGameObject(-6, -5.5f);
-
-        TestingRender characterRenderer = character.addComponent(TestingRender.class);
-        characterRenderer.width = characterWidth;
-        characterRenderer.height = characterHeight;
+        characterRenderer = character.addComponent(SpriteRenderer.class);
+        characterRenderer.setImage(elementsImage);
+        characterRenderer.setSize(2, 2);
+        characterRenderer.setSrcPosition(0, 128);
+        characterRenderer.setSrcSize(128, 128);
+        characterRenderer.setPivot(0.5f, 1);
+        characterRenderer.setLayer(-2);
 
         // Game Over trigger
-        GameObject gameOverTriggerGO = createGameObject(-6, -5.5f);
+
+        // NOTE:
+        // The trigger is a separate object from the character renderer because it's easier to deal with
+
+        // NOTE:
+        // It may be better to make the trigger size NOT equals to the character size
+        // - wider: ensure the trigger detects the rock falling
+        // - less tall: event is triggered when the rock is already over the character, animations can have a better effect this way
+
+        GameObject gameOverTriggerGO = createGameObject(-6, -6f);
 
         RigidBody gameOverTriggerRigidBody = gameOverTriggerGO.addComponent(RigidBody.class);
         gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
-        gameOverTriggerRigidBody.setCollider(BoxCollider.build(characterWidth, characterHeight, true));
-        gameOverTriggerRigidBody.setSleepingAllowed(false);
+        gameOverTriggerRigidBody.setCollider(BoxCollider.build(4, 1, true));
 
         PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
         gameOverTrigger.setOnCollisionEnter(() -> gameOver(platformDraggingComponent, platformDragging2Component));
+
+        if (DEBUG) {
+            // Visualize the trigger in debug mode
+            RectRenderer debugTriggerRenderer = gameOverTriggerGO.addComponent(RectRenderer.class);
+            debugTriggerRenderer.setColor(Color.MAGENTA);
+            debugTriggerRenderer.setLayer(-16);
+            debugTriggerRenderer.setSize(4, 1);
+        }
 
         // Pressure plate
         float pressurePlateWidth = 3;
@@ -196,7 +242,6 @@ public class Level2 extends Scene {
         RigidBody pressurePlateRigidBody = pressurePlateGO.addComponent(RigidBody.class);
         pressurePlateRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
-        pressurePlateRigidBody.setSleepingAllowed(false);
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
         pressurePlate.setOnCollisionEnter(() -> move(pressurePlateRenderer, pressurePlateRigidBody, bridge, character, gameOverTriggerGO));
@@ -214,6 +259,17 @@ public class Level2 extends Scene {
         RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
         pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlatePlatformRigidBody.setCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+
+        animator = null;
+        fullScreenRenderer = null;
+        characterRenderer = null;
+
+        elementsImage.dispose();
     }
 
     private void move(PlatformRenderComponent prova, RigidBody prova2, GameObject bridge, GameObject character, GameObject characterSensor) {
@@ -248,10 +304,11 @@ public class Level2 extends Scene {
         nextLevelButton.setOnClick(this::nextLevel);
 
         // Animator
-        GameObject animatorGO = createGameObject();
-        AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
-        animator.add(MoveToAnimation.build(bridge, 0, -7, 1));
-        animator.add(MoveToAnimation.build(character, 6, -5.5f, 1));
+//        GameObject animatorGO = createGameObject();
+//        AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
+        animator.clear();
+        animator.add(MoveToAnimation.build(bridge, 2.8f, bridge.y, 1));
+        animator.add(MoveToAnimation.build(character, 6, character.y, 1));
         animator.add(ParallelAnimation.build(
                 MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),
                 MoveToAnimation.build(nextLevelButtonGO, 4, 1, 0.5f)
@@ -272,40 +329,43 @@ public class Level2 extends Scene {
             component.interactable = false;
 
         // Retry button
-        GameObject retryButtonGO = createGameObject(4, -21);
-
-        DebugRenderer retryButtonRenderer = retryButtonGO.addComponent(DebugRenderer.class);
-        retryButtonRenderer.setSize(6, 3);
-
-        Button retryButton = retryButtonGO.addComponent(Button.class);
-        retryButton.setSize(6, 3);
-        retryButton.setOnClick(this::retry);
+//        GameObject retryButtonGO = createGameObject(4, -21);
+//
+//        DebugRenderer retryButtonRenderer = retryButtonGO.addComponent(DebugRenderer.class);
+//        retryButtonRenderer.setSize(6, 3);
+//
+//        Button retryButton = retryButtonGO.addComponent(Button.class);
+//        retryButton.setSize(6, 3);
+//        retryButton.setOnClick(this::retry);
 
         // Menu button
-        GameObject menuButtonGO = createGameObject(-4, -21);
-
-        DebugRenderer menuButtonRenderer = menuButtonGO.addComponent(DebugRenderer.class);
-        menuButtonRenderer.setSize(6, 3);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(6, 3);
-        menuButton.setOnClick(this::toMenu);
+//        GameObject menuButtonGO = createGameObject(-4, -21);
+//
+//        DebugRenderer menuButtonRenderer = menuButtonGO.addComponent(DebugRenderer.class);
+//        menuButtonRenderer.setSize(6, 3);
+//
+//        Button menuButton = menuButtonGO.addComponent(Button.class);
+//        menuButton.setSize(6, 3);
+//        menuButton.setOnClick(this::toMenu);
 
         // Animator
-        GameObject animatorGO = createGameObject();
-        AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
-        animator.add(ParallelAnimation.build(
-                MoveToAnimation.build(retryButtonGO, 4, 1, 0.5f),
-                MoveToAnimation.build(menuButtonGO, -4, 1, 0.5f)
-        ));
-        animator.add(ParallelAnimation.build(
-                MoveToAnimation.build(retryButtonGO, 4, 2, 0.05f),
-                MoveToAnimation.build(menuButtonGO, -4, 2, 0.05f)
-        ));
-        animator.add(ParallelAnimation.build(
-                MoveToAnimation.build(retryButtonGO, 4, 0, 0.25f),
-                MoveToAnimation.build(menuButtonGO, -4, 0, 0.25f)
-        ));
+        characterRenderer.setSize(4, 0.5f);
+
+        animator.clear();
+        animator.add(WaitAnimation.build(2));
+        animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), this::retry);
+//        animator.add(ParallelAnimation.build(
+//                MoveToAnimation.build(retryButtonGO, 4, 1, 0.5f),
+//                MoveToAnimation.build(menuButtonGO, -4, 1, 0.5f)
+//        ));
+//        animator.add(ParallelAnimation.build(
+//                MoveToAnimation.build(retryButtonGO, 4, 2, 0.05f),
+//                MoveToAnimation.build(menuButtonGO, -4, 2, 0.05f)
+//        ));
+//        animator.add(ParallelAnimation.build(
+//                MoveToAnimation.build(retryButtonGO, 4, 0, 0.25f),
+//                MoveToAnimation.build(menuButtonGO, -4, 0, 0.25f)
+//        ));
         animator.start();
     }
 

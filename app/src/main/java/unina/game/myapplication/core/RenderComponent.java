@@ -16,6 +16,7 @@ public abstract class RenderComponent extends Component {
     public void onRemove() {
         super.onRemove();
         scene = null;
+        layer = 0;
     }
 
     /**

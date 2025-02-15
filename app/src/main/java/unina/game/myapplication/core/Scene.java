@@ -20,6 +20,8 @@ import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
+    public static final boolean DEBUG = true; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
+
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
     private static final float GRAVITY_X = 0, GRAVITY_Y = -9.82f;
 
@@ -128,6 +130,21 @@ public abstract class Scene extends Screen {
         if (layerDirty) {
             renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
             layerDirty = false;
+        }
+
+        if (DEBUG) {
+            for (int i = -50; i < 50; i++) {
+                int color = i % 5 == 0 ? Color.WHITE : Color.GREY;
+
+                if (i == 0)
+                    color = Color.RED;
+
+                float x1 = Camera.getInstance().worldToScreenX(i);
+                graphics.drawLine(x1, 0, x1, graphics.getHeight(), color);
+
+                float y1 = Camera.getInstance().worldToScreenY(i);
+                graphics.drawLine(0, y1, graphics.getWidth(), y1, color);
+            }
         }
 
         // Render each component

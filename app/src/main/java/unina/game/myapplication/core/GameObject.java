@@ -131,9 +131,6 @@ public final class GameObject {
             @SuppressWarnings("unchecked")
             T component = pool == null || pool.isEmpty() ? type.getConstructor().newInstance() : (T) pool.get();
 
-            if (component.owner != null)
-                throw new RuntimeException("Component is already owned by another GameObject");
-
             if (hasComponent(component.getType()))
                 throw new RuntimeException("GameObject already has a component of the same type");
 

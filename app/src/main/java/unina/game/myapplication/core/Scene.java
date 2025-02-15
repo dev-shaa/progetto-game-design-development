@@ -132,24 +132,31 @@ public abstract class Scene extends Screen {
             layerDirty = false;
         }
 
-        if (DEBUG) {
-            for (int i = -50; i < 50; i++) {
-                int color = i % 5 == 0 ? Color.WHITE : Color.GREY;
-
-                if (i == 0)
-                    color = Color.RED;
-
-                float x1 = Camera.getInstance().worldToScreenX(i);
-                graphics.drawLine(x1, 0, x1, graphics.getHeight(), color);
-
-                float y1 = Camera.getInstance().worldToScreenY(i);
-                graphics.drawLine(0, y1, graphics.getWidth(), y1, color);
-            }
-        }
+//        if (DEBUG) {
+//            for (int i = -50; i < 50; i++) {
+//                int color = i % 5 == 0 ? Color.WHITE : Color.GREY;
+//
+//                if (i == 0)
+//                    color = Color.RED;
+//
+//                float x1 = Camera.getInstance().worldToScreenX(i);
+//                graphics.drawLine(x1, 0, x1, graphics.getHeight(), color);
+//
+//                float y1 = Camera.getInstance().worldToScreenY(i);
+//                graphics.drawLine(0, y1, graphics.getWidth(), y1, color);
+//            }
+//        }
 
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)
             renderComponents.get(i).render(deltaTime, graphics);
+
+        if (DEBUG) {
+            for (GameObject gameObject : gameObjects) {
+                for (Component component : gameObject.getComponents())
+                    component.onDrawGizmos(graphics);
+            }
+        }
     }
 
     @Override

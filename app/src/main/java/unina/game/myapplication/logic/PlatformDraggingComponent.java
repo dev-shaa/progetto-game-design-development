@@ -1,5 +1,9 @@
 package unina.game.myapplication.logic;
 
+import com.badlogic.androidgames.framework.Color;
+import com.badlogic.androidgames.framework.Graphics;
+
+import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.Utility;
 import unina.game.myapplication.core.physics.RigidBody;
 
@@ -49,4 +53,15 @@ public class PlatformDraggingComponent extends PressableComponent {
         sqrDistance = (startX - endX) * (startX - endX) + (startY - endY) * (startY - endY);
     }
 
+    @Override
+    public void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
+
+        float x1 = Camera.getInstance().worldToScreenX(startX);
+        float y1 = Camera.getInstance().worldToScreenY(startY);
+        float x2 = Camera.getInstance().worldToScreenX(endX);
+        float y2 = Camera.getInstance().worldToScreenY(endY);
+
+        graphics.drawLine(x1, y1, x2, y2, Color.MAGENTA);
+    }
 }

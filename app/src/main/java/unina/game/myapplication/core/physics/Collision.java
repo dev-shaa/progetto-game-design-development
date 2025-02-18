@@ -4,6 +4,10 @@ public final class Collision {
 
     RigidBody a, b;
 
+    Collision() {
+
+    }
+
     @Override
     public int hashCode() {
         return a.hashCode() ^ b.hashCode();

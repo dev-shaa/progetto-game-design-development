@@ -26,6 +26,7 @@ public class DistanceJoint extends PhysicsComponent {
         def.setFrequencyHz(frequency);
 
         joint = world.createJoint(def);
+        joint.setUserData(this);
 
         def.delete();
     }
@@ -34,9 +35,12 @@ public class DistanceJoint extends PhysicsComponent {
     public void onRemove() {
         super.onRemove();
 
-        world.destroyJoint(joint);
+        if (joint != null) {
+            world.destroyJoint(joint);
+            joint = null;
+        }
+
         world = null;
-        joint = null;
         rigidBodyA = rigidBodyB = null;
     }
 

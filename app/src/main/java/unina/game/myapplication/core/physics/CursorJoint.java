@@ -34,6 +34,7 @@ public class CursorJoint extends PhysicsComponent {
         def.setMaxForce(maxForce);
 
         joint = world.createMouseJoint(def);
+        joint.setUserData(this);
 
         def.delete();
     }
@@ -41,9 +42,13 @@ public class CursorJoint extends PhysicsComponent {
     @Override
     public void onRemove() {
         super.onRemove();
-        world.destroyJoint(joint);
+
+        if (joint != null) {
+            world.destroyJoint(joint);
+            joint = null;
+        }
+
         world = null;
-        joint = null;
         x = y = maxForce = 0;
     }
 

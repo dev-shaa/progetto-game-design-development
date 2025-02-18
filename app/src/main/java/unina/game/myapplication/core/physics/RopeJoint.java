@@ -1,6 +1,5 @@
 package unina.game.myapplication.core.physics;
 
-import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.RopeJointDef;
 import com.google.fpl.liquidfun.Vec2;
 
@@ -8,20 +7,11 @@ import java.util.Objects;
 
 import unina.game.myapplication.core.PhysicsComponent;
 
-public class RopeJoint extends PhysicsComponent {
-
-    private static final Pool<RopeJoint> pool = new Pool<>(RopeJoint::new, 16);
-
-    public static RopeJoint build() {
-        return pool.get();
-    }
+public final class RopeJoint extends PhysicsComponent {
 
     private RigidBody a, b;
     private float maxLength;
     private com.google.fpl.liquidfun.RopeJoint joint;
-
-    private RopeJoint() {
-    }
 
     @Override
     public void onInitialize() {
@@ -30,35 +20,33 @@ public class RopeJoint extends PhysicsComponent {
         Objects.requireNonNull(a, "RigidBody A was not set before initialize");
         Objects.requireNonNull(b, "RigidBody B was not set before initialize");
 
-        RopeJointDef def = new RopeJointDef();
-
         Vec2 v = new Vec2(0, 0);
 
+        RopeJointDef def = new RopeJointDef();
         def.setBodyA(a.body);
         def.setLocalAnchorA(v);
-
         def.setBodyB(b.body);
         def.setLocalAnchorB(v);
-
-        v.delete();
-
         def.setMaxLength(maxLength);
 
         joint = world.createRopeJoint(def);
+        joint.setUserData(this);
 
         def.delete();
+        v.delete();
     }
 
     @Override
     public void onRemove() {
         super.onRemove();
 
-        world.destroyJoint(joint);
-        world = null;
-        joint = null;
-        a = b = null;
+        if (joint != null) {
+            world.destroyJoint(joint);
+            joint = null;
+        }
 
-        pool.free(this);
+        world = null;
+        a = b = null;
     }
 
     public void setRigidBodyA(RigidBody a) {

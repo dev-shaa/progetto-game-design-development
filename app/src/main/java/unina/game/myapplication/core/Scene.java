@@ -42,6 +42,8 @@ public abstract class Scene extends Screen {
     private final BitSet gameObjectsOperations = new BitSet();
     private final ArrayList<GameObject> gameObjectsToOperate = new ArrayList<>();
 
+    private int clearColor = Color.BLACK;
+
     public Scene(Game game) {
         super(game);
     }
@@ -125,7 +127,7 @@ public abstract class Scene extends Screen {
         Graphics graphics = game.getGraphics();
 
         // Clear the screen
-        graphics.clear(Color.BLACK);
+        graphics.clear(clearColor);
 
         // Sort the renderers by layer
         if (layerDirty) {
@@ -262,6 +264,10 @@ public abstract class Scene extends Screen {
             gameObjectsOperations.clear(gameObjectsToOperate.size());
             gameObjectsToOperate.add(gameObject);
         }
+    }
+
+    public void setClearColor(int clearColor) {
+        this.clearColor = clearColor;
     }
 
     private void applySceneChanges() {

@@ -30,7 +30,7 @@ import unina.game.myapplication.logic.common.RectRenderer;
 
 public class Level2 extends Scene {
 
-    private static final int PALETTE_BACKGROUND = 0xff005387;
+    private static final int PALETTE_BACKGROUND = 0xff237F52;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
     private Sound buttonSound;
@@ -56,7 +56,7 @@ public class Level2 extends Scene {
     public void initialize() {
         super.initialize();
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/background-level2.jpg", Graphics.PixmapFormat.ARGB8888);
+        backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
 
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
@@ -67,11 +67,13 @@ public class Level2 extends Scene {
         Camera.getInstance().setSize(20);
 
         //Background
+        setClearColor(PALETTE_BACKGROUND);
+
         GameObject backgroundGO = createGameObject();
         SpriteRenderer backgroundRenderer = backgroundGO.addComponent(SpriteRenderer.class);
         backgroundRenderer.setImage(backgroundImage);
         backgroundRenderer.setSize(20, 20 / backgroundImage.getAspectRatio());
-        backgroundRenderer.setLayer(-10);
+        backgroundRenderer.setLayer(16);
 
         // Transition panel
         GameObject fade = createGameObject();
@@ -166,7 +168,7 @@ public class Level2 extends Scene {
         rockRenderer.setSize(4, 4);
         rockRenderer.setSrcPosition(256, 0);
         rockRenderer.setSrcSize(128, 128);
-        
+
         RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
         rockRigidBody.setCollider(CircleCollider.build(2, 100, 0, 1, false));
@@ -317,7 +319,7 @@ public class Level2 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 6f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
             animator.start();
 //            animator.add(ParallelAnimation.build(
 //                    MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),

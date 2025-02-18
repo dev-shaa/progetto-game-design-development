@@ -25,6 +25,7 @@ import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.RectRenderer;
 
@@ -298,6 +299,34 @@ public class Level2 extends Scene {
         pressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
+
+        // Pressure plate platform
+        float pressurePlatePlatformWidth = 11;
+        float pressurePlatePlatformHeight = 1;
+        GameObject pressurePlatePlatformGO = createGameObject(3.4f, 2);
+
+        if (DEBUG) {
+            PlatformRenderComponent pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(PlatformRenderComponent.class);
+            pressurePlatePlatformRenderer.color = Color.MAGENTA;
+            pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
+            pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
+            pressurePlatePlatformRenderer.setLayer(64);
+        }
+
+        RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
+        pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
+        pressurePlatePlatformRigidBody.setCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
+
+        //Linea tra pulsante e ponte
+        GameObject lineRendererGO = createGameObject();
+        DottedLineRenderer lineRenderer = lineRendererGO.addComponent(DottedLineRenderer.class);
+        lineRenderer.setPointA(pressurePlateGO.x, pressurePlateGO.y - 1.25f);
+        lineRenderer.setPointB(pressurePlateGO.x, bridge.y);
+        lineRenderer.setCount(14);
+        lineRenderer.setRadius(0.2f);
+        lineRenderer.setColor(Color.GREY);
+        lineRenderer.setLayer(-4);
+
         pressurePlate.setOnCollisionEnter(() -> {
             if (isPressed)
                 return;
@@ -307,6 +336,8 @@ public class Level2 extends Scene {
             buttonSound.play(1);
             pressurePlateRenderer.color = Color.GREEN;
             pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y - 0.5f);
+
+            lineRenderer.setColor(PALETTE_PRIMARY);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
@@ -336,23 +367,6 @@ public class Level2 extends Scene {
 //            prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
 
         });
-
-        // Pressure plate platform
-        float pressurePlatePlatformWidth = 11;
-        float pressurePlatePlatformHeight = 1;
-        GameObject pressurePlatePlatformGO = createGameObject(3.4f, 2);
-
-        if (DEBUG) {
-            PlatformRenderComponent pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(PlatformRenderComponent.class);
-            pressurePlatePlatformRenderer.color = Color.MAGENTA;
-            pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
-            pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
-            pressurePlatePlatformRenderer.setLayer(64);
-        }
-
-        RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
-        pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlatePlatformRigidBody.setCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
 
         //Piattaforma noBugRight
         GameObject noBugPlatformRight = createGameObject(-2.5f, 2.5f, -45);

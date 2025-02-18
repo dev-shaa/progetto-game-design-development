@@ -47,7 +47,7 @@ public class Level1 extends Scene {
         Camera.getInstance().setSize(10);
 
         backgroundImage = game.getGraphics().newPixmap("graphics/background-level1.png", Graphics.PixmapFormat.ARGB8888);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
+        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
 
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");

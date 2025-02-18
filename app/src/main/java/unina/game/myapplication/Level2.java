@@ -37,7 +37,7 @@ public class Level2 extends Scene {
     private Sound buttonsAppearSound;
     private Sound movingPlatformSound;
     private Sound winSound;
-    
+
     private boolean isPressed = false;
 
     private Pixmap backgroundImage;
@@ -56,8 +56,8 @@ public class Level2 extends Scene {
     public void initialize() {
         super.initialize();
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/background-level2.jpg",Graphics.PixmapFormat.ARGB8888);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-white.png", Graphics.PixmapFormat.ARGB8888);
+        backgroundImage = game.getGraphics().newPixmap("graphics/background-level2.jpg", Graphics.PixmapFormat.ARGB8888);
+        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
 
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
@@ -72,8 +72,6 @@ public class Level2 extends Scene {
         backgroundRenderer.setImage(backgroundImage);
         backgroundRenderer.setSize(20, 20 / backgroundImage.getAspectRatio());
         backgroundRenderer.setLayer(-10);
-
-
 
         // Transition panel
         GameObject fade = createGameObject();
@@ -163,12 +161,16 @@ public class Level2 extends Scene {
         // Rock
         GameObject rock = createGameObject(5, 15);
 
-        RockRenderComponent rockRenderComponent = rock.addComponent(RockRenderComponent.class);
-        rockRenderComponent.color = PALETTE_PRIMARY;
-        rockRenderComponent.radius = 2;
-        RigidBody rigidRock = rock.addComponent(RigidBody.class);
-        rigidRock.setType(RigidBody.Type.DYNAMIC);
-        rigidRock.setCollider(CircleCollider.build(2, 100, 0, 1, false));
+        SpriteRenderer rockRenderer = rock.addComponent(SpriteRenderer.class);
+        rockRenderer.setImage(elementsImage);
+        rockRenderer.setSize(4, 4);
+        rockRenderer.setSrcPosition(256, 0);
+        rockRenderer.setSrcSize(128, 128);
+        
+        RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
+        rockRigidBody.setType(RigidBody.Type.DYNAMIC);
+        rockRigidBody.setCollider(CircleCollider.build(2, 100, 0, 1, false));
+        rockRigidBody.setSleepingAllowed(false);
 
         //Piattaforma scorrevole
         float dragPlatformWidth = 7.5f;
@@ -183,9 +185,9 @@ public class Level2 extends Scene {
 
         SpriteRenderer platformDraggedRenderComponent = platformDragged.addComponent(SpriteRenderer.class);
         platformDraggedRenderComponent.setImage(elementsImage);
-        platformDraggedRenderComponent.setSrcPosition(128,48);
-        platformDraggedRenderComponent.setSrcSize(128,32);
-        platformDraggedRenderComponent.setSize(dragPlatformWidth,dragPlatformHeight);
+        platformDraggedRenderComponent.setSrcPosition(128, 48);
+        platformDraggedRenderComponent.setSrcSize(128, 32);
+        platformDraggedRenderComponent.setSize(dragPlatformWidth, dragPlatformHeight);
 
         PlatformDraggingComponent platformDraggingComponent = platformDragged.addComponent(PlatformDraggingComponent.class);
         platformDraggingComponent.width = 10;
@@ -214,9 +216,9 @@ public class Level2 extends Scene {
 
         SpriteRenderer platformDraggedR2enderComponent = platformDragged2.addComponent(SpriteRenderer.class);
         platformDraggedR2enderComponent.setImage(elementsImage);
-        platformDraggedR2enderComponent.setSrcPosition(128,48);
-        platformDraggedR2enderComponent.setSrcSize(128,32);
-        platformDraggedR2enderComponent.setSize(dragPlatform2Width,dragPlatform2Height);
+        platformDraggedR2enderComponent.setSrcPosition(128, 48);
+        platformDraggedR2enderComponent.setSrcSize(128, 32);
+        platformDraggedR2enderComponent.setSize(dragPlatform2Width, dragPlatform2Height);
 
         PlatformDraggingComponent platformDragging2Component = platformDragged2.addComponent(PlatformDraggingComponent.class);
         platformDragging2Component.width = 10;
@@ -305,7 +307,7 @@ public class Level2 extends Scene {
 
             buttonSound.play(1);
             pressurePlateRenderer.color = Color.GREEN;
-            pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y-0.5f);
+            pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y - 0.5f);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
@@ -332,10 +334,9 @@ public class Level2 extends Scene {
             animator.start();
 
 
-
 //            prova2.setTransform(prova2.getOwner().x, prova2.getOwner().y - 0.5f);
 
-                });
+        });
 
         // Pressure plate platform
         float pressurePlatePlatformWidth = 11;
@@ -366,7 +367,7 @@ public class Level2 extends Scene {
 //        noBugPlatfomrLeftRigidBody.setCollider(BoxCollider.build(1,3));
 
         //Piattaforma noBugRight
-        GameObject noBugPlatformRight = createGameObject(-2.5f,2.5f,-45);
+        GameObject noBugPlatformRight = createGameObject(-2.5f, 2.5f, -45);
 
         if (DEBUG) {
             PlatformRenderComponent noBugPlatformRightRenderComponent = noBugPlatformRight.addComponent(PlatformRenderComponent.class);
@@ -377,7 +378,7 @@ public class Level2 extends Scene {
 
         RigidBody noBugPlatfomrRightRigidBody = noBugPlatformRight.addComponent(RigidBody.class);
         noBugPlatfomrRightRigidBody.setType(RigidBody.Type.STATIC);
-        noBugPlatfomrRightRigidBody.setCollider(BoxCollider.build(1,1));
+        noBugPlatfomrRightRigidBody.setCollider(BoxCollider.build(1, 1));
 
     }
 

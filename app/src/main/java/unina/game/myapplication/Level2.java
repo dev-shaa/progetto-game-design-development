@@ -94,9 +94,12 @@ public class Level2 extends Scene {
         // Left floor
         GameObject leftFloor = createGameObject(-6, -14);
 
-        RectRenderer leftFloorRenderer = leftFloor.addComponent(RectRenderer.class);
-        leftFloorRenderer.setSize(floorW, floorH);
-        leftFloorRenderer.setColor(PALETTE_PRIMARY);
+        if (DEBUG) {
+            RectRenderer leftFloorRenderer = leftFloor.addComponent(RectRenderer.class);
+            leftFloorRenderer.setSize(floorW, floorH);
+            leftFloorRenderer.setColor(Color.MAGENTA);
+            leftFloorRenderer.setLayer(64);
+        }
 
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
@@ -105,10 +108,13 @@ public class Level2 extends Scene {
         // Right floor
         GameObject rightFloor = createGameObject(6, -14);
 
-        PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
-        rightFloorRenderer.color = PALETTE_PRIMARY;
-        rightFloorRenderer.width = floorW;
-        rightFloorRenderer.height = floorH;
+        if (DEBUG) {
+            PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
+            rightFloorRenderer.color = Color.MAGENTA;
+            rightFloorRenderer.width = floorW;
+            rightFloorRenderer.height = floorH;
+            rightFloorRenderer.setLayer(64);
+        }
 
         RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
         rightFloorRigidBody.setType(RigidBody.Type.STATIC);
@@ -119,10 +125,14 @@ public class Level2 extends Scene {
 
         float platW = 9;
         float platH = 0.5f;
-        PlatformRenderComponent rockPlatformRenderComponent = rockPlatform.addComponent(PlatformRenderComponent.class);
-        rockPlatformRenderComponent.color = PALETTE_PRIMARY;
-        rockPlatformRenderComponent.width = platW;
-        rockPlatformRenderComponent.height = platH;
+
+        if (DEBUG) {
+            PlatformRenderComponent rockPlatformRenderComponent = rockPlatform.addComponent(PlatformRenderComponent.class);
+            rockPlatformRenderComponent.color = Color.MAGENTA;
+            rockPlatformRenderComponent.width = platW;
+            rockPlatformRenderComponent.height = platH;
+            rockPlatformRenderComponent.setLayer(64);
+        }
 
         RigidBody rcokPlatformRigidBody = rockPlatform.addComponent(RigidBody.class);
         rcokPlatformRigidBody.setType(RigidBody.Type.STATIC);
@@ -139,6 +149,7 @@ public class Level2 extends Scene {
             leftWallRenderComponent.color = Color.MAGENTA;
             leftWallRenderComponent.width = plat2W;
             leftWallRenderComponent.height = plat2H;
+            leftWallRenderComponent.setLayer(64);
         }
 
         RigidBody LeftWallRigidBody2 = leftWall.addComponent(RigidBody.class);
@@ -154,6 +165,7 @@ public class Level2 extends Scene {
             rightWallRenderComponent.color = Color.MAGENTA;
             rightWallRenderComponent.width = plat2W;
             rightWallRenderComponent.height = plat2H;
+            rightWallRenderComponent.setLayer(64);
         }
 
         RigidBody RightWallRigidBody2 = rightWall.addComponent(RigidBody.class);
@@ -198,13 +210,6 @@ public class Level2 extends Scene {
         platformDraggingComponent.setEnd(platformDragged.x, 4);
         platformDraggingComponent.rigidBody = rigidDrag;
 
-//        PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
-//        platformDraggedRenderComponent.setStart(3, 14);
-//        platformDraggedRenderComponent.setEnd(5, 5);
-//        platformDraggedRenderComponent.color = Color.DARKCYAN;
-//        platformDraggedRenderComponent.width = dragPlatformWidth;
-//        platformDraggedRenderComponent.height = dragPlatformHeight;
-
         //Piattaforma scorrevole2
         float dragPlatform2Width = 6;
         float dragPlatform2Height = 0.5f;
@@ -228,14 +233,6 @@ public class Level2 extends Scene {
         platformDragging2Component.rigidBody = rigidDrag2;
         platformDragging2Component.setStart(platformDragged2.x, 15);
         platformDragging2Component.setEnd(platformDragged2.x, 7);
-
-
-//        PlatformRenderComponent platformDragged2RenderComponent = platformDragged2.addComponent(PlatformRenderComponent.class);
-//        platformDragged2RenderComponent.color = Color.DARKCYAN;
-//        platformDragged2RenderComponent.width = dragPlatform2Width;
-//        platformDragged2RenderComponent.height = dragPlatform2Height;
-//        platformDragged2RenderComponent.setStart(-12, 14);
-//        platformDragged2RenderComponent.setEnd(-8, 10);
 
         // Bridge
         GameObject bridge = createGameObject(-2.5f, -6.6f);
@@ -345,28 +342,17 @@ public class Level2 extends Scene {
         float pressurePlatePlatformHeight = 1;
         GameObject pressurePlatePlatformGO = createGameObject(3.4f, 2);
 
-        PlatformRenderComponent pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(PlatformRenderComponent.class);
-        pressurePlatePlatformRenderer.color = PALETTE_PRIMARY;
-        pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
-        pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
+        if (DEBUG) {
+            PlatformRenderComponent pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(PlatformRenderComponent.class);
+            pressurePlatePlatformRenderer.color = Color.MAGENTA;
+            pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
+            pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
+            pressurePlatePlatformRenderer.setLayer(64);
+        }
 
         RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
         pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlatePlatformRigidBody.setCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
-
-//        //Piattaforma noBugLeft
-//        GameObject noBugPlatformLeft = createGameObject(2.5f,2.5f);
-//
-//        if (DEBUG) {
-//            PlatformRenderComponent noBugPlatformLeftRenderComponent = noBugPlatformLeft.addComponent(PlatformRenderComponent.class);
-//            noBugPlatformLeftRenderComponent.width = 1;
-//            noBugPlatformLeftRenderComponent.height = 3;
-//            noBugPlatformLeftRenderComponent.color = Color.MAGENTA;
-//        }
-//
-//        RigidBody noBugPlatfomrLeftRigidBody = noBugPlatformLeft.addComponent(RigidBody.class);
-//        noBugPlatfomrLeftRigidBody.setType(RigidBody.Type.STATIC);
-//        noBugPlatfomrLeftRigidBody.setCollider(BoxCollider.build(1,3));
 
         //Piattaforma noBugRight
         GameObject noBugPlatformRight = createGameObject(-2.5f, 2.5f, -45);
@@ -376,6 +362,7 @@ public class Level2 extends Scene {
             noBugPlatformRightRenderComponent.width = 1;
             noBugPlatformRightRenderComponent.height = 1;
             noBugPlatformRightRenderComponent.color = Color.MAGENTA;
+            noBugPlatformRightRenderComponent.setLayer(64);
         }
 
         RigidBody noBugPlatfomrRightRigidBody = noBugPlatformRight.addComponent(RigidBody.class);

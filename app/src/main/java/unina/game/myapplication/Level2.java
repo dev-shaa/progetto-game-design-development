@@ -347,7 +347,7 @@ public class Level2 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 6f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
             animator.start();
 //            animator.add(ParallelAnimation.build(
 //                    MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),

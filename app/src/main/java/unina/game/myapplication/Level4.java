@@ -2,6 +2,9 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
+import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Pixmap;
+import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
@@ -15,6 +18,7 @@ import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.CursorJoint;
 import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
+import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.ButtonInputComponent;
 import unina.game.myapplication.logic.ButtonRenderComponent;
 import unina.game.myapplication.logic.CursorJointInput;
@@ -23,8 +27,27 @@ import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.RockRenderComponent;
 import unina.game.myapplication.logic.TestingRender;
+import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.RectRenderer;
 
 public class Level4 extends Scene {
+
+    private static final int PALETTE_BACKGROUND = 0xffF9A900;
+    private static final int PALETTE_PRIMARY = 0xff2B2B2C;
+
+    private Sound buttonSound;
+    private Sound buttonsAppearSound;
+    private Sound movingPlatformSound;
+    private Sound winSound;
+
+    private Sound fallSound;
+
+    private Pixmap backgroundImage;
+    private Pixmap elementsImage;
+
+    private RectRenderer fullScreenRenderer;
+    private AnimationSequence animator;
+    private SpriteRenderer characterRenderer;
 
     public Level4(Game game) {
         super(game);
@@ -33,13 +56,38 @@ public class Level4 extends Scene {
     public void initialize() {
         super.initialize();
 
+        backgroundImage = game.getGraphics().newPixmap("graphics/background-level4.jpg", Graphics.PixmapFormat.RGB565);
+        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
+
+        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
+        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
+        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        fallSound = game.getAudio().newSound("sounds/fall.mp3");
+
         Camera.getInstance().setSize(30);
 
-        float floorW = 8;
-        float floorH = 10;
+        //Background
+        setClearColor(PALETTE_BACKGROUND);
 
-        float bridgeW = 8;
-        float bridgeH = 1;
+        GameObject backgroundGO = createGameObject();
+        SpriteRenderer backgroundRenderer = backgroundGO.addComponent(SpriteRenderer.class);
+        backgroundRenderer.setImage(backgroundImage);
+        backgroundRenderer.setSize(30, 30 / backgroundImage.getAspectRatio());
+        backgroundRenderer.setLayer(-10);
+
+        // Transition panel
+        GameObject fade = createGameObject();
+        fullScreenRenderer = fade.addComponent(RectRenderer.class);
+        fullScreenRenderer.setSize(50, 50);
+        fullScreenRenderer.setLayer(Integer.MAX_VALUE);
+        fullScreenRenderer.setColor(Color.TRANSPARENT);
+
+        // Animator
+        GameObject animatorGO = createGameObject();
+        animator = animatorGO.addComponent(AnimationSequence.class);
+        animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
+        animator.start();
 
         float platW = 8;
         float platH = 0.7f;
@@ -51,48 +99,50 @@ public class Level4 extends Scene {
         float plat2W = 6;
         float plat2H = 1;
 
-        //Personaggio
-        float pgW = 2;
-        float pgH = 2;
-        GameObject character = createGameObject(-8, -24);
+        // Right floor
+        float floorW = 8;
+        float floorH = 10;
+        GameObject rightFloor = createGameObject(8, -25);
 
-        TestingRender characterRender = character.addComponent(TestingRender.class);
-        characterRender.width = pgW;
-        characterRender.height = pgH;
-        AnimationSequence characterAnimation = character.addComponent(AnimationSequence.class);
+        if (DEBUG) {
+            PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
+            rightFloorRenderer.color = Color.MAGENTA;
+            rightFloorRenderer.width = floorW;
+            rightFloorRenderer.height = floorH;
+            rightFloorRenderer.setLayer(64);
+        }
 
-        //Pavimento
-        GameObject floor1 = createGameObject(8, -30);
+        RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
+        rightFloorRigidBody.setType(RigidBody.Type.STATIC);
+        rightFloorRigidBody.setCollider(BoxCollider.build(floorW, floorH));
 
-        PlatformRenderComponent floorRenderComponent1 = floor1.addComponent(PlatformRenderComponent.class);
-        floorRenderComponent1.color = Color.GREY;
-        floorRenderComponent1.width = floorW;
-        floorRenderComponent1.height = floorH;
+        //Bridge Character
+        float bridgeW = 8;
+        float bridgeH = 1;
 
-        RigidBody rigidFloor1 = floor1.addComponent(RigidBody.class);
-        rigidFloor1.setType(RigidBody.Type.STATIC);
-        rigidFloor1.setCollider(BoxCollider.build(floorW, floorH));
+        GameObject bridgeCharacter = createGameObject(-8, -20.6f);
 
+        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
+        bridgeCharacterRenderComponent.setImage(elementsImage);
+        bridgeCharacterRenderComponent.setSrcPosition(128, 48);
+        bridgeCharacterRenderComponent.setSrcSize(128, 32);
+        bridgeCharacterRenderComponent.setSize(bridgeW, bridgeH);
+        bridgeCharacterRenderComponent.setLayer(-3);
 
-        //Ponte 1 (sotto il personaggio)
-        GameObject bridge1 = createGameObject(-8, -25.5f);
-        PlatformRenderComponent bridge1RenderComponent = bridge1.addComponent(PlatformRenderComponent.class);
-        bridge1RenderComponent.color = Color.GOLD;
-        bridge1RenderComponent.width = bridgeW;
-        bridge1RenderComponent.height = bridgeH;
-        RigidBody rigidBridge1 = bridge1.addComponent(RigidBody.class);
-        rigidBridge1.setType(RigidBody.Type.KINEMATIC);
-        rigidBridge1.setCollider(BoxCollider.build(bridgeW, bridgeH));
-        AnimationSequence bridge1Animation = bridge1.addComponent(AnimationSequence.class);
+        //Sensor bridge
+        GameObject sensorBridgeCharacter = createGameObject(-8, -20.6f);
+        RigidBody SensorBridgeCharacterRigidBody = sensorBridgeCharacter.addComponent(RigidBody.class);
+        SensorBridgeCharacterRigidBody.setType(RigidBody.Type.STATIC);
+        SensorBridgeCharacterRigidBody.setCollider(BoxCollider.build(bridgeW, bridgeH, true));
+        SensorBridgeCharacterRigidBody.setSleepingAllowed(false);
 
-        //Sensore ponte
-        GameObject sensorBridge1 = createGameObject(-8, -25.5f);
-        RigidBody rigidSensorBridge1 = sensorBridge1.addComponent(RigidBody.class);
-        rigidSensorBridge1.setType(RigidBody.Type.STATIC);
-        rigidSensorBridge1.setCollider(BoxCollider.build(bridgeW, bridgeH, true));
-        rigidSensorBridge1.setSleepingAllowed(false);
-        PhysicsButton sensorBridgeBehaevour1 = sensorBridge1.addComponent(PhysicsButton.class);
-        sensorBridgeBehaevour1.onCollisionEnter = () -> moveLose(bridge1Animation, rigidBridge1, characterAnimation);
+        if (DEBUG) {
+            PlatformRenderComponent sensorBridgeCharacterRenderComponent = sensorBridgeCharacter.addComponent(PlatformRenderComponent.class);
+            sensorBridgeCharacterRenderComponent.color = Color.MAGENTA;
+            sensorBridgeCharacterRenderComponent.width = bridgeW;
+            sensorBridgeCharacterRenderComponent.height = bridgeH;
+            sensorBridgeCharacterRenderComponent.setLayer(-5);
+        }
 
         //Ponte 2
         GameObject bridge2 = createGameObject();
@@ -105,8 +155,28 @@ public class Level4 extends Scene {
         rigidBridge2.setType(RigidBody.Type.KINEMATIC);
         rigidBridge2.setCollider(BoxCollider.build(bridgeW, bridgeH));
         AnimationSequence bridge2Animation = bridge2.addComponent(AnimationSequence.class);
-
         bridge2.y = -15.5f;
+
+        //Character
+        GameObject character = createGameObject(-8, -20);
+
+        characterRenderer = character.addComponent(SpriteRenderer.class);
+        characterRenderer.setImage(elementsImage);
+        characterRenderer.setSize(2, 2);
+        characterRenderer.setSrcPosition(0, 128);
+        characterRenderer.setSrcSize(128, 128);
+        characterRenderer.setPivot(0.5f, 1);
+        characterRenderer.setLayer(-2);
+
+        //Personaggio
+//        float pgW = 2;
+//        float pgH = 2;
+//        GameObject character = createGameObject(-8, -24);
+//
+//        TestingRender characterRender = character.addComponent(TestingRender.class);
+//        characterRender.width = pgW;
+//        characterRender.height = pgH;
+//        AnimationSequence characterAnimation = character.addComponent(AnimationSequence.class);
 
         //Palla demolitrice
         GameObject wreckingBall = createGameObject();
@@ -252,7 +322,7 @@ public class Level4 extends Scene {
         phisicSensor1.setSleepingAllowed(false);
 
         PhysicsButton physicsButton = pressure_plate1.addComponent(PhysicsButton.class);
-        physicsButton.onCollisionEnter = () -> moveWin(bridge2Animation, rigidBridge2, characterAnimation);
+//        physicsButton.onCollisionEnter = () -> moveWin(bridge2Animation, rigidBridge2, characterAnimation);
 
         pressure_plate1.x = 11.5f;
         pressure_plate1.y = -4;

@@ -40,6 +40,8 @@ public class Level3 extends Scene {
     private Sound movingPlatformSound;
     private Sound winSound;
 
+    private Sound fallSound;
+
     private Pixmap backgroundImage;
     private Pixmap elementsImage;
 
@@ -65,6 +67,7 @@ public class Level3 extends Scene {
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
         movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
         winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        fallSound = game.getAudio().newSound("sounds/fall.mp3");
 
         Camera.getInstance().setSize(20);
 
@@ -98,7 +101,7 @@ public class Level3 extends Scene {
 
         if (DEBUG) {
             PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
-            rightFloorRenderer.color = PALETTE_PRIMARY;
+            rightFloorRenderer.color = Color.MAGENTA;
             rightFloorRenderer.width = floorW;
             rightFloorRenderer.height = floorH;
             rightFloorRenderer.setLayer(64);
@@ -107,6 +110,8 @@ public class Level3 extends Scene {
         RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
         rightFloorRigidBody.setType(RigidBody.Type.STATIC);
         rightFloorRigidBody.setCollider(BoxCollider.build(floorW, floorH));
+
+        //TODO cambiare nomi bridge
 
         // Bridge 1
         GameObject bridge1 = createGameObject(-2.5f, -6.6f);
@@ -168,18 +173,34 @@ public class Level3 extends Scene {
         platformRockRigidBody.setType(RigidBody.Type.STATIC);
         platformRockRigidBody.setCollider(BoxCollider.build(platW, platH));
 
-        //Piattaforma 2
-        float plat2W = 17;
-        float plat2H = 0.7f;
-        GameObject platform2 = createGameObject(9, 9, 90);
+        //Right wall
+        float rightWallWidth = 0.7f;
+        float rightWallHeight = 17;
 
-        PlatformRenderComponent platform2RenderComponent = platform2.addComponent(PlatformRenderComponent.class);
-        platform2RenderComponent.color = Color.GREY;
-        platform2RenderComponent.width = plat2W;
-        platform2RenderComponent.height = plat2H;
-        RigidBody rigidPlatform2 = platform2.addComponent(RigidBody.class);
-        rigidPlatform2.setType(RigidBody.Type.STATIC);
-        rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
+        GameObject rightWall = createGameObject(8,7);
+
+        RigidBody rightWallRigidBody = rightWall.addComponent(RigidBody.class);
+        rightWallRigidBody.setType(RigidBody.Type.STATIC);
+        rightWallRigidBody.setCollider(BoxCollider.build(rightWallWidth,rightWallHeight));
+
+        if (DEBUG) {
+            PlatformRenderComponent rightWallRenderComponent = rightWall.addComponent(PlatformRenderComponent.class);
+            rightWallRenderComponent.color = Color.MAGENTA;
+            rightWallRenderComponent.width = rightWallWidth;
+            rightWallRenderComponent.height = rightWallHeight;
+            rightWallRenderComponent.setLayer(64);
+        }
+
+
+//        GameObject platform2 = createGameObject(9, 9, 90);
+//
+//        PlatformRenderComponent platform2RenderComponent = platform2.addComponent(PlatformRenderComponent.class);
+//        platform2RenderComponent.color = Color.MAGENTA;
+//        platform2RenderComponent.width = plat2W;
+//        platform2RenderComponent.height = plat2H;
+//        RigidBody rigidPlatform2 = platform2.addComponent(RigidBody.class);
+//        rigidPlatform2.setType(RigidBody.Type.STATIC);
+//        rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
 
         //Ponte Masso
         GameObject bridgeRock = createGameObject(-2.5f, 14.5f, 50);
@@ -320,14 +341,14 @@ public class Level3 extends Scene {
         // Win pressure plate
         GameObject pressurePlateWinGO = createGameObject(6, 1);
 
-        PlatformRenderComponent winPressurePlateRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
-        winPressurePlateRenderer.color = Color.BLUE;
-        winPressurePlateRenderer.height = pressurePlateHeight;
-        winPressurePlateRenderer.width = pressurePlateWidth;
+        PlatformRenderComponent pressurePlateWinRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
+        pressurePlateWinRenderer.color = Color.BLUE;
+        pressurePlateWinRenderer.height = pressurePlateHeight;
+        pressurePlateWinRenderer.width = pressurePlateWidth;
 
-        RigidBody winPressurePlateRigidBody = pressurePlateWinGO.addComponent(RigidBody.class);
-        winPressurePlateRigidBody.setType(RigidBody.Type.STATIC);
-        winPressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+        RigidBody pressurePlateWinRigidBody = pressurePlateWinGO.addComponent(RigidBody.class);
+        pressurePlateWinRigidBody.setType(RigidBody.Type.STATIC);
+        pressurePlateWinRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlateWin = pressurePlateWinGO.addComponent(PhysicsButton.class);
 
@@ -358,11 +379,36 @@ public class Level3 extends Scene {
             animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
             animator.add(MoveToAnimation.build(bridge1,-9,bridge1.y,0.35f));
             animator.add(WaitAnimation.build(0.2f), () -> {
+                fallSound.play(1);
                 characterRenderer.setSrcPosition(128,128);
                 character.angle = 90;
-                //TODO add fall song AAAAAAAAaaaaaaaaaaa
             });
             animator.add(MoveToAnimation.build(character, character.x, -20,0.25f));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
+            animator.start();
+        });
+
+        pressurePlateWin.setOnCollisionEnter(() -> {
+            if (isPressedWin)
+                return;
+
+            isPressedWin = true;
+
+            buttonSound.play(1);
+            pressurePlateWinRenderer.color = Color.GREEN;
+            pressurePlateWinRigidBody.setTransform(pressurePlateWinGO.x,pressurePlateWinGO.y - 0.25f);
+
+            lineRendererWinVertical.setColor(Color.GREY);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveToAnimation.build(bridgeCharacter,3.8f,bridgeCharacter.y,0.35f));
+            animator.add(WaitAnimation.build(0.2f), () -> {
+                characterRenderer.setSrcPosition(128,128);
+                winSound.play(1);
+            });
+            animator.add(MoveToAnimation.build(character,rightFloor.x,character.y,0.3f));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
             animator.start();
         });
 

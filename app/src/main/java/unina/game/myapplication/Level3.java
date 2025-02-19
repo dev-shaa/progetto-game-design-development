@@ -10,6 +10,7 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
@@ -19,7 +20,6 @@ import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.DebugRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.PressableComponent;
@@ -46,6 +46,9 @@ public class Level3 extends Scene {
     private RectRenderer fullScreenRenderer;
     private AnimationSequence animator;
     private SpriteRenderer characterRenderer;
+
+    private boolean isPressedLose = false;
+    private boolean isPressedWin = false;
 
     public Level3(Game game) {
         super(game);
@@ -178,17 +181,25 @@ public class Level3 extends Scene {
         rigidPlatform2.setType(RigidBody.Type.STATIC);
         rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
 
-        //Ponte 3
-        GameObject bridge3 = createGameObject(-2.5f, 14.5f, 50);
-        PlatformRenderComponent bridge3RenderComponent = bridge3.addComponent(PlatformRenderComponent.class);
-        bridge3RenderComponent.color = Color.GOLD;
-        bridge3RenderComponent.width = 4;
-        bridge3RenderComponent.height = 0.7f;
-        RigidBody rigidBridge = bridge3.addComponent(RigidBody.class);
-        rigidBridge.setType(RigidBody.Type.KINEMATIC);
-        rigidBridge.setCollider(BoxCollider.build(4, 0.7f));
-        AnimationSequence bridge3Animation = bridge3.addComponent(AnimationSequence.class);
-        PlatformBehaviourComponent bridge3BehaviourComponent = bridge3.addComponent(PlatformBehaviourComponent.class);
+        //Ponte Masso
+        GameObject bridgeRock = createGameObject(-2.5f, 14.5f, 50);
+
+        RigidBody bridgeRockRigidBody = bridgeRock.addComponent(RigidBody.class);
+        bridgeRockRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeRockRigidBody.setCollider(BoxCollider.build(4, 0.7f));
+
+        SpriteRenderer bridgeRockRender = bridgeRock.addComponent(SpriteRenderer.class);
+        bridgeRockRender.setImage(elementsImage);
+        bridgeRockRender.setSrcPosition(128, 48);
+        bridgeRockRender.setSrcSize(128, 32);
+        bridgeRockRender.setSize(4,0.7f);
+        bridgeRockRender.setLayer(-3);
+
+//        PlatformRenderComponent bridgeRockRenderComponent = bridgeRock.addComponent(PlatformRenderComponent.class);
+//        bridgeRockRenderComponent.color = Color.GOLD;
+//        bridgeRockRenderComponent.width = 4;
+//        bridgeRockRenderComponent.height = 0.7f;
+
 
         //Piattaforma scorrevole
         float dragPlatformWidth = 6;
@@ -231,86 +242,136 @@ public class Level3 extends Scene {
 
         Button buttonInputComponent = button.addComponent(Button.class);
         buttonInputComponent.setSize(3, 3);
-        buttonInputComponent.setOnClick(() -> {
-            buttonCircleRender.setColor(Color.WHITE);
-        });
 
         //Linea pulsante ponte orizzontale
         GameObject lineRendererVerticalGO = createGameObject();
         DottedLineRenderer lineVerticalRenderer = lineRendererVerticalGO.addComponent(DottedLineRenderer.class);
         lineVerticalRenderer.setPointA(button.x + 1.25f, button.y);
-        lineVerticalRenderer.setPointB(bridge3.x, button.y);
+        lineVerticalRenderer.setPointB(bridgeRock.x, button.y);
         lineVerticalRenderer.setCount(4);
         lineVerticalRenderer.setRadius(0.2f);
-        lineVerticalRenderer.setColor(Color.GREY);
+        lineVerticalRenderer.setColor(PALETTE_PRIMARY);
         lineVerticalRenderer.setLayer(-4);
 
         //Linea pulsante ponte verticale
-        GameObject lineRendererGO = createGameObject();
-        DottedLineRenderer lineRenderer = lineRendererGO.addComponent(DottedLineRenderer.class);
-        lineRenderer.setPointA(bridge3.x, button.y);
-        lineRenderer.setPointB(bridge3.x, bridge3.y);
-        lineRenderer.setCount(12);
-        lineRenderer.setRadius(0.2f);
-        lineRenderer.setColor(Color.GREY);
-        lineRenderer.setLayer(-4);
+        GameObject lineRendererHorizontalGO = createGameObject();
+        DottedLineRenderer lineHorizontalRenderer = lineRendererHorizontalGO.addComponent(DottedLineRenderer.class);
+        lineHorizontalRenderer.setPointA(bridgeRock.x, button.y);
+        lineHorizontalRenderer.setPointB(bridgeRock.x, bridgeRock.y);
+        lineHorizontalRenderer.setCount(12);
+        lineHorizontalRenderer.setRadius(0.2f);
+        lineHorizontalRenderer.setColor(PALETTE_PRIMARY);
+        lineHorizontalRenderer.setLayer(-4);
 
-//        //Pulsante
-//        GameObject button = createGameObject(-6, 5);
-//
-//        ButtonRenderComponent buttonRenderComponent = button.addComponent(ButtonRenderComponent.class);
-//        ButtonInputComponent buttonInputComponent = button.addComponent(ButtonInputComponent.class);
-//        buttonInputComponent.buttonRenderComponent = buttonRenderComponent;
-//        buttonRenderComponent.edge = 2;
-//        buttonRenderComponent.radius = 0.6f;
-//        buttonInputComponent.width = 2;
-//        buttonInputComponent.height = 2;
-//        buttonInputComponent.runnable = () -> move1(bridge3Animation, rigidBridge);
+        buttonInputComponent.setOnClick(() -> {
+            buttonSound.play(1);
+            buttonCircleRender.setColor(Color.GREY);
+            lineVerticalRenderer.setColor(Color.GREY);
+            lineHorizontalRenderer.setColor(Color.GREY);
 
-        //Pulsante a pressione 1
-        float phisic1W = 2;
-        float phisic1H = 0.5f;
+            float oldX = -2.5f;
+            float oldY = 14.5f;
+            float newX = (float) (oldX - 4 * Math.cos(Math.toRadians(50)));
+            float newY = (float) (oldY - 4 * Math.sin(Math.toRadians(50)));
 
-        GameObject pressure_plate1 = createGameObject(1, 1);
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeRockRigidBody,newX,newY,0.25f, EaseFunction.CUBIC_IN_OUT));
+            animator.start();
+        });
 
-        PlatformRenderComponent phisic1RenderComponent = pressure_plate1.addComponent(PlatformRenderComponent.class);
-        phisic1RenderComponent.color = Color.RED;
-        phisic1RenderComponent.height = phisic1H;
-        phisic1RenderComponent.width = phisic1W;
-        RigidBody phisicSensor1 = pressure_plate1.addComponent(RigidBody.class);
-        phisicSensor1.setType(RigidBody.Type.STATIC);
-        phisicSensor1.setCollider(BoxCollider.build(phisic1W, phisic1H, true));
-        phisicSensor1.setSleepingAllowed(false);
-        PhysicsButton physicsButton = pressure_plate1.addComponent(PhysicsButton.class);
-        //physicsButton.onCollisionEnter = () -> moveRED(bridge2Animation, pgAnimation, platformDraggingComponent);
-//        physicsButton.onCollisionExit = () -> move(phisicRenderComponent,Color.RED);
+        //Lose pressure plate
+        float pressurePlateWidth = 2;
+        float pressurePlateHeight = 0.5f;
 
+        GameObject pressurePlateLoseGO = createGameObject(1, 1);
+
+        PlatformRenderComponent pressurePlateLoseRenderer = pressurePlateLoseGO.addComponent(PlatformRenderComponent.class);
+        pressurePlateLoseRenderer.color = Color.RED;
+        pressurePlateLoseRenderer.width = pressurePlateWidth;
+        pressurePlateLoseRenderer.height = pressurePlateHeight;
+
+        RigidBody pressurePlateLoseRigidBody = pressurePlateLoseGO.addComponent(RigidBody.class);
+        pressurePlateLoseRigidBody.setType(RigidBody.Type.STATIC);
+        pressurePlateLoseRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+
+        PhysicsButton pressurePlateLose = pressurePlateLoseGO.addComponent(PhysicsButton.class);
+
+        //Linea orizzontale lose
+        GameObject lineRenderLoseHorizzontalGO = createGameObject();
+        DottedLineRenderer lineRendererLoseHorizzontal = lineRenderLoseHorizzontalGO.addComponent(DottedLineRenderer.class);
+        lineRendererLoseHorizzontal.setPointA(pressurePlateLoseGO.x - 1.5f, pressurePlateLoseGO.y);
+        lineRendererLoseHorizzontal.setPointB(-5,pressurePlateLoseGO.y);
+        lineRendererLoseHorizzontal.setColor(PALETTE_PRIMARY);
+        lineRendererLoseHorizzontal.setRadius(0.2f);
+        lineRendererLoseHorizzontal.setLayer(-3);
+        lineRendererLoseHorizzontal.setCount(7);
+
+        //Linea verticale lose
+        GameObject lineRenderLoseVerticalGO = createGameObject();
+        DottedLineRenderer lineRendererLoseVertical = lineRenderLoseVerticalGO.addComponent(DottedLineRenderer.class);
+        lineRendererLoseVertical.setPointA(-5, pressurePlateLoseGO.y);
+        lineRendererLoseVertical.setPointB(-5,bridge1.y + 0.5f);
+        lineRendererLoseVertical.setColor(PALETTE_PRIMARY);
+        lineRendererLoseVertical.setRadius(0.2f);
+        lineRendererLoseVertical.setLayer(-3);
+        lineRendererLoseVertical.setCount(10);
 
         // Win pressure plate
-        float winPressurePlateWidth = 2;
-        float winPressurePlateHeight = 0.5f;
+        GameObject pressurePlateWinGO = createGameObject(6, 1);
 
-        GameObject winPressurePlate = createGameObject(6, 1);
-
-        RigidBody winPressurePlateRigidBody = winPressurePlate.addComponent(RigidBody.class);
-        winPressurePlateRigidBody.setType(RigidBody.Type.STATIC);
-        winPressurePlateRigidBody.setCollider(BoxCollider.build(winPressurePlateWidth, winPressurePlateHeight, true));
-        winPressurePlateRigidBody.setSleepingAllowed(false);
-
-        PlatformRenderComponent winPressurePlateRenderer = winPressurePlate.addComponent(PlatformRenderComponent.class);
+        PlatformRenderComponent winPressurePlateRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
         winPressurePlateRenderer.color = Color.BLUE;
-        winPressurePlateRenderer.height = winPressurePlateHeight;
-        winPressurePlateRenderer.width = winPressurePlateWidth;
+        winPressurePlateRenderer.height = pressurePlateHeight;
+        winPressurePlateRenderer.width = pressurePlateWidth;
 
-        PhysicsButton winPressurePlateBehaviour = winPressurePlate.addComponent(PhysicsButton.class);
-        //winPressurePlateBehaviour.onCollisionEnter = () -> moveBLU(bridge1Animation, pgAnimation, platformDraggingComponent);
+        RigidBody winPressurePlateRigidBody = pressurePlateWinGO.addComponent(RigidBody.class);
+        winPressurePlateRigidBody.setType(RigidBody.Type.STATIC);
+        winPressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+
+        PhysicsButton pressurePlateWin = pressurePlateWinGO.addComponent(PhysicsButton.class);
+
+        //Linea verticale win
+        GameObject lineRenderWinVerticalGO = createGameObject();
+        DottedLineRenderer lineRendererWinVertical = lineRenderWinVerticalGO.addComponent(DottedLineRenderer.class);
+        lineRendererWinVertical.setPointA(pressurePlateWinGO.x, pressurePlateWinGO.y-1);
+        lineRendererWinVertical.setPointB(pressurePlateWinGO.x,bridgeCharacter.y + 0.5f);
+        lineRendererWinVertical.setColor(PALETTE_PRIMARY);
+        lineRendererWinVertical.setRadius(0.2f);
+        lineRendererWinVertical.setLayer(-3);
+        lineRendererWinVertical.setCount(10);
+
+        pressurePlateLose.setOnCollisionEnter(() -> {
+            if (isPressedLose)
+                return;
+
+            isPressedLose = true;
+
+            buttonSound.play(1);
+            pressurePlateLoseRenderer.color = Color.GREEN;
+            pressurePlateLoseRigidBody.setTransform(pressurePlateLoseGO.x, pressurePlateLoseGO.y - 0.25f);
+
+            lineRendererLoseHorizzontal.setColor(Color.GREY);
+            lineRendererLoseVertical.setColor(Color.GREY);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveToAnimation.build(bridge1,-9,bridge1.y,0.35f));
+            animator.add(WaitAnimation.build(0.2f), () -> {
+                characterRenderer.setSrcPosition(128,128);
+                character.angle = 90;
+                //TODO add fall song AAAAAAAAaaaaaaaaaaa
+            });
+            animator.add(MoveToAnimation.build(character, character.x, -20,0.25f));
+            animator.start();
+        });
 
         //Piattaforma sotto la pedana 1
         float plat3W = 8;
         float plat3H = 0.5f;
         GameObject platform3 = createGameObject(3.5f, 0.5f);
         PlatformRenderComponent platformRenderComponent3 = platform3.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent3.color = Color.GREY;
+        platformRenderComponent3.color = PALETTE_PRIMARY;
         platformRenderComponent3.width = plat3W;
         platformRenderComponent3.height = plat3H;
         RigidBody rigidPlatform3 = platform3.addComponent(RigidBody.class);
@@ -323,22 +384,12 @@ public class Level3 extends Scene {
         GameObject platform4 = createGameObject(3.5f, 4, 90);
 
         PlatformRenderComponent platformRenderComponent4 = platform4.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent4.color = Color.GREY;
+        platformRenderComponent4.color = PALETTE_PRIMARY;
         platformRenderComponent4.width = plat4W;
         platformRenderComponent4.height = plat4H;
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);
         rigidPlatform4.setCollider(BoxCollider.build(plat4W, plat4H));
-    }
-
-    public void move1(AnimationSequence bridge, RigidBody rigidBridge) {
-        float oldX = -2.5f;
-        float oldY = 14.5f;
-        float newX = (float) (oldX - 4 * Math.cos(Math.toRadians(50)));
-        float newY = (float) (oldY - 4 * Math.sin(Math.toRadians(50)));
-
-        bridge.add(MoveRigidBodyTo.build(rigidBridge, newX, newY, 0.5f));
-        bridge.start();
     }
 
     public void moveRED(AnimationSequence bridge, AnimationSequence character, PressableComponent platform) {

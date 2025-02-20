@@ -7,29 +7,38 @@ public class CursorJointInput extends PressableComponent {
     private CursorJoint joint;
 
     private float maxForce;
+    private float offsetX, offsetY;
 
     @Override
     public void onInitialize() {
         super.onInitialize();
         joint.setMaxForce(0);
+        offsetX = offsetY = 0;
     }
 
     @Override
     protected void onPointerDown(int pointer, float x, float y) {
         super.onPointerDown(pointer, x, y);
+
         joint.setMaxForce(maxForce);
+        offsetX = joint.getRigidBody().getPositionX() - x;
+        offsetY = joint.getRigidBody().getPositionY() - y;
+
+        joint.setTarget(x + offsetX, y + offsetY);
     }
 
     @Override
     protected void onPointerDrag(int pointer, float x, float y) {
         super.onPointerDrag(pointer, x, y);
-        joint.setTarget(x, y);
+        joint.setTarget(x + offsetX, y + offsetY);
     }
 
     @Override
     protected void onPointerUp(int pointer, float x, float y) {
         super.onPointerUp(pointer, x, y);
         joint.setMaxForce(0);
+        offsetX = 0;
+        offsetY = 0;
     }
 
     public void setJoint(CursorJoint joint) {

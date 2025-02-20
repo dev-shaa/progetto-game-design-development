@@ -30,7 +30,7 @@ public class CursorJoint extends PhysicsComponent {
         MouseJointDef def = new MouseJointDef();
         def.setBodyA(rigidBody.body);
         def.setBodyB(rigidBody.body);
-        def.setTarget(x, y);
+        def.setTarget(rigidBody.body.getPositionX(), rigidBody.body.getPositionY());
         def.setMaxForce(maxForce);
 
         joint = world.createMouseJoint(def);

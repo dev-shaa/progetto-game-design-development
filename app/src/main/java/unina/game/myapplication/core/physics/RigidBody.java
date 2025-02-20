@@ -171,9 +171,17 @@ public final class RigidBody extends PhysicsComponent {
         }
     }
 
+    public float getPositionX() {
+        return body == null ? getOwner().x : body.getPositionX();
+    }
+
+    public float getPositionY() {
+        return body == null ? getOwner().y : body.getPositionY();
+    }
+
     @Override
     public int getComponentPoolSize() {
         return 16;
     }
-    
+
 }

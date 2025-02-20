@@ -9,17 +9,9 @@ import unina.game.myapplication.core.PhysicsComponent;
 
 public class CursorJoint extends PhysicsComponent {
 
-    public static CursorJoint build() {
-        return new CursorJoint();
-    }
-
     private RigidBody rigidBody;
     private MouseJoint joint;
     private float x, y, maxForce;
-
-    public CursorJoint() {
-
-    }
 
     @Override
     public void onInitialize() {
@@ -35,6 +27,11 @@ public class CursorJoint extends PhysicsComponent {
 
         joint = world.createMouseJoint(def);
         joint.setUserData(this);
+
+        // NOTE:
+        // Set the target after the joint initialization, otherwise liquidfun shows incorrect behaviour
+        // when the RigidBody position is not (0, 0)
+        joint.setTarget(x, y);
 
         def.delete();
     }
@@ -52,6 +49,11 @@ public class CursorJoint extends PhysicsComponent {
         x = y = maxForce = 0;
     }
 
+    /**
+     * Returns the controlled RigidBody.
+     *
+     * @return the controlled RigidBody
+     */
     public RigidBody getRigidBody() {
         return rigidBody;
     }

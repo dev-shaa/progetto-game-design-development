@@ -3,16 +3,11 @@ package unina.game.myapplication.core.rendering;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
-import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
 public class SpriteRenderer extends RenderComponent {
-
-    public synchronized static SpriteRenderer build() {
-        return new SpriteRenderer();
-    }
 
     public int srcX, srcY;
     public int srcWidth, srcHeight;

@@ -142,13 +142,13 @@ public class AndroidGraphics implements Graphics {
     public void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
         srcRect.left = srcX;
         srcRect.top = srcY;
-        srcRect.right = srcX + srcWidth - 1;
-        srcRect.bottom = srcY + srcHeight - 1;
+        srcRect.right = srcX + srcWidth;
+        srcRect.bottom = srcY + srcHeight;
 
         dstRect.left = (int) x;
         dstRect.top = (int) y;
-        dstRect.right = (int) (x + dstWidth - 1);
-        dstRect.bottom = (int) (y + dstHeight - 1);
+        dstRect.right = (int) (x + dstWidth);
+        dstRect.bottom = (int) (y + dstHeight);
 
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, paint);
     }

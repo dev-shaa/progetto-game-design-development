@@ -346,8 +346,8 @@ public class Level2 extends Scene {
                 characterRenderer.setSrcPosition(128, 128);
                 winSound.play(1);
             });
-            animator.add(MoveToAnimation.build(character, 6f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
+            animator.add(MoveToAnimation.build(character, 8f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
             animator.start();
 //            animator.add(ParallelAnimation.build(
 //                    MoveToAnimation.build(retryButtonGO, -4, 1, 0.5f),
@@ -383,6 +383,13 @@ public class Level2 extends Scene {
         noBugPlatfomrRightRigidBody.setType(RigidBody.Type.STATIC);
         noBugPlatfomrRightRigidBody.setCollider(BoxCollider.build(1, 1));
 
+        // Exit cover rectangle
+        GameObject exitCover = createGameObject(7.15f, -6.5f);
+        RectRenderer exitCoverRenderer = exitCover.addComponent(RectRenderer.class);
+        exitCoverRenderer.setSize(1.5f, 3f);
+        exitCoverRenderer.setColor(PALETTE_BACKGROUND);
+        exitCoverRenderer.setPivot(0, 1f);
+        exitCoverRenderer.setLayer(16);
     }
 
     @Override

@@ -59,7 +59,7 @@ public abstract class Component {
      * @return component pool size
      */
     public int getComponentPoolSize() {
-        return 3;
+        return 8;
     }
 
 }

@@ -10,7 +10,7 @@ import java.io.OutputStream;
 import unina.game.myapplication.Level1;
 import unina.game.myapplication.Level2;
 import unina.game.myapplication.Level3;
-import unina.game.myapplication.TestingScene;
+import unina.game.myapplication.Level4;
 import unina.game.myapplication.core.Scene;
 
 public class LevelSaver {
@@ -21,17 +21,17 @@ public class LevelSaver {
 
     public LevelSaver(FileIO fileIO) {
         levels = new Class[4];
-        levels[0] = TestingScene.class;
-        levels[1] = Level1.class;
-        levels[2] = Level2.class;
-        levels[3] = Level3.class;
+        levels[0] = Level1.class;
+        levels[1] = Level2.class;
+        levels[2] = Level3.class;
+        levels[3] = Level4.class;
 
         this.fileIO = fileIO;
 
         try (InputStream stream = fileIO.readFile("save.txt")) {
             latestCompletedLevel = stream.read();
         } catch (FileNotFoundException e) {
-            latestCompletedLevel = levels.length;
+            latestCompletedLevel = 2;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

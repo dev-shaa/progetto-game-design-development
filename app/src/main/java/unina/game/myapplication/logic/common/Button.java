@@ -6,15 +6,6 @@ public class Button extends PressableComponent {
 
     private Runnable onClick;
 
-    public Button() {
-
-    }
-
-    @Deprecated
-    public Button(float width, float height) {
-        setSize(width, height);
-    }
-
     @Override
     public void onRemove() {
         super.onRemove();

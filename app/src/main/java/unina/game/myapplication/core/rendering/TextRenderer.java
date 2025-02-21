@@ -8,19 +8,13 @@ import unina.game.myapplication.core.RenderComponent;
 
 public class TextRenderer extends RenderComponent {
 
-    public static TextRenderer build() {
-        return new TextRenderer();
-    }
-
     private String text;
     private float size = 11;
-    private Graphics.Align align = Graphics.Align.END;
+    private Graphics.Align horizontalAlign = Graphics.Align.START;
+    private Graphics.Align verticalAlign = Graphics.Align.START;
+    private int color = Color.WHITE;
 
     private Camera camera;
-
-    private TextRenderer() {
-
-    }
 
     @Override
     public void onInitialize() {
@@ -32,15 +26,18 @@ public class TextRenderer extends RenderComponent {
     public void onRemove() {
         super.onRemove();
         camera = null;
+        color = Color.WHITE;
+        horizontalAlign = Graphics.Align.START;
     }
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        if (text != null) {
-            float x = camera.worldToScreenX(getOwner().x);
-            float y = camera.worldToScreenY(getOwner().y);
-            graphics.drawText(text, x, y, size, Color.WHITE, align, Graphics.Align.START);
-        }
+        if (text == null)
+            return;
+
+        float x = camera.worldToScreenX(getOwner().x);
+        float y = camera.worldToScreenY(getOwner().y);
+        graphics.drawText(text, x, y, size, color, horizontalAlign, verticalAlign);
     }
 
     public void setText(String text) {
@@ -51,8 +48,16 @@ public class TextRenderer extends RenderComponent {
         this.size = size;
     }
 
-    public void setAlign(Graphics.Align align) {
-        this.align = align;
+    public void setHorizontalAlign(Graphics.Align align) {
+        this.horizontalAlign = align;
+    }
+
+    public void setVerticalAlign(Graphics.Align verticalAlign) {
+        this.verticalAlign = verticalAlign;
+    }
+
+    public void setColor(int color) {
+        this.color = color;
     }
 
 }

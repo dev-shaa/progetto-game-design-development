@@ -18,6 +18,8 @@ public interface Graphics {
 
     void drawLine(float x, float y, float x2, float y2, int color);
 
+    void drawLine(float x, float y, float x2, float y2, float width, int color);
+
     /**
      * Draws a rectangle on screen.
      *

@@ -84,6 +84,13 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void drawLine(float x, float y, float x2, float y2, float width, int color) {
+        paint.setColor(color);
+        paint.setStrokeWidth(width);
+        canvas.drawLine(x, y, x2, y2, paint);
+    }
+
+    @Override
     public void drawRect(float x, float y, float width, float height, int color) {
         paint.setColor(color);
         paint.setStyle(Style.FILL);

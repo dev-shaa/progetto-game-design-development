@@ -47,7 +47,7 @@ public class RectRenderer extends RenderComponent {
         float x = camera.worldToScreenX(getOwner().x) - pivotX * w;
         float y = camera.worldToScreenY(getOwner().y) - pivotY * h;
 
-        graphics.drawRect(x, y, w, h, color);
+        graphics.drawRect(x, y, w, h, getOwner().angle, color);
     }
 
     public void setSize(float width, float height) {

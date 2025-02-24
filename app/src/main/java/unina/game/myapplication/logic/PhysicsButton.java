@@ -28,8 +28,8 @@ public final class PhysicsButton extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionEnter(RigidBody other) {
-        super.onCollisionEnter(other);
+    public void onCollisionEnter(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
+        super.onCollisionEnter(other, relativeVelocityX, relativeVelocityY);
 
         counter++;
         if (counter == 1 && onCollisionEnter != null)
@@ -37,8 +37,8 @@ public final class PhysicsButton extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionExit(RigidBody other) {
-        super.onCollisionExit(other);
+    public void onCollisionExit(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
+        super.onCollisionExit(other, relativeVelocityX, relativeVelocityY);
 
         counter--;
         if (counter == 0 && onCollisionExit != null)

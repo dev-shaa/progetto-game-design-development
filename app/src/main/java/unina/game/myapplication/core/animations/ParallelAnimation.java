@@ -18,13 +18,17 @@ public final class ParallelAnimation extends Animation {
      * @param animations animations to execute simultaneously.
      * @return a composite animation
      */
-    public synchronized static ParallelAnimation build(Animation animation, Animation... animations) {
+    public synchronized static ParallelAnimation build(Animation animation, Animation secondAnimation, Animation... animations) {
         if (pool == null)
             pool = new Pool<>(ParallelAnimation::new, 8);
 
         ParallelAnimation parallelAnimation = pool.get();
         parallelAnimation.animations.add(animation);
-        parallelAnimation.animations.addAll(Arrays.asList(animations));
+        parallelAnimation.animations.add(secondAnimation);
+
+        if (animations.length > 0)
+            parallelAnimation.animations.addAll(Arrays.asList(animations));
+        
         return parallelAnimation;
     }
 

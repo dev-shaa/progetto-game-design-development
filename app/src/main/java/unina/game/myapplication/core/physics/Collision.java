@@ -2,7 +2,8 @@ package unina.game.myapplication.core.physics;
 
 public final class Collision {
 
-    RigidBody a, b;
+    public RigidBody a, b;
+    public float relativeVelocityX, relativeVelocityY;
 
     Collision() {
 

@@ -59,6 +59,10 @@ public class SpriteRenderer extends RenderComponent {
         this.pivotY = y;
     }
 
+    public void setTint(int color) {
+        this.color = color;
+    }
+
     @Override
     public void onInitialize() {
         super.onInitialize();

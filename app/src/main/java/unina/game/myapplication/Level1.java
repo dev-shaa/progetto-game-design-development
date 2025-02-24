@@ -3,8 +3,11 @@ package unina.game.myapplication;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
+
+import java.io.IOException;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
@@ -16,10 +19,12 @@ import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.common.CircleRenderer;
+import unina.game.myapplication.logic.common.LevelSaver;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.common.SoundFadeAnimation;
 import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level1 extends Scene {
@@ -36,6 +41,8 @@ public class Level1 extends Scene {
     private Sound movingPlatformSound;
     private Sound winSound;
 
+    private Music backgroundMusic;
+
     private AnimationSequence animator;
 
     public Level1(Game game) {
@@ -49,6 +56,10 @@ public class Level1 extends Scene {
         Camera.getInstance().setSize(10);
 
         setClearColor(PALETTE_BACKGROUND);
+
+        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(1);
 
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-roundabout.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.RGB565);
@@ -140,7 +151,11 @@ public class Level1 extends Scene {
             buttonSound.play(1);
 
             animator.clear();
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+            animator.add(ParallelAnimation.build(
+                            FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
+                            SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)
+                    ),
+                    () -> loadScene(MainMenu.class));
             animator.start();
         });
 
@@ -161,15 +176,21 @@ public class Level1 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 4f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
+            animator.add(ParallelAnimation.build(
+                            FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
+                            SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)),
+                    () -> loadScene(Level2.class));
             animator.start();
+
+            saveProgress();
         });
 
         GameObject animatorGO = createGameObject();
         animator = animatorGO.addComponent(AnimationSequence.class);
         animator.add(ParallelAnimation.build(
                         FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.4f),
-                        MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT)
+                        MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT),
+                        SoundFadeAnimation.build(backgroundMusic, 0, 1, 0.4f)
                 ),
                 () -> characterRenderer.setSrcPosition(0, 128));
         animator.add(MoveToAnimation.build(menuButtonGO, -Camera.getInstance().getSizeX() / 2 + 1.5f, menuButtonGO.y, 0.25f, EaseFunction.CUBIC_IN_OUT),
@@ -181,8 +202,23 @@ public class Level1 extends Scene {
     }
 
     @Override
+    public void resume() {
+        super.resume();
+        backgroundMusic.play();
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        backgroundMusic.pause();
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
+
+        backgroundMusic.stop();
+        backgroundMusic.dispose();
 
         backgroundImage.dispose();
         elementsImage.dispose();
@@ -194,6 +230,14 @@ public class Level1 extends Scene {
         winSound.dispose();
 
         animator = null;
+    }
+
+    private void saveProgress() {
+        try {
+            LevelSaver.getInstance(game.getFileIO()).saveLevelAsCompleted(0);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

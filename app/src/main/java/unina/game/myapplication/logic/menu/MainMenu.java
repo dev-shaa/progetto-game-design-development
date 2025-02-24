@@ -44,7 +44,7 @@ public class MainMenu extends Scene {
         initializeAssets();
 
         Localization localization = game.getLocalization();
-        LevelSaver levelSaver = new LevelSaver(game.getFileIO());
+        LevelSaver levelSaver = LevelSaver.getInstance(game.getFileIO());
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
         RectRenderer fadeRenderer = createGameObject().addComponent(RectRenderer.class);
@@ -131,9 +131,9 @@ public class MainMenu extends Scene {
             indicator.setSize(2, 2);
             indicator.setSrcSize(128, 128);
 
-            if (i < levelSaver.getLatestCompletedLevel()) {
+            if (i <= levelSaver.getLatestCompletedLevel()) {
                 indicator.setSrcPosition(128, 128);
-            } else if (i == levelSaver.getLatestCompletedLevel()) {
+            } else if (i == levelSaver.getLatestCompletedLevel() + 1) {
                 indicator.setSrcPosition(0, 128);
                 buttonsAnimator.add(SpriteRendererScaleAnimation.build(indicator, 2, 2, 2.15f, 2.15f, 0.5f));
                 buttonsAnimator.start();

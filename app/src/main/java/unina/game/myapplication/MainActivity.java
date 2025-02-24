@@ -22,8 +22,4 @@ public class MainActivity extends AndroidGame {
         return new MainMenu(this);
     }
 
-    // public Screen getStartScreen() {
-    //        return new Level1(this);
-    //    }
-
 }

@@ -3,4 +3,6 @@
     <string name="app_name">Gioco</string>
     <string name="placeholder">Ciao, mondo!</string>
     <string name="menu_button_play">Gioca</string>
+    <string name="select_level">Seleziona livello</string>
+    <string name="level">Livello %1$s</string>
 </resources>

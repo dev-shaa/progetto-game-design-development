@@ -2,26 +2,36 @@ package unina.game.myapplication.logic.menu;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
+import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Localization;
+import com.badlogic.androidgames.framework.Music;
+import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
+import unina.game.myapplication.R;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.EaseFunction;
-import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.logic.DebugRenderer;
+import unina.game.myapplication.core.animations.ParallelAnimation;
+import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.core.rendering.TextRenderer;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
 import unina.game.myapplication.logic.common.RectRenderer;
+import unina.game.myapplication.logic.common.SoundFadeAnimation;
+import unina.game.myapplication.logic.common.SpriteRendererScaleAnimation;
 
 public class MainMenu extends Scene {
 
     private static boolean firstTime = true;
 
+    private Pixmap backgroundImage;
+    private Pixmap spritesImage;
+
+    private Music backgroundMusic;
     private Sound selectSound;
-    private LevelSaver levelSaver;
 
     public MainMenu(Game game) {
         super(game);
@@ -31,79 +41,171 @@ public class MainMenu extends Scene {
     public void initialize() {
         super.initialize();
 
-        levelSaver = new LevelSaver(game.getFileIO());
-        //selectSound = game.getAudio().newSound("sounds/select_001.ogg");
+        initializeAssets();
 
+        Localization localization = game.getLocalization();
+        LevelSaver levelSaver = new LevelSaver(game.getFileIO());
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
-        GameObject fadeGO = createGameObject();
-        RectRenderer fadeRenderer = fadeGO.addComponent(RectRenderer.class);
+        RectRenderer fadeRenderer = createGameObject().addComponent(RectRenderer.class);
         fadeRenderer.setSize(100, 100);
         fadeRenderer.setColor(Color.TRANSPARENT);
         fadeRenderer.setLayer(Short.MAX_VALUE);
 
+        AnimationSequence animator = createGameObject().addComponent(AnimationSequence.class);
+        animator.add(ParallelAnimation.build(
+                FadeAnimation.build(fadeRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f),
+                SoundFadeAnimation.build(backgroundMusic, 0, 1, 0.5f)
+        ));
+        animator.start();
 
-        AnimationSequence sequence = createGameObject().addComponent(AnimationSequence.class);
+        // Main menu
+        GameObject playButtonGO = createGameObject();
 
-        GameObject selectLevelButtonGO = createGameObject();
-        DebugRenderer selectLevelButtonRenderer = selectLevelButtonGO.addComponent(DebugRenderer.class);
-        selectLevelButtonRenderer.setSize(2, 1);
-        Button selectLevelButton = selectLevelButtonGO.addComponent(Button.class);
-        selectLevelButton.setSize(2, 1);
+        RectRenderer playButtonRenderer = playButtonGO.addComponent(RectRenderer.class);
+        playButtonRenderer.setSize(2, 1);
+        playButtonRenderer.setColor(Color.RED);
 
-        selectLevelButton.setOnClick(() -> {
-//            selectSound.play(1);
-
-            sequence.clear();
-            sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, -20, 1f, EaseFunction.CUBIC_IN_OUT));
-            sequence.start();
+        Button playButton = playButtonGO.addComponent(Button.class);
+        playButton.setSize(2, 1);
+        playButton.setOnClick(() -> {
+            animator.clear();
+            animator.add(FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> Camera.getInstance().getOwner().setTransform(30, 0, 0));
+            animator.add(FadeAnimation.build(fadeRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f), () -> {
+                for (Button levelButton : levelButtons)
+                    levelButton.setInteractable(true);
+            });
+            animator.start();
         });
+
+        // Level selection
+        setClearColor(0xff2B2B2C);
+
+        SpriteRenderer levelSelectionBackgroundRenderer = createGameObject(30, 0).addComponent(SpriteRenderer.class);
+        levelSelectionBackgroundRenderer.setImage(backgroundImage);
+        levelSelectionBackgroundRenderer.setSrcPosition(0, 0);
+        levelSelectionBackgroundRenderer.setSrcSize(412, 892);
+        levelSelectionBackgroundRenderer.setSize(Camera.getInstance().getSizeX(), Camera.getInstance().getSizeY());
+        levelSelectionBackgroundRenderer.setLayer(128);
+
+        GameObject levelSelectionLabelGO = createGameObject(-3.5f + 30, 6.5f);
+        TextRenderer levelSelectionLabel = levelSelectionLabelGO.addComponent(TextRenderer.class);
+        levelSelectionLabel.setText(localization.getString(R.string.select_level));
+        levelSelectionLabel.setSize(32);
+        levelSelectionLabel.setHorizontalAlign(Graphics.Align.START);
+        levelSelectionLabel.setColor(Color.WHITE);
+
+        RectRenderer line = createGameObject(-3 + 30, 5).addComponent(RectRenderer.class);
+        line.setSize(0.25f, Math.max(2 * levelSaver.getLevelsCount(), 12));
+        line.setPivot(0.5f, 0f);
+        line.setColor(0xffF9A900);
+
+        AnimationSequence buttonsAnimator = createGameObject().addComponent(AnimationSequence.class);
+
+        for (int i = 0; i < levelSaver.getLevelsCount(); i++) {
+            final Class<? extends Scene> level = levelSaver.getLevel(i);
+
+            TextRenderer label = createGameObject(-2f + 30, 4f - i * 2f).addComponent(TextRenderer.class);
+            label.setSize(24);
+            label.setColor(Color.WHITE);
+            label.setLayer(2);
+            label.setHorizontalAlign(Graphics.Align.START);
+            label.setVerticalAlign(Graphics.Align.CENTER);
+            label.setText(localization.getString(R.string.level, i + 1));
+
+            GameObject buttonGameObject = createGameObject(30, 4f - i * 2f);
+
+            if (DEBUG) {
+                RectRenderer buttonRenderer = buttonGameObject.addComponent(RectRenderer.class);
+                buttonRenderer.setSize(7.5f, 1.5f);
+                buttonRenderer.setColor(Color.MAGENTA);
+                buttonRenderer.setLayer(-8);
+            }
+
+            Button button = buttonGameObject.addComponent(Button.class);
+            button.setSize(7f, 1.5f);
+            button.setInteractable(!firstTime);
+
+            SpriteRenderer indicator = createGameObject(-3 + 30, 4 - i * 2f).addComponent(SpriteRenderer.class);
+            indicator.setImage(spritesImage);
+            indicator.setSize(2, 2);
+            indicator.setSrcSize(128, 128);
+
+            if (i < levelSaver.getLatestCompletedLevel()) {
+                indicator.setSrcPosition(128, 128);
+            } else if (i == levelSaver.getLatestCompletedLevel()) {
+                indicator.setSrcPosition(0, 128);
+                buttonsAnimator.add(SpriteRendererScaleAnimation.build(indicator, 2, 2, 2.15f, 2.15f, 0.5f));
+                buttonsAnimator.start();
+            } else {
+                indicator.setSrcPosition(128, 0);
+                button.setInteractable(false);
+            }
+
+            button.setOnClick(() -> {
+                for (Button levelButton : levelButtons)
+                    levelButton.interactable = false;
+
+                selectSound.play(1);
+
+                animator.clear();
+                animator.add(ParallelAnimation.build(
+                                FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 1.5f),
+                                SoundFadeAnimation.build(backgroundMusic, 1, 0, 1.5f)
+                        ),
+                        () -> loadScene(level));
+                animator.start();
+            });
+
+            levelButtons[i] = button;
+        }
 
         // Skip the landing page if returning here from another scene
         if (firstTime) {
             Camera.getInstance().getOwner().setTransform(0, 0, 0);
             firstTime = false;
         } else {
-            Camera.getInstance().getOwner().setTransform(0, -20, 0);
+            Camera.getInstance().getOwner().setTransform(30, 0, 0);
         }
+    }
 
-        for (int i = 0; i < levelSaver.getLevelsCount(); i++) {
-            final Class<? extends Scene> level = levelSaver.getLevel(i);
+    @Override
+    public void pause() {
+        super.pause();
+        backgroundMusic.pause();
+    }
 
-            GameObject buttonGameObject = createGameObject(0, -20 - i * 1.5f);
-            DebugRenderer buttonRenderer = buttonGameObject.addComponent(DebugRenderer.class);
-            buttonRenderer.setSize(2, 1);
-            Button button = buttonGameObject.addComponent(Button.class);
-            button.setSize(2, 1);
-
-            if (i <= levelSaver.getLatestCompletedLevel()) {
-                button.interactable = true;
-                buttonRenderer.color = Color.BLUE;
-            } else {
-                button.interactable = false;
-                buttonRenderer.color = Color.GREY;
-            }
-
-            button.setOnClick(() -> {
-//                selectSound.play(1);
-
-                for (Button levelButton : levelButtons)
-                    levelButton.interactable = false;
-
-                sequence.clear();
-                sequence.add(FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 1f), () -> loadScene(level));
-                sequence.start();
-            });
-
-            levelButtons[i] = button;
-        }
+    @Override
+    public void resume() {
+        super.resume();
+        backgroundMusic.play();
     }
 
     @Override
     public void dispose() {
         super.dispose();
-
-        //selectSound.dispose();
+        disposeAssets();
     }
+
+    private void initializeAssets() {
+        backgroundImage = game.getGraphics().newPixmap("graphics/environment-level-selection.png", Graphics.PixmapFormat.RGB565);
+        spritesImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
+
+        selectSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
+
+        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(1);
+    }
+
+    private void disposeAssets() {
+        backgroundMusic.stop();
+        backgroundMusic.dispose();
+
+        selectSound.dispose();
+        backgroundImage.dispose();
+        spritesImage.dispose();
+    }
+
 
 }

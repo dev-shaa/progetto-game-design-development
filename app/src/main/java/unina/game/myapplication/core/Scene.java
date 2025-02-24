@@ -79,27 +79,27 @@ public abstract class Scene extends Screen {
         for (int i = 0; i < physicsComponents.size(); i++)
             physicsComponents.valueAt(i).update(deltaTime);
 
-        collisionListener.forEachEnter((a, b) -> {
-            if (a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) a.getOwner().getComponent(Component.Type.BEHAVIOUR);
-                behaviour.onCollisionEnter(b);
+        collisionListener.forEachEnter(collision -> {
+            if (collision.a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) collision.a.getOwner().getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionEnter(collision.b, collision.relativeVelocityX, collision.relativeVelocityY);
             }
 
-            if (b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) b.getOwner().getComponent(Component.Type.BEHAVIOUR);
-                behaviour.onCollisionEnter(a);
+            if (collision.b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) collision.b.getOwner().getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionEnter(collision.a, collision.relativeVelocityX, collision.relativeVelocityY);
             }
         });
 
-        collisionListener.forEachExit((a, b) -> {
-            if (a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) a.getOwner().getComponent(Component.Type.BEHAVIOUR);
-                behaviour.onCollisionExit(b);
+        collisionListener.forEachExit(collision -> {
+            if (collision.a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) collision.a.getOwner().getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionExit(collision.b, collision.relativeVelocityX, collision.relativeVelocityY);
             }
 
-            if (b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) b.getOwner().getComponent(Component.Type.BEHAVIOUR);
-                behaviour.onCollisionExit(a);
+            if (collision.b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) collision.b.getOwner().getComponent(Component.Type.BEHAVIOUR);
+                behaviour.onCollisionExit(collision.a, collision.relativeVelocityX, collision.relativeVelocityY);
             }
         });
 
@@ -145,6 +145,8 @@ public abstract class Scene extends Screen {
                 for (Component component : gameObject.getComponents())
                     component.onDrawGizmos(graphics);
             }
+
+            graphics.drawCircle(Camera.getInstance().worldToScreenX(0), Camera.getInstance().worldToScreenY(0), 4, Color.MAGENTA);
         }
     }
 
@@ -266,7 +268,12 @@ public abstract class Scene extends Screen {
         }
     }
 
-    public void setClearColor(int clearColor) {
+    /**
+     * Sets the color to use when clearing the screen at the start of the render process.
+     *
+     * @param clearColor clear color
+     */
+    public final void setClearColor(int clearColor) {
         this.clearColor = clearColor;
     }
 
@@ -279,55 +286,13 @@ public abstract class Scene extends Screen {
                 if (!gameObjects.add(gameObject))
                     continue;
 
-                for (Component component : gameObject.getComponents()) {
-                    switch (component.getType()) {
-                        case PHYSICS:
-                            physicsComponents.add((PhysicsComponent) component);
-                            ((PhysicsComponent) component).world = world;
-                            break;
-                        case BEHAVIOUR:
-                            behaviourComponents.add((BehaviourComponent) component);
-                            break;
-                        case INPUT:
-                            inputComponents.add((InputComponent) component);
-                            break;
-                        case RENDER:
-                            ((RenderComponent) component).scene = this;
-                            renderComponents.add((RenderComponent) component);
-                            layerDirty = true;
-                            break;
-                        case ANIMATION:
-                            animationComponents.add((AnimationComponent) component);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                for (Component component : gameObject.getComponents())
+                    addComponent(component);
 
                 gameObject.initialize();
             } else if (gameObjects.remove(gameObject)) {
-                for (Component component : gameObject.getComponents()) {
-                    switch (component.getType()) {
-                        case PHYSICS:
-                            physicsComponents.remove((PhysicsComponent) component);
-                            break;
-                        case BEHAVIOUR:
-                            behaviourComponents.remove((BehaviourComponent) component);
-                            break;
-                        case INPUT:
-                            inputComponents.remove((InputComponent) component);
-                            break;
-                        case RENDER:
-                            renderComponents.remove((RenderComponent) component);
-                            layerDirty = true;
-                            break;
-                        case ANIMATION:
-                            animationComponents.remove((AnimationComponent) component);
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                for (Component component : gameObject.getComponents())
+                    removeComponent(component);
 
                 gameObject.dispose();
             }
@@ -335,6 +300,53 @@ public abstract class Scene extends Screen {
 
         gameObjectsToOperate.clear();
         gameObjectsOperations.clear();
+    }
+
+    private void addComponent(Component component) {
+        switch (component.getType()) {
+            case PHYSICS:
+                physicsComponents.add((PhysicsComponent) component);
+                ((PhysicsComponent) component).world = world;
+                break;
+            case BEHAVIOUR:
+                behaviourComponents.add((BehaviourComponent) component);
+                break;
+            case INPUT:
+                inputComponents.add((InputComponent) component);
+                break;
+            case RENDER:
+                ((RenderComponent) component).scene = this;
+                renderComponents.add((RenderComponent) component);
+                layerDirty = true;
+                break;
+            case ANIMATION:
+                animationComponents.add((AnimationComponent) component);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private boolean removeComponent(Component component) {
+        switch (component.getType()) {
+            case PHYSICS:
+                return physicsComponents.remove((PhysicsComponent) component);
+            case BEHAVIOUR:
+                return behaviourComponents.remove((BehaviourComponent) component);
+            case INPUT:
+                return inputComponents.remove((InputComponent) component);
+            case RENDER:
+                if (renderComponents.remove((RenderComponent) component)) {
+                    layerDirty = true;
+                    return true;
+                } else {
+                    return false;
+                }
+            case ANIMATION:
+                return animationComponents.remove((AnimationComponent) component);
+            default:
+                return false;
+        }
     }
 
 }

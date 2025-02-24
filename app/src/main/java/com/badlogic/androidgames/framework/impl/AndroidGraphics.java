@@ -114,6 +114,11 @@ public class AndroidGraphics implements Graphics {
 
     @Override
     public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
+        int alpha = Color.alpha(color);
+
+        if (alpha == 0)
+            return;
+
         if (color != Color.WHITE) {
             ColorMatrixColorFilter filter = filters.get(color);
 
@@ -121,7 +126,7 @@ public class AndroidGraphics implements Graphics {
                 colorMatrixArray[0] = Color.red(color) / 255.0f;
                 colorMatrixArray[6] = Color.green(color) / 255.0f;
                 colorMatrixArray[12] = Color.blue(color) / 255.0f;
-                colorMatrixArray[18] = Color.alpha(color) / 255.0f;
+                colorMatrixArray[18] = alpha / 255.0f;
                 filter = new ColorMatrixColorFilter(colorMatrixArray);
 
                 filters.put(color, filter);

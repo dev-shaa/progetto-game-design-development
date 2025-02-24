@@ -8,8 +8,8 @@ import unina.game.myapplication.core.RenderComponent;
 
 public class PlatformRenderComponent extends RenderComponent {
 
-    public float width;
-    public float height;
+    private float width;
+    private float height;
     public int color;
 
     private float startX, startY;
@@ -41,6 +41,11 @@ public class PlatformRenderComponent extends RenderComponent {
     public void setEnd(float x, float y) {
         endX = x;
         endY = y;
+    }
+
+    public void setSize(float width, float height) {
+        this.width = width;
+        this.height = height;
     }
 
 }

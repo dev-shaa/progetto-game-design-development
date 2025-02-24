@@ -102,8 +102,7 @@ public class Level3 extends Scene {
         if (DEBUG) {
             PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
             rightFloorRenderer.color = Color.MAGENTA;
-            rightFloorRenderer.width = floorW;
-            rightFloorRenderer.height = floorH;
+            rightFloorRenderer.setSize(floorW,floorH);
             rightFloorRenderer.setLayer(64);
         }
 
@@ -186,8 +185,7 @@ public class Level3 extends Scene {
         if (DEBUG) {
             PlatformRenderComponent rightWallRenderComponent = rightWall.addComponent(PlatformRenderComponent.class);
             rightWallRenderComponent.color = Color.MAGENTA;
-            rightWallRenderComponent.width = rightWallWidth;
-            rightWallRenderComponent.height = rightWallHeight;
+            rightWallRenderComponent.setSize(rightWallWidth,rightWallHeight);
             rightWallRenderComponent.setLayer(64);
         }
 
@@ -204,8 +202,7 @@ public class Level3 extends Scene {
         if (DEBUG) {
             PlatformRenderComponent leftWallRenderComponent = leftWall.addComponent(PlatformRenderComponent.class);
             leftWallRenderComponent.color = Color.MAGENTA;
-            leftWallRenderComponent.width = leftWallWidht;
-            leftWallRenderComponent.height = leftWallHeight;
+            leftWallRenderComponent.setSize(leftWallWidht,leftWallHeight);
             leftWallRenderComponent.setLayer(64);
         }
 
@@ -253,8 +250,7 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
         platformDraggedRenderComponent.color = Color.DARKCYAN;
-        platformDraggedRenderComponent.width = dragPlatformWidth;
-        platformDraggedRenderComponent.height = dragPlatformHeight;
+        platformDraggedRenderComponent.setSize(dragPlatformWidth,dragPlatformHeight);
         platformDraggedRenderComponent.setStart(-4, 13);
         platformDraggedRenderComponent.setEnd(5, 5);
 
@@ -327,8 +323,7 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent pressurePlateLoseRenderer = pressurePlateLoseGO.addComponent(PlatformRenderComponent.class);
         pressurePlateLoseRenderer.color = Color.RED;
-        pressurePlateLoseRenderer.width = pressurePlateWidth;
-        pressurePlateLoseRenderer.height = pressurePlateHeight;
+        pressurePlateLoseRenderer.setSize(pressurePlateWidth,pressurePlateHeight);
 
         RigidBody pressurePlateLoseRigidBody = pressurePlateLoseGO.addComponent(RigidBody.class);
         pressurePlateLoseRigidBody.setType(RigidBody.Type.STATIC);
@@ -361,8 +356,7 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent pressurePlateWinRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
         pressurePlateWinRenderer.color = Color.BLUE;
-        pressurePlateWinRenderer.height = pressurePlateHeight;
-        pressurePlateWinRenderer.width = pressurePlateWidth;
+        pressurePlateWinRenderer.setSize(pressurePlateWidth,pressurePlateHeight);
 
         RigidBody pressurePlateWinRigidBody = pressurePlateWinGO.addComponent(RigidBody.class);
         pressurePlateWinRigidBody.setType(RigidBody.Type.STATIC);
@@ -436,8 +430,7 @@ public class Level3 extends Scene {
         GameObject platform3 = createGameObject(3.5f, 0.5f);
         PlatformRenderComponent platformRenderComponent3 = platform3.addComponent(PlatformRenderComponent.class);
         platformRenderComponent3.color = PALETTE_PRIMARY;
-        platformRenderComponent3.width = plat3W;
-        platformRenderComponent3.height = plat3H;
+        platformRenderComponent3.setSize(plat3W,plat3H);
         RigidBody rigidPlatform3 = platform3.addComponent(RigidBody.class);
         rigidPlatform3.setType(RigidBody.Type.STATIC);
         rigidPlatform3.setCollider(BoxCollider.build(plat3W, plat3H));
@@ -449,8 +442,7 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent platformRenderComponent4 = platform4.addComponent(PlatformRenderComponent.class);
         platformRenderComponent4.color = PALETTE_PRIMARY;
-        platformRenderComponent4.width = plat4W;
-        platformRenderComponent4.height = plat4H;
+        platformRenderComponent4.setSize(plat4W,plat4H);
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);
         rigidPlatform4.setCollider(BoxCollider.build(plat4W, plat4H));

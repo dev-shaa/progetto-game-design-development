@@ -39,8 +39,8 @@ public abstract class AndroidGame extends Activity implements Game {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
 
         boolean isLandscape = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        int frameBufferWidth = (isLandscape ? 892 : 412) * 1;
-        int frameBufferHeight = (isLandscape ? 412 : 892) * 1;
+        int frameBufferWidth = isLandscape ? getWidth() : getHeight();
+        int frameBufferHeight = isLandscape ? getHeight() : getWidth();
         Bitmap frameBuffer = Bitmap.createBitmap(frameBufferWidth, frameBufferHeight, Config.RGB_565);
 
         float scaleX = (float) frameBufferWidth / getWindowManager().getDefaultDisplay().getWidth();
@@ -124,5 +124,9 @@ public abstract class AndroidGame extends Activity implements Game {
     public Screen getCurrentScreen() {
         return screen;
     }
+
+    protected abstract int getWidth();
+
+    protected abstract int getHeight();
 
 }

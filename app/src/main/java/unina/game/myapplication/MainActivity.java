@@ -18,6 +18,16 @@ public class MainActivity extends AndroidGame {
     }
 
     @Override
+    protected int getWidth() {
+        return 892;
+    }
+
+    @Override
+    protected int getHeight() {
+        return 412;
+    }
+
+    @Override
     public Screen getStartScreen() {
         return new MainMenu(this);
     }

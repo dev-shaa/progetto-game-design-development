@@ -7,7 +7,7 @@ import com.google.fpl.liquidfun.ContactListener;
 import com.google.fpl.liquidfun.Fixture;
 
 import java.util.HashSet;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 public final class CollisionListener extends ContactListener {
 
@@ -24,18 +24,18 @@ public final class CollisionListener extends ContactListener {
         collisionPool = new Pool<>(Collision::new, maxSize);
     }
 
-    public void forEachEnter(BiConsumer<RigidBody, RigidBody> action) {
+    public void forEachEnter(Consumer<Collision> action) {
         for (Collision collision : enterBuffer) {
-            action.accept(collision.a, collision.b);
+            action.accept(collision);
             collisionPool.free(collision);
         }
 
         enterBuffer.clear();
     }
 
-    public void forEachExit(BiConsumer<RigidBody, RigidBody> action) {
+    public void forEachExit(Consumer<Collision> action) {
         for (Collision collision : exitBuffer) {
-            action.accept(collision.a, collision.b);
+            action.accept(collision);
             collisionPool.free(collision);
         }
 
@@ -67,6 +67,11 @@ public final class CollisionListener extends ContactListener {
         Collision collision = collisionPool.get();
         collision.a = ga;
         collision.b = gb;
+        collision.relativeVelocityX = Math.abs(ba.getLinearVelocity().getX() - bb.getLinearVelocity().getX());
+        collision.relativeVelocityY = Math.abs(ba.getLinearVelocity().getY() - bb.getLinearVelocity().getY());
+
+//        Log.d("Collision", "Velocity: " + bb.getLinearVelocity().getX() + ", " + bb.getLinearVelocity().getY());
+//        Log.d("Collision", "Speed: " + contact.getTangentSpeed());
 
         buffer.add(collision);
     }

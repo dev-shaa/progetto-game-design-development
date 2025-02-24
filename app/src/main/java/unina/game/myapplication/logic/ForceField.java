@@ -40,14 +40,14 @@ public class ForceField extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionEnter(RigidBody other) {
-        super.onCollisionEnter(other);
+    public void onCollisionEnter(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
+        super.onCollisionEnter(other, relativeVelocityX, relativeVelocityY);
         bodies.add(other);
     }
 
     @Override
-    public void onCollisionExit(RigidBody other) {
-        super.onCollisionExit(other);
+    public void onCollisionExit(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
+        super.onCollisionExit(other, relativeVelocityX, relativeVelocityY);
         bodies.remove(other);
     }
 

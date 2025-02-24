@@ -1,7 +1,5 @@
 package unina.game.myapplication.logic.common;
 
-import android.util.Log;
-
 import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.BehaviourComponent;
@@ -11,6 +9,7 @@ public class CollisionSoundPlayer extends BehaviourComponent {
 
     private Sound sound;
     private float volume = 1;
+    private float minVelocitySqrMagnitude = 20f;
 
     @Override
     public void onRemove() {
@@ -21,11 +20,13 @@ public class CollisionSoundPlayer extends BehaviourComponent {
     }
 
     @Override
-    public void onCollisionEnter(RigidBody other) {
-        super.onCollisionEnter(other);
+    public void onCollisionEnter(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
+        super.onCollisionEnter(other, relativeVelocityX, relativeVelocityY);
+        float sqrMagnitude = (relativeVelocityX * relativeVelocityX) + (relativeVelocityY * relativeVelocityY);
 
-        if (sound != null)
+        if (sound != null && sqrMagnitude > minVelocitySqrMagnitude) {
             sound.play(volume);
+        }
     }
 
     @Override
@@ -39,6 +40,10 @@ public class CollisionSoundPlayer extends BehaviourComponent {
 
     public void setVolume(float volume) {
         this.volume = volume;
+    }
+
+    public void setMinVelocitySqrMagnitude(float minVelocitySqrMagnitude) {
+        this.minVelocitySqrMagnitude = minVelocitySqrMagnitude;
     }
 
 }

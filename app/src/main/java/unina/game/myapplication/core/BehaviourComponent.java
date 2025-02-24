@@ -27,7 +27,7 @@ public abstract class BehaviourComponent extends Component {
      *
      * @param other the other GameObject
      */
-    public void onCollisionEnter(RigidBody other) {
+    public void onCollisionEnter(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
 
     }
 
@@ -37,7 +37,7 @@ public abstract class BehaviourComponent extends Component {
      *
      * @param other the other GameObject
      */
-    public void onCollisionExit(RigidBody other) {
+    public void onCollisionExit(RigidBody other, float relativeVelocityX, float relativeVelocityY) {
 
     }
 

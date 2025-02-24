@@ -19,6 +19,7 @@ import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.common.CircleRenderer;
+import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
@@ -44,6 +45,7 @@ public class Level1 extends Scene {
     private Music backgroundMusic;
 
     private AnimationSequence animator;
+    private SpriteRenderer promptRenderer;
 
     public Level1(Game game) {
         super(game);
@@ -81,6 +83,16 @@ public class Level1 extends Scene {
         fullScreenRenderer.setSize(50, 50);
         fullScreenRenderer.setLayer(Integer.MAX_VALUE);
         fullScreenRenderer.setColor(Color.TRANSPARENT);
+
+        // Prompt Renderer
+        promptRenderer = createGameObject(-1, 2f).addComponent(SpriteRenderer.class);
+        promptRenderer.setImage(elementsUIImage);
+        promptRenderer.setSize(1.75f, 1.75f);
+        promptRenderer.setSrcSize(128, 128);
+        promptRenderer.setSrcPosition(0, 256);
+        promptRenderer.setPivot(0.4f, 0);
+        promptRenderer.setTint(Color.TRANSPARENT);
+        promptRenderer.setLayer(8);
 
         // Bridge
         GameObject bridge = createGameObject(-2.5f, -1.35f);
@@ -168,8 +180,13 @@ public class Level1 extends Scene {
             menuButton.setInteractable(false);
             buttonInputComponent.setInteractable(false);
 
+//            promptRenderer.setTint(Color.TRANSPARENT);
+
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(ParallelAnimation.build(
+                    WaitAnimation.build(0.4f),
+                    ColorAnimation.build(promptRenderer::setTint, promptRenderer.color, Color.TRANSPARENT, 0.1f)
+            ), () -> movingPlatformSound.play(1));
             animator.add(MoveToAnimation.build(bridge, -1, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
             animator.add(WaitAnimation.build(0.2f), () -> {
                 characterRenderer.setSrcPosition(128, 128);
@@ -198,6 +215,7 @@ public class Level1 extends Scene {
                     buttonInputComponent.interactable = true;
                     menuButton.interactable = true;
                 });
+        animator.add(WaitAnimation.build(1), this::showPrompt);
         animator.start();
     }
 
@@ -238,6 +256,21 @@ public class Level1 extends Scene {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void showPrompt() {
+        promptRenderer.setTint(Color.TRANSPARENT);
+        promptRenderer.getOwner().setTransform(-1, 2.25f, 0);
+
+        animator.clear();
+        animator.add(WaitAnimation.build(1f));
+        animator.add(ParallelAnimation.build(
+                ColorAnimation.build(promptRenderer::setTint, Color.TRANSPARENT, Color.WHITE, 0.2f),
+                MoveToAnimation.build(promptRenderer.getOwner(), -1, 2.5f, 0.4f, EaseFunction.CUBIC_IN_OUT)
+        ));
+        animator.add(WaitAnimation.build(1));
+        animator.add(ColorAnimation.build(promptRenderer::setTint, Color.WHITE, Color.TRANSPARENT, 0.2f), this::showPrompt);
+        animator.start();
     }
 
 }

@@ -9,19 +9,11 @@ import unina.game.myapplication.core.AnimationComponent;
  */
 public class AnimationSequence extends AnimationComponent {
 
-    public static AnimationSequence build() {
-        return new AnimationSequence();
-    }
-
     private final LinkedList<Animation> animations = new LinkedList<>();
     private final LinkedList<Runnable> events = new LinkedList<>();
 
     private Animation currentAnimation = null;
     private boolean stopped = true;
-
-    public AnimationSequence() {
-
-    }
 
     @Override
     public void onRemove() {

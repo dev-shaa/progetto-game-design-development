@@ -14,8 +14,28 @@ public class PlatformDraggingComponent extends PressableComponent {
     private float startX, startY;
     private float endX, endY;
     private float sqrDistance;
-
     private float offsetX, offsetY;
+
+    private Runnable onDrag;
+
+    @Override
+    public void onRemove() {
+        super.onRemove();
+        onDrag = null;
+        rigidBody = null;
+    }
+
+    @Override
+    public void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
+
+        float x1 = Camera.getInstance().worldToScreenX(startX);
+        float y1 = Camera.getInstance().worldToScreenY(startY);
+        float x2 = Camera.getInstance().worldToScreenX(endX);
+        float y2 = Camera.getInstance().worldToScreenY(endY);
+
+        graphics.drawLine(x1, y1, x2, y2, Color.MAGENTA);
+    }
 
     @Override
     protected void onPointerDown(int pointer, float x, float y) {
@@ -39,6 +59,9 @@ public class PlatformDraggingComponent extends PressableComponent {
         float projectionY = Utility.lerp(startY, endY, t);
 
         rigidBody.setTransform(projectionX, projectionY);
+
+        if (onDrag != null)
+            onDrag.run();
     }
 
     public void setStart(float x, float y) {
@@ -53,15 +76,12 @@ public class PlatformDraggingComponent extends PressableComponent {
         sqrDistance = (startX - endX) * (startX - endX) + (startY - endY) * (startY - endY);
     }
 
-    @Override
-    public void onDrawGizmos(Graphics graphics) {
-        super.onDrawGizmos(graphics);
-
-        float x1 = Camera.getInstance().worldToScreenX(startX);
-        float y1 = Camera.getInstance().worldToScreenY(startY);
-        float x2 = Camera.getInstance().worldToScreenX(endX);
-        float y2 = Camera.getInstance().worldToScreenY(endY);
-
-        graphics.drawLine(x1, y1, x2, y2, Color.MAGENTA);
+    public void setRigidBody(RigidBody rigidBody) {
+        this.rigidBody = rigidBody;
     }
+
+    public void setOnDrag(Runnable onDrag) {
+        this.onDrag = onDrag;
+    }
+
 }

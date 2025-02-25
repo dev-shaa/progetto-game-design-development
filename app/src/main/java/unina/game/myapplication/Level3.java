@@ -299,6 +299,7 @@ public class Level3 extends Scene {
         lineHorizontalRenderer.setLayer(-4);
 
         buttonInputComponent.setOnClick(() -> {
+            buttonInputComponent.setInteractable(false);
             buttonSound.play(1);
             buttonCircleRender.setColor(Color.GREY);
             lineVerticalRenderer.setColor(Color.GREY);

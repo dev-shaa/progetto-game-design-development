@@ -10,30 +10,25 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
 import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
-import unina.game.myapplication.core.physics.CursorJoint;
-import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.ButtonInputComponent;
-import unina.game.myapplication.logic.ButtonRenderComponent;
-import unina.game.myapplication.logic.CursorJointInput;
-import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformBehaviourComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
-import unina.game.myapplication.logic.RockRenderComponent;
-import unina.game.myapplication.logic.TestingRender;
+import unina.game.myapplication.logic.common.Button;
+import unina.game.myapplication.logic.common.CircleRenderer;
+import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.RectRenderer;
 
 public class Level4 extends Scene {
 
     private static final int PALETTE_BACKGROUND = 0xffF9A900;
-    private static final int PALETTE_PRIMARY = 0xff2B2B2C;
+    private static final int PALETTE_PRIMARY = 0xffECECE7;
 
     private Sound buttonSound;
     private Sound buttonsAppearSound;
@@ -116,6 +111,125 @@ public class Level4 extends Scene {
             platformExitRenderComponent.color = Color.MAGENTA;
             platformExitRenderComponent.setLayer(64);
         }
+
+        //Ponte Masso up
+        float bridgeW = 8;
+        float bridgeH = 1;
+        GameObject bridgeRockUp = createGameObject(-8,17);
+
+        SpriteRenderer bridgeRockUpRenderComponent = bridgeRockUp.addComponent(SpriteRenderer.class);
+        bridgeRockUpRenderComponent.setImage(elementsImage);
+        bridgeRockUpRenderComponent.setSrcPosition(128,48);
+        bridgeRockUpRenderComponent.setSrcSize(128,32);
+        bridgeRockUpRenderComponent.setSize(bridgeW,bridgeH);
+        bridgeRockUpRenderComponent.setLayer(64);
+
+        RigidBody bridgeRockUpRigidBody = bridgeRockUp.addComponent(RigidBody.class);
+        bridgeRockUpRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeRockUpRigidBody.setCollider(BoxCollider.build(bridgeW,bridgeH));
+
+        //Ponte Masso down
+        GameObject bridgeRockDown = createGameObject(0,15.5f);
+
+        SpriteRenderer bridgeRockDownRenderComponent = bridgeRockDown.addComponent(SpriteRenderer.class);
+        bridgeRockDownRenderComponent.setImage(elementsImage);
+        bridgeRockDownRenderComponent.setSrcPosition(128,48);
+        bridgeRockDownRenderComponent.setSrcSize(128,32);
+        bridgeRockDownRenderComponent.setSize(bridgeW,bridgeH);
+        bridgeRockDownRenderComponent.setLayer(64);
+
+        RigidBody bridgeRockDownRigidBody = bridgeRockDown.addComponent(RigidBody.class);
+        bridgeRockDownRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeRockDownRigidBody.setCollider(BoxCollider.build(bridgeW,bridgeH));
+
+        //Masso
+        float rockRadius = 2;
+        GameObject rock = createGameObject(-8,18);
+
+        SpriteRenderer rockRenderComponent = rock.addComponent(SpriteRenderer.class);
+        rockRenderComponent.setImage(elementsImage);
+        rockRenderComponent.setSrcPosition(256,0);
+        rockRenderComponent.setSrcSize(128,128);
+        rockRenderComponent.setSize(4,4);
+        rockRenderComponent.setLayer(64);
+
+        RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
+        rockRigidBody.setType(RigidBody.Type.DYNAMIC);
+        rockRigidBody.setCollider(CircleCollider.build(2,100,0,1,false));
+
+        //Pulsante ponte down
+        CircleRenderer buttonBridgeDownCircleRender = createGameObject(8,13).addComponent(CircleRenderer.class);
+        buttonBridgeDownCircleRender.setColor(PALETTE_PRIMARY);
+        buttonBridgeDownCircleRender.setRadius(0.85f);
+
+        GameObject buttonBridgeDown = createGameObject(8,13);
+
+        SpriteRenderer buttonBridgeDownRenderComponent = buttonBridgeDown.addComponent(SpriteRenderer.class);
+        buttonBridgeDownRenderComponent.setImage(elementsImage);
+        buttonBridgeDownRenderComponent.setSrcPosition(0,0);
+        buttonBridgeDownRenderComponent.setSrcSize(128,128);
+        buttonBridgeDownRenderComponent.setSize(3,3);
+        buttonBridgeDownRenderComponent.setLayer(0);
+
+        Button buttonBridgeDownInputComponent = buttonBridgeDown.addComponent(Button.class);
+        buttonBridgeDownInputComponent.setSize(3,3);
+
+        //Linea BridgeDown
+        GameObject lineBridgeDownGO = createGameObject();
+        DottedLineRenderer lineBridgeDown = lineBridgeDownGO.addComponent(DottedLineRenderer.class);
+        lineBridgeDown.setColor(PALETTE_PRIMARY);
+        lineBridgeDown.setPointA(buttonBridgeDown.x - 2, buttonBridgeDown.y);
+        lineBridgeDown.setPointB(bridgeRockDown.x,buttonBridgeDown.y);
+        lineBridgeDown.setRadius(0.25f);
+        lineBridgeDown.setCount(8);
+        lineBridgeDown.setLayer(-4);
+
+        buttonBridgeDownInputComponent.setOnClick(() -> {
+            buttonBridgeDownInputComponent.setInteractable(false);
+            buttonSound.play(1);
+            buttonBridgeDownCircleRender.setColor(Color.GREY);
+            lineBridgeDown.setColor(Color.GREY);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeRockDownRigidBody,-8,bridgeRockDown.y,0.4f, EaseFunction.CUBIC_IN_OUT));
+            animator.start();
+        });
+
+        //Ponte palla demolitrice WreckingBall
+        float bridgeBallW = 8;
+        float bridgeBallH = 1;
+        GameObject bridgeWreckingBall = createGameObject(-4,-8,90);
+
+        SpriteRenderer bridgeWreckingBallRenderComponent = bridgeWreckingBall.addComponent(SpriteRenderer.class);
+        bridgeWreckingBallRenderComponent.setImage(elementsImage);
+        bridgeWreckingBallRenderComponent.setSrcPosition(128,48);
+        bridgeWreckingBallRenderComponent.setSrcSize(128,32);
+        bridgeWreckingBallRenderComponent.setSize(bridgeBallW,bridgeBallH);
+        bridgeWreckingBallRenderComponent.setLayer(-4);
+
+        RigidBody bridgeWreckingBallRigidBody = bridgeWreckingBall.addComponent(RigidBody.class);
+        bridgeWreckingBallRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeWreckingBallRigidBody.setCollider(BoxCollider.build(bridgeBallW,bridgeBallH));
+
+        //Pulsante ponte Palla
+        CircleRenderer buttonBallCircleRender = createGameObject(8,-13).addComponent(CircleRenderer.class);
+        buttonBallCircleRender.setColor(PALETTE_PRIMARY);
+        buttonBallCircleRender.setRadius(0.85f);
+
+        GameObject buttonBall = createGameObject(8,-13);
+
+        SpriteRenderer buttonBallRenderComponent = buttonBall.addComponent(SpriteRenderer.class);
+        buttonBallRenderComponent.setImage(elementsImage);
+        buttonBallRenderComponent.setSrcPosition(0,0);
+        buttonBallRenderComponent.setSrcSize(128,128);
+        buttonBallRenderComponent.setSize(3,3);
+        buttonBallRenderComponent.setLayer(0);
+
+        Button buttonBallInputComponent = buttonBall.addComponent(Button.class);
+        buttonBallInputComponent.setSize(3,3);
+
+
 
 
 

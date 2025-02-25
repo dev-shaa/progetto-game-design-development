@@ -2,7 +2,7 @@ package unina.game.myapplication.core.animations;
 
 import com.badlogic.androidgames.framework.Pool;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 public final class Sequence extends Animation {
 
@@ -15,17 +15,20 @@ public final class Sequence extends Animation {
         return pool.get();
     }
 
-    private final LinkedList<Animation> animations;
+    private final ArrayList<Animation> animations;
     private Animation current;
+    private int currentIndex;
 
     private Sequence() {
-        animations = new LinkedList<>();
+        animations = new ArrayList<>(4);
+        currentIndex = -1;
     }
 
     @Override
     public void start() {
         if (!animations.isEmpty()) {
-            current = animations.remove();
+            currentIndex = 0;
+            current = animations.get(currentIndex);
             current.start();
         }
     }
@@ -41,6 +44,7 @@ public final class Sequence extends Animation {
             animation.dispose();
 
         animations.clear();
+        currentIndex = -1;
     }
 
     @Override
@@ -49,12 +53,11 @@ public final class Sequence extends Animation {
             if (animations.isEmpty())
                 return;
 
-            current = animations.remove();
+            current = animations.get(currentIndex++);
             current.start();
         }
 
         if (current.isFinished()) {
-            current.dispose();
             current = null;
         } else {
             current.process(deltaTime);
@@ -63,10 +66,10 @@ public final class Sequence extends Animation {
 
     @Override
     public boolean isFinished() {
-        return current == null && animations.isEmpty();
+        return current == null && currentIndex == animations.size();
     }
 
-    public void addAnimation(Animation animation) {
+    public void add(Animation animation) {
         animations.add(animation);
     }
 

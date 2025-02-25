@@ -19,7 +19,7 @@ import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
-    public static final boolean DEBUG = true; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
+    public static final boolean DEBUG = false; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
 
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
     private static final float GRAVITY_X = 0, GRAVITY_Y = -9.82f;

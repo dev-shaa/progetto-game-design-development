@@ -6,17 +6,23 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
+import java.io.IOException;
+
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
+import unina.game.myapplication.core.animations.LoopingAnimation;
 import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.ParallelAnimation;
+import unina.game.myapplication.core.animations.Sequence;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
@@ -25,6 +31,7 @@ import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.LevelSaver;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.menu.MainMenu;
 
@@ -59,6 +66,7 @@ public class Level2 extends Scene {
 
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
+        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
 
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
@@ -80,8 +88,35 @@ public class Level2 extends Scene {
         GameObject fade = createGameObject();
         fullScreenRenderer = fade.addComponent(RectRenderer.class);
         fullScreenRenderer.setSize(50, 50);
-        fullScreenRenderer.setLayer(Integer.MAX_VALUE);
+        fullScreenRenderer.setLayer(256);
         fullScreenRenderer.setColor(Color.TRANSPARENT);
+
+        // Prompt Renderer
+        GameObject promptGameObject = createGameObject(5, 11, 45);
+
+        SpriteRenderer promptRenderer = promptGameObject.addComponent(SpriteRenderer.class);
+        promptRenderer.setImage(elementsUIImage);
+        promptRenderer.setSize(3, 3);
+        promptRenderer.setSrcSize(128, 128);
+        promptRenderer.setSrcPosition(0, 256);
+        promptRenderer.setPivot(0.4f, 0);
+        promptRenderer.setTint(Color.TRANSPARENT);
+        promptRenderer.setLayer(128);
+
+        AnimationSequence promptAnimator = promptGameObject.addComponent(AnimationSequence.class);
+
+        Sequence promptAnimationSequence = Sequence.build();
+        promptAnimationSequence.add(WaitAnimation.build(1));
+        promptAnimationSequence.add(ParallelAnimation.build(
+                MoveToAnimation.build(promptGameObject, 3, 12, 0.5f, EaseFunction.CUBIC_IN_OUT),
+                ColorAnimation.build(promptRenderer::setTint, Color.TRANSPARENT, Color.WHITE, 0.4f)
+        ));
+        promptAnimationSequence.add(WaitAnimation.build(0.5f));
+        promptAnimationSequence.add(MoveToAnimation.build(promptGameObject, 3, 6, 1, EaseFunction.CUBIC_IN_OUT));
+        promptAnimationSequence.add(ColorAnimation.build(promptRenderer::setTint, Color.WHITE, Color.TRANSPARENT, 0.2f));
+
+        promptAnimator.add(new LoopingAnimation(promptAnimationSequence, () -> promptGameObject.setTransform(5, 11, 45)));
+        promptAnimator.start();
 
         // Animator
         GameObject animatorGO = createGameObject();
@@ -213,7 +248,7 @@ public class Level2 extends Scene {
         rightDraggablePlatform.height = 10;
         rightDraggablePlatform.setStart(rightDraggablePlatformGO.x, 12);
         rightDraggablePlatform.setEnd(rightDraggablePlatformGO.x, 3f + rightDraggablePlatformWidth / 2f + 0.25f);
-        rightDraggablePlatform.rigidBody = rightDraggablePlatformRigidBody;
+        rightDraggablePlatform.setRigidBody(rightDraggablePlatformRigidBody);
 
         DraggablePlatformLineRenderer rightDraggablePlatformLineRenderer = createGameObject().addComponent(DraggablePlatformLineRenderer.class);
         rightDraggablePlatformLineRenderer.setStart(rightDraggablePlatformGO.x, 12 + rightDraggablePlatformWidth / 2 + 0.25f);
@@ -241,7 +276,7 @@ public class Level2 extends Scene {
         leftDraggablePlatformRenderer.setSize(leftDraggablePlatformWidth, leftDraggablePlatformHeight);
 
         PlatformDraggingComponent leftDraggablePlatform = leftDraggablePlatformGO.addComponent(PlatformDraggingComponent.class);
-        leftDraggablePlatform.rigidBody = leftDraggablePlatformRigidBody;
+        leftDraggablePlatform.setRigidBody(leftDraggablePlatformRigidBody);
         leftDraggablePlatform.setSize(10, 10);
         leftDraggablePlatform.setStart(leftDraggablePlatformGO.x, 15);
         leftDraggablePlatform.setEnd(leftDraggablePlatformGO.x, 7);
@@ -252,6 +287,17 @@ public class Level2 extends Scene {
         leftDraggablePlatformLineRenderer.setRadius(0.25f);
         leftDraggablePlatformLineRenderer.setColor(Color.WHITE);
         leftDraggablePlatformLineRenderer.setLayer(-2);
+
+        rightDraggablePlatform.setOnDrag(() -> {
+            removeGameObject(promptGameObject);
+            rightDraggablePlatform.setOnDrag(null);
+            leftDraggablePlatform.setOnDrag(null);
+        });
+        leftDraggablePlatform.setOnDrag(() -> {
+            removeGameObject(promptGameObject);
+            rightDraggablePlatform.setOnDrag(null);
+            leftDraggablePlatform.setOnDrag(null);
+        });
 
         // Bridge
         GameObject bridge = createGameObject(-2.5f, -6.6f);
@@ -365,9 +411,10 @@ public class Level2 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 8f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level2.class));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
             animator.start();
-            animator.start();
+
+            saveProgress();
         });
 
         //Piattaforma noBugRight
@@ -447,6 +494,14 @@ public class Level2 extends Scene {
 
     private void retry() {
         loadScene(Level2.class);
+    }
+
+    private void saveProgress() {
+        try {
+            LevelSaver.getInstance(game.getFileIO()).saveLevelAsCompleted(1);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

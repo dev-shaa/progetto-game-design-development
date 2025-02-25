@@ -53,6 +53,8 @@ public interface Graphics {
 
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);
 
+    void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, float pivotPointX, float pivotPointY, int srcX, int srcY, int srcWidth, int srcHeight, int color);
+
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);

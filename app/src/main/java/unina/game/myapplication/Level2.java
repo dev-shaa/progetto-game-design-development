@@ -3,6 +3,7 @@ package unina.game.myapplication;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -26,7 +27,6 @@ import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
-import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
@@ -44,17 +44,11 @@ public class Level2 extends Scene {
     private Sound buttonsAppearSound;
     private Sound movingPlatformSound;
     private Sound winSound;
+    private Music backgroundMusic;
 
     private boolean isPressed = false;
 
-    private Pixmap backgroundImage;
-    private Pixmap elementsImage;
-    private Pixmap elementsUIImage;
-
-    private RectRenderer fullScreenRenderer;
-    private AnimationSequence animator;
-
-    private SpriteRenderer characterRenderer;
+    private Pixmap backgroundImage, elementsImage, elementsUIImage;
 
     public Level2(Game game) {
         super(game);
@@ -63,6 +57,10 @@ public class Level2 extends Scene {
     @Override
     public void initialize() {
         super.initialize();
+
+        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(0.6f);
 
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
@@ -84,9 +82,27 @@ public class Level2 extends Scene {
         backgroundRenderer.setSize(20, 20 / backgroundImage.getAspectRatio());
         backgroundRenderer.setLayer(16);
 
+        // Level selection button
+        float levelSelectionButtonWidth = 4f;
+        float levelSelectionButtonHeight = 4f;
+
+        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
+        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
+
+        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
+        menuButtonRenderer.setImage(elementsUIImage);
+        menuButtonRenderer.setSrcPosition(0, 0);
+        menuButtonRenderer.setSrcSize(128, 128);
+        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+        menuButtonRenderer.setLayer(32);
+        menuButtonRenderer.setPivot(0.5f, 0.5f);
+
+        Button menuButton = menuButtonGO.addComponent(Button.class);
+        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+
         // Transition panel
         GameObject fade = createGameObject();
-        fullScreenRenderer = fade.addComponent(RectRenderer.class);
+        RectRenderer fullScreenRenderer = fade.addComponent(RectRenderer.class);
         fullScreenRenderer.setSize(50, 50);
         fullScreenRenderer.setLayer(256);
         fullScreenRenderer.setColor(Color.TRANSPARENT);
@@ -120,7 +136,7 @@ public class Level2 extends Scene {
 
         // Animator
         GameObject animatorGO = createGameObject();
-        animator = animatorGO.addComponent(AnimationSequence.class);
+        AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
         animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
@@ -174,7 +190,7 @@ public class Level2 extends Scene {
             rockPlatformRenderComponent.setLayer(64);
         }
 
-        //Muro a sinistra
+        // Left wall
         float plat2W = 1;
         float plat2H = 20;
 
@@ -192,8 +208,7 @@ public class Level2 extends Scene {
         LeftWallRigidBody2.setType(RigidBody.Type.STATIC);
         LeftWallRigidBody2.addCollider(BoxCollider.build(plat2W, plat2H));
 
-        //Muro a destra
-
+        // Right wall
         GameObject rightWall = createGameObject(9.25f, 5);
 
         if (DEBUG) {
@@ -313,7 +328,7 @@ public class Level2 extends Scene {
         // Character
         GameObject character = createGameObject(-6, -6.5f);
 
-        characterRenderer = character.addComponent(SpriteRenderer.class);
+        SpriteRenderer characterRenderer = character.addComponent(SpriteRenderer.class);
         characterRenderer.setImage(elementsImage);
         characterRenderer.setSize(2, 2);
         characterRenderer.setSrcPosition(0, 128);
@@ -338,7 +353,18 @@ public class Level2 extends Scene {
         gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
 
         PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
-        gameOverTrigger.setOnCollisionEnter(() -> gameOver(rightDraggablePlatform, leftDraggablePlatform));
+        gameOverTrigger.setOnCollisionEnter(() -> {
+            rightDraggablePlatform.setInteractable(false);
+            leftDraggablePlatform.setInteractable(false);
+
+            // Animator
+            characterRenderer.setSize(4, 0.5f);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(2));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level2.class));
+            animator.start();
+        });
 
         if (DEBUG) {
             // Visualize the trigger in debug mode
@@ -397,6 +423,9 @@ public class Level2 extends Scene {
 
             isPressed = true;
 
+            menuButton.setInteractable(false);
+            removeGameObject(menuButtonGO);
+
             buttonSound.play(1);
             pressurePlateRenderer.color = Color.GREEN;
             pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y - 0.5f);
@@ -432,35 +461,17 @@ public class Level2 extends Scene {
         noBugPlatfomrRightRigidBody.setType(RigidBody.Type.STATIC);
         noBugPlatfomrRightRigidBody.addCollider(BoxCollider.build(1, 1));
 
-        // Exit cover rectangle
-        GameObject exitCover = createGameObject(7.15f, -6.5f);
-        RectRenderer exitCoverRenderer = exitCover.addComponent(RectRenderer.class);
-        exitCoverRenderer.setSize(1.5f, 3f);
-        exitCoverRenderer.setColor(PALETTE_BACKGROUND);
-        exitCoverRenderer.setPivot(0, 1f);
-        exitCoverRenderer.setLayer(16);
-
-        // Level selection button
-        float levelSelectionButtonWidth = 4f;
-        float levelSelectionButtonHeight = 4f;
-
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
-        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
-
-        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(elementsUIImage);
-        menuButtonRenderer.setSrcPosition(0, 0);
-        menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
-        menuButtonRenderer.setLayer(32);
-        menuButtonRenderer.setPivot(0.5f, 0.5f);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
         menuButton.setOnClick(() -> {
+            // Prevent user from clicking again
             menuButton.setInteractable(false);
+
+            // Disable the pressure plate so the win condition can't happen in the small interval when fading to menu
+            pressurePlate.setOnCollisionEnter(null);
+
+            // Play the sound
             buttonSound.play(1);
 
+            // Fade animation and load main menu
             animator.clear();
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
@@ -468,32 +479,28 @@ public class Level2 extends Scene {
     }
 
     @Override
+    public void resume() {
+        super.resume();
+        backgroundMusic.play();
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        backgroundMusic.pause();
+    }
+
+    @Override
     public void dispose() {
         super.dispose();
 
-        animator = null;
-        fullScreenRenderer = null;
-        characterRenderer = null;
+        backgroundMusic.stop();
+        backgroundMusic.dispose();
+        buttonsAppearSound.dispose();
 
         elementsImage.dispose();
         elementsUIImage.dispose();
-    }
-
-    private void gameOver(PressableComponent... interactableComponents) {
-        for (PressableComponent component : interactableComponents)
-            component.interactable = false;
-
-        // Animator
-        characterRenderer.setSize(4, 0.5f);
-
-        animator.clear();
-        animator.add(WaitAnimation.build(2));
-        animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), this::retry);
-        animator.start();
-    }
-
-    private void retry() {
-        loadScene(Level2.class);
+        backgroundImage.dispose();
     }
 
     private void saveProgress() {

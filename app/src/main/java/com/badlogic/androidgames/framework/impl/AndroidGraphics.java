@@ -143,6 +143,39 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, float pivotPointX, float pivotPointY, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
+        int alpha = Color.alpha(color);
+
+        if (alpha != 0) {
+            canvas.save();
+            canvas.rotate(-angle, pivotPointX, pivotPointY);
+
+            if (color != Color.WHITE) {
+                ColorMatrixColorFilter filter = filters.get(color);
+
+                if (filter == null) {
+                    colorMatrixArray[0] = Color.red(color) / 255.0f;
+                    colorMatrixArray[6] = Color.green(color) / 255.0f;
+                    colorMatrixArray[12] = Color.blue(color) / 255.0f;
+                    colorMatrixArray[18] = alpha / 255.0f;
+                    filter = new ColorMatrixColorFilter(colorMatrixArray);
+
+                    filters.put(color, filter);
+                }
+
+                paint.setColorFilter(filter);
+            } else {
+                paint.setColor(Color.WHITE);
+            }
+
+            drawPixmap(pixmap, x, y, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
+
+            paint.setColorFilter(null);
+            canvas.restore();
+        }
+    }
+
+    @Override
     public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
         canvas.save();
         canvas.rotate(-angle, x + dstWidth / 2, y + dstHeight / 2);

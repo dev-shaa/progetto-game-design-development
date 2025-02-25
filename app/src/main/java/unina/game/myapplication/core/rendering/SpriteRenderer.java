@@ -85,10 +85,19 @@ public class SpriteRenderer extends RenderComponent {
 
         float screenWidth = camera.worldToScreenSizeX(width);
         float screenHeight = camera.worldToScreenSizeY(height);
-        float screenX = camera.worldToScreenX(getOwner().x) - pivotX * screenWidth;
-        float screenY = camera.worldToScreenY(getOwner().y) - pivotY * screenHeight;
+        float screenX = camera.worldToScreenX(getOwner().x);
+        float screenY = camera.worldToScreenY(getOwner().y);
 
-        graphics.drawPixmap(image, screenX, screenY, getOwner().angle, screenWidth, screenHeight, srcX, srcY, srcWidth, srcHeight, color);
+        graphics.drawPixmap(image, screenX - pivotX * screenWidth, screenY - pivotY * screenHeight, getOwner().angle, screenWidth, screenHeight, screenX, screenY, srcX, srcY, srcWidth, srcHeight, color);
     }
 
+    @Override
+    public void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
+
+        float screenX = camera.worldToScreenX(getOwner().x);
+        float screenY = camera.worldToScreenY(getOwner().y);
+
+        graphics.drawCircle(screenX, screenY, 2, Color.GREEN);
+    }
 }

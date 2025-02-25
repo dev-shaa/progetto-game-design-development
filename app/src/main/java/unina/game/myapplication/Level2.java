@@ -139,7 +139,7 @@ public class Level2 extends Scene {
 
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
-        leftFloorRigidBody.setCollider(BoxCollider.build(floorW, floorH));
+        leftFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
 
         // Right floor
         GameObject rightFloor = createGameObject(6, -14);
@@ -154,7 +154,7 @@ public class Level2 extends Scene {
 
         RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
         rightFloorRigidBody.setType(RigidBody.Type.STATIC);
-        rightFloorRigidBody.setCollider(BoxCollider.build(floorW, floorH));
+        rightFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
 
         // Rock Platform
         float rockPlatformWidth = 9;
@@ -164,7 +164,7 @@ public class Level2 extends Scene {
 
         RigidBody rockPlatformRigidBody = rockPlatform.addComponent(RigidBody.class);
         rockPlatformRigidBody.setType(RigidBody.Type.STATIC);
-        rockPlatformRigidBody.setCollider(BoxCollider.build(rockPlatformWidth, rockPlatformHeight));
+        rockPlatformRigidBody.addCollider(BoxCollider.build(rockPlatformWidth, rockPlatformHeight));
 
         if (DEBUG) {
             RectRenderer rockPlatformRenderComponent = rockPlatform.addComponent(RectRenderer.class);
@@ -190,7 +190,7 @@ public class Level2 extends Scene {
 
         RigidBody LeftWallRigidBody2 = leftWall.addComponent(RigidBody.class);
         LeftWallRigidBody2.setType(RigidBody.Type.STATIC);
-        LeftWallRigidBody2.setCollider(BoxCollider.build(plat2W, plat2H));
+        LeftWallRigidBody2.addCollider(BoxCollider.build(plat2W, plat2H));
 
         //Muro a destra
 
@@ -206,7 +206,7 @@ public class Level2 extends Scene {
 
         RigidBody RightWallRigidBody2 = rightWall.addComponent(RigidBody.class);
         RightWallRigidBody2.setType(RigidBody.Type.STATIC);
-        RightWallRigidBody2.setCollider(BoxCollider.build(plat2W, plat2H));
+        RightWallRigidBody2.addCollider(BoxCollider.build(plat2W, plat2H));
 
         // Rock
         GameObject rock = createGameObject(5, 15);
@@ -219,7 +219,7 @@ public class Level2 extends Scene {
 
         RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
-        rockRigidBody.setCollider(CircleCollider.build(2, 100, 0, 1, false));
+        rockRigidBody.addCollider(CircleCollider.build(2, 100, 0, 1, false));
         rockRigidBody.setSleepingAllowed(false);
 
         CollisionSoundPlayer rockCollisionSoundPlayer = rock.addComponent(CollisionSoundPlayer.class);
@@ -234,7 +234,7 @@ public class Level2 extends Scene {
 
         RigidBody rightDraggablePlatformRigidBody = rightDraggablePlatformGO.addComponent(RigidBody.class);
         rightDraggablePlatformRigidBody.setType(RigidBody.Type.KINEMATIC);
-        rightDraggablePlatformRigidBody.setCollider(BoxCollider.build(rightDraggablePlatformWidth, rightDraggablePlatformHeight));
+        rightDraggablePlatformRigidBody.addCollider(BoxCollider.build(rightDraggablePlatformWidth, rightDraggablePlatformHeight));
         rightDraggablePlatformRigidBody.setSleepingAllowed(false);
 
         SpriteRenderer rightDraggablePlatformRenderer = rightDraggablePlatformGO.addComponent(SpriteRenderer.class);
@@ -266,7 +266,7 @@ public class Level2 extends Scene {
 
         RigidBody leftDraggablePlatformRigidBody = leftDraggablePlatformGO.addComponent(RigidBody.class);
         leftDraggablePlatformRigidBody.setType(RigidBody.Type.KINEMATIC);
-        leftDraggablePlatformRigidBody.setCollider(BoxCollider.build(leftDraggablePlatformWidth, leftDraggablePlatformHeight));
+        leftDraggablePlatformRigidBody.addCollider(BoxCollider.build(leftDraggablePlatformWidth, leftDraggablePlatformHeight));
         leftDraggablePlatformRigidBody.setSleepingAllowed(false);
 
         SpriteRenderer leftDraggablePlatformRenderer = leftDraggablePlatformGO.addComponent(SpriteRenderer.class);
@@ -335,7 +335,7 @@ public class Level2 extends Scene {
 
         RigidBody gameOverTriggerRigidBody = gameOverTriggerGO.addComponent(RigidBody.class);
         gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
-        gameOverTriggerRigidBody.setCollider(BoxCollider.build(4, 1, true));
+        gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
 
         PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
         gameOverTrigger.setOnCollisionEnter(() -> gameOver(rightDraggablePlatform, leftDraggablePlatform));
@@ -360,7 +360,7 @@ public class Level2 extends Scene {
 
         RigidBody pressurePlateRigidBody = pressurePlateGO.addComponent(RigidBody.class);
         pressurePlateRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlateRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+        pressurePlateRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
 
@@ -379,7 +379,7 @@ public class Level2 extends Scene {
 
         RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
         pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlatePlatformRigidBody.setCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
+        pressurePlatePlatformRigidBody.addCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
 
         //Linea tra pulsante e ponte
         GameObject lineRendererGO = createGameObject();
@@ -430,7 +430,7 @@ public class Level2 extends Scene {
 
         RigidBody noBugPlatfomrRightRigidBody = noBugPlatformRight.addComponent(RigidBody.class);
         noBugPlatfomrRightRigidBody.setType(RigidBody.Type.STATIC);
-        noBugPlatfomrRightRigidBody.setCollider(BoxCollider.build(1, 1));
+        noBugPlatfomrRightRigidBody.addCollider(BoxCollider.build(1, 1));
 
         // Exit cover rectangle
         GameObject exitCover = createGameObject(7.15f, -6.5f);

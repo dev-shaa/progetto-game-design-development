@@ -2,9 +2,9 @@ package unina.game.myapplication.core.physics;
 
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
-import com.google.fpl.liquidfun.Fixture;
-import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.Vec2;
+
+import java.util.HashSet;
 
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.PhysicsComponent;
@@ -16,11 +16,10 @@ public final class RigidBody extends PhysicsComponent {
     }
 
     Body body;
-    private Fixture fixture;
     private Type type;
-    private Collider collider;
     private boolean sleepingAllowed;
-    private float linearDamping = 0;
+    private float linearDamping;
+    private final HashSet<Collider> colliders = new HashSet<>(2);
 
     @Override
     public void onInitialize() {
@@ -46,16 +45,8 @@ public final class RigidBody extends PhysicsComponent {
         body = world.createBody(bodyDef);
         bodyDef.delete();
 
-        if (collider != null) {
-            FixtureDef fixtureDef = collider.createFixture();
-            fixture = body.createFixture(fixtureDef);
-
-            fixtureDef.getShape().delete();
-            fixtureDef.delete();
-
-            collider.dispose();
-            collider = null;
-        }
+        for (Collider c : colliders)
+            c.createFixture(body);
 
         body.setUserData(this);
         body.setLinearDamping(linearDamping);
@@ -66,12 +57,15 @@ public final class RigidBody extends PhysicsComponent {
     public void onRemove() {
         super.onRemove();
 
+        for (Collider c : colliders)
+            c.dispose();
+
+        colliders.clear();
+
         world.destroyBody(body);
         world = null;
 
-        collider = null;
         body = null;
-        fixture = null;
         sleepingAllowed = true;
     }
 
@@ -109,25 +103,9 @@ public final class RigidBody extends PhysicsComponent {
             body.setTransform(x, y, body.getAngle());
     }
 
+    @Deprecated
     public void setCollider(Collider collider) {
-        if (body == null) {
-            this.collider = collider;
-        } else {
-            if (fixture != null) {
-                body.destroyFixture(fixture);
-                fixture = null;
-            }
-
-            if (collider != null) {
-                FixtureDef fixtureDef = collider.createFixture();
-                fixture = body.createFixture(fixtureDef);
-
-                fixtureDef.getShape().delete();
-                fixtureDef.delete();
-
-                collider.dispose();
-            }
-        }
+        addCollider(collider);
     }
 
     public void setType(Type type) {
@@ -177,6 +155,27 @@ public final class RigidBody extends PhysicsComponent {
 
     public float getPositionY() {
         return body == null ? getOwner().y : body.getPositionY();
+    }
+
+    public void addCollider(Collider collider) {
+        if (collider.owner == this)
+            return;
+
+        if (collider.owner != null)
+            throw new RuntimeException();
+
+        collider.owner = this;
+        colliders.add(collider);
+
+        if (body != null)
+            collider.createFixture(body);
+    }
+
+    public void removeCollider(Collider collider) {
+        if (collider.owner == this) {
+            collider.dispose();
+            colliders.remove(collider);
+        }
     }
 
     @Override

@@ -2,7 +2,7 @@ package unina.game.myapplication.core.physics;
 
 import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.CircleShape;
-import com.google.fpl.liquidfun.FixtureDef;
+import com.google.fpl.liquidfun.Shape;
 
 /**
  * A collider shaped as a circle.
@@ -47,26 +47,16 @@ public final class CircleCollider extends Collider {
     }
 
     private float radius;
-    private float density, restitution, friction;
-    private boolean isSensor;
 
     private CircleCollider() {
 
     }
 
     @Override
-    FixtureDef createFixture() {
+    Shape createShape() {
         CircleShape shape = new CircleShape();
         shape.setRadius(radius);
-
-        FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.setShape(shape);
-        fixtureDef.setDensity(density);
-        fixtureDef.setRestitution(restitution);
-        fixtureDef.setFriction(friction);
-        fixtureDef.setIsSensor(isSensor);
-
-        return fixtureDef;
+        return shape;
     }
 
     @Override

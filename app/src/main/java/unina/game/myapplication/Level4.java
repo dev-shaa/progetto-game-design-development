@@ -16,8 +16,11 @@ import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
+import unina.game.myapplication.core.physics.CursorJoint;
+import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.CursorJointInput;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CircleRenderer;
@@ -155,7 +158,7 @@ public class Level4 extends Scene {
 
         RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
-        rockRigidBody.setCollider(CircleCollider.build(2,100,0,1,false));
+        rockRigidBody.addCollider(CircleCollider.build(2,100,0,1,false));
 
         //Pulsante ponte down
         CircleRenderer buttonBridgeDownCircleRender = createGameObject(8,13).addComponent(CircleRenderer.class);
@@ -199,7 +202,7 @@ public class Level4 extends Scene {
         //Ponte palla demolitrice WreckingBall
         float bridgeBallW = 8;
         float bridgeBallH = 1;
-        GameObject bridgeWreckingBall = createGameObject(-4,-8,90);
+        GameObject bridgeWreckingBall = createGameObject(-4,-15,90);
 
         SpriteRenderer bridgeWreckingBallRenderComponent = bridgeWreckingBall.addComponent(SpriteRenderer.class);
         bridgeWreckingBallRenderComponent.setImage(elementsImage);
@@ -229,7 +232,59 @@ public class Level4 extends Scene {
         Button buttonBallInputComponent = buttonBall.addComponent(Button.class);
         buttonBallInputComponent.setSize(3,3);
 
+        //Linea Button Down
+        GameObject lineButtonDownGO = createGameObject();
+        DottedLineRenderer lineButtonDown = lineButtonDownGO.addComponent(DottedLineRenderer.class);
+        lineButtonDown.setColor(PALETTE_PRIMARY);
+        lineButtonDown.setPointA(buttonBall.x, buttonBall.y + 2.5f);
+        lineButtonDown.setPointB(bridgeWreckingBall.x + 1.5f,buttonBall.y + 2.5f);
+        lineButtonDown.setRadius(0.25f);
+        lineButtonDown.setCount(10);
+        lineButtonDown.setLayer(-4);
 
+        buttonBallInputComponent.setOnClick(() -> {
+            buttonSound.play(1);
+            buttonBallCircleRender.setColor(Color.GREY);
+            lineButtonDown.setColor(Color.GREY);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f),() -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeWreckingBallRigidBody,bridgeWreckingBall.x,-23,0.4f));
+            animator.add(WaitAnimation.build(0.4f),() -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeRockUpRigidBody,0,bridgeRockUp.y,0.4f));
+            animator.start();
+        });
+
+        //Palla demolitrice
+        GameObject wreckingBall = createGameObject(-8,-15);
+
+        CircleRenderer wreckingBallRenderComponent = wreckingBall.addComponent(CircleRenderer.class);
+        wreckingBallRenderComponent.setColor(PALETTE_PRIMARY);
+        wreckingBallRenderComponent.setRadius(2);
+        wreckingBallRenderComponent.setLayer(3);
+
+        RigidBody wreckingBallRigidBody = wreckingBall.addComponent(RigidBody.class);
+        wreckingBallRigidBody.setType(RigidBody.Type.DYNAMIC);
+        wreckingBallRigidBody.addCollider(CircleCollider.build(3,100,0,1,false));
+
+        //Distance Joint
+        GameObject distanceJointGO = createGameObject();
+        DistanceJoint distanceJoint = distanceJointGO.addComponent(DistanceJoint.class);
+        distanceJoint.setRigidBodyA(wreckingBallRigidBody);
+        distanceJoint.setRigidBodyB(platformCharacterRigidBody);
+        distanceJoint.setLength(15);
+        distanceJoint.setDampingRatio(1);
+        distanceJoint.setFrequency(15);
+
+        //Cursor Joint
+        GameObject cursorJointGO = createGameObject();
+        CursorJoint cursorJoint = cursorJointGO.addComponent(CursorJoint.class);
+        cursorJoint.setRigidBody(wreckingBallRigidBody);
+
+        CursorJointInput cursorJointInput = cursorJointGO.addComponent(CursorJointInput.class);
+        cursorJointInput.setJoint(cursorJoint);
+        cursorJointInput.setSize(3,3);
+        cursorJointInput.setMaxForce(9000);
 
 
 

@@ -1,20 +1,30 @@
 package unina.game.myapplication.core.physics;
 
 import com.google.fpl.liquidfun.DistanceJointDef;
-import com.google.fpl.liquidfun.Joint;
+import com.google.fpl.liquidfun.World;
 
-import unina.game.myapplication.core.PhysicsComponent;
+public final class DistanceJoint extends Joint {
 
-public class DistanceJoint extends PhysicsComponent {
-
-    private RigidBody rigidBodyA, rigidBodyB;
     private float length, dampingRatio, frequency;
-    private Joint joint;
+    private com.google.fpl.liquidfun.Joint joint;
+
+    public static DistanceJoint build(RigidBody anchor, float length, float frequency, float dampingRatio) {
+        DistanceJoint joint = new DistanceJoint();
+
+        joint.rigidBodyB = anchor;
+        joint.length = length;
+        joint.frequency = frequency;
+        joint.dampingRatio = dampingRatio;
+
+        return joint;
+    }
+
+    private DistanceJoint() {
+
+    }
 
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-
+    void createJoint(World world) {
         DistanceJointDef def = new DistanceJointDef();
 
         def.setBodyA(rigidBodyA.body);
@@ -32,36 +42,13 @@ public class DistanceJoint extends PhysicsComponent {
     }
 
     @Override
-    public void onRemove() {
-        super.onRemove();
+    void dispose(World world) {
+        super.dispose(world);
 
         if (joint != null) {
             world.destroyJoint(joint);
             joint = null;
         }
-
-        world = null;
-        rigidBodyA = rigidBodyB = null;
-    }
-
-    public void setRigidBodyA(RigidBody rigidBodyA) {
-        this.rigidBodyA = rigidBodyA;
-    }
-
-    public void setRigidBodyB(RigidBody rigidBodyB) {
-        this.rigidBodyB = rigidBodyB;
-    }
-
-    public void setLength(float length) {
-        this.length = length;
-    }
-
-    public void setFrequency(float frequency) {
-        this.frequency = frequency;
-    }
-
-    public void setDampingRatio(float dampingRatio) {
-        this.dampingRatio = dampingRatio;
     }
 
 }

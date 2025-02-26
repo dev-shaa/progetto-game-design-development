@@ -2,30 +2,34 @@ package unina.game.myapplication.core.physics;
 
 import com.google.fpl.liquidfun.RopeJointDef;
 import com.google.fpl.liquidfun.Vec2;
+import com.google.fpl.liquidfun.World;
 
-import java.util.Objects;
+public final class RopeJoint extends Joint {
 
-import unina.game.myapplication.core.PhysicsComponent;
+    public static RopeJoint build(RigidBody anchor, float maxLength) {
+        RopeJoint joint = new RopeJoint();
 
-public final class RopeJoint extends PhysicsComponent {
+        joint.rigidBodyB = anchor;
+        joint.maxLength = maxLength;
 
-    private RigidBody a, b;
+        return joint;
+    }
+
     private float maxLength;
     private com.google.fpl.liquidfun.RopeJoint joint;
 
+    private RopeJoint() {
+
+    }
+
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-
-        Objects.requireNonNull(a, "RigidBody A was not set before initialize");
-        Objects.requireNonNull(b, "RigidBody B was not set before initialize");
-
+    void createJoint(World world) {
         Vec2 v = new Vec2(0, 0);
 
         RopeJointDef def = new RopeJointDef();
-        def.setBodyA(a.body);
+        def.setBodyA(rigidBodyA.body);
+        def.setBodyB(rigidBodyB.body);
         def.setLocalAnchorA(v);
-        def.setBodyB(b.body);
         def.setLocalAnchorB(v);
         def.setMaxLength(maxLength);
 
@@ -37,30 +41,13 @@ public final class RopeJoint extends PhysicsComponent {
     }
 
     @Override
-    public void onRemove() {
-        super.onRemove();
+    void dispose(World world) {
+        super.dispose(world);
 
         if (joint != null) {
             world.destroyJoint(joint);
             joint = null;
         }
-
-        world = null;
-        a = b = null;
-    }
-
-    public void setRigidBodyA(RigidBody a) {
-        if (joint != null)
-            throw new IllegalStateException("Can't set body after joint has been initialized");
-
-        this.a = a;
-    }
-
-    public void setRigidBodyB(RigidBody b) {
-        if (joint != null)
-            throw new IllegalStateException("Can't set body after joint has been initialized");
-
-        this.b = b;
     }
 
     public void setMaxLength(float maxLength) {

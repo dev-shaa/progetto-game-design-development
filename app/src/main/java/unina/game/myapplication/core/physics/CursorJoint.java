@@ -2,27 +2,29 @@ package unina.game.myapplication.core.physics;
 
 import com.google.fpl.liquidfun.MouseJoint;
 import com.google.fpl.liquidfun.MouseJointDef;
+import com.google.fpl.liquidfun.World;
 
-import java.util.Objects;
+public final class CursorJoint extends Joint {
 
-import unina.game.myapplication.core.PhysicsComponent;
+    public static CursorJoint build() {
+        return new CursorJoint();
+    }
 
-public class CursorJoint extends PhysicsComponent {
-
-    private RigidBody rigidBody;
     private MouseJoint joint;
     private float x, y, maxForce;
 
-    @Override
-    public void onInitialize() {
-        super.onInitialize();
+    private CursorJoint() {
 
-        Objects.requireNonNull(rigidBody, "RigidBody was not set before initialize");
+    }
+
+    @Override
+    void createJoint(World world) {
+        rigidBodyB = rigidBodyA;
 
         MouseJointDef def = new MouseJointDef();
-        def.setBodyA(rigidBody.body);
-        def.setBodyB(rigidBody.body);
-        def.setTarget(rigidBody.body.getPositionX(), rigidBody.body.getPositionY());
+        def.setBodyA(rigidBodyA.body);
+        def.setBodyB(rigidBodyA.body);
+        def.setTarget(rigidBodyA.body.getPositionX(), rigidBodyA.body.getPositionY());
         def.setMaxForce(maxForce);
 
         joint = world.createMouseJoint(def);
@@ -37,15 +39,14 @@ public class CursorJoint extends PhysicsComponent {
     }
 
     @Override
-    public void onRemove() {
-        super.onRemove();
+    void dispose(World world) {
+        super.dispose(world);
 
         if (joint != null) {
             world.destroyJoint(joint);
             joint = null;
         }
 
-        world = null;
         x = y = maxForce = 0;
     }
 
@@ -55,20 +56,7 @@ public class CursorJoint extends PhysicsComponent {
      * @return the controlled RigidBody
      */
     public RigidBody getRigidBody() {
-        return rigidBody;
-    }
-
-    /**
-     * Sets the RigidBody affected by this joint.
-     *
-     * @param rigidBody rigidBody to affect
-     * @throws IllegalStateException if this method is called after the component has been added and initialized to the scene
-     */
-    public void setRigidBody(RigidBody rigidBody) {
-        if (joint != null)
-            throw new IllegalStateException();
-
-        this.rigidBody = rigidBody;
+        return rigidBodyA;
     }
 
     /**

@@ -20,6 +20,7 @@ public final class RigidBody extends PhysicsComponent {
     private boolean sleepingAllowed;
     private float linearDamping;
     private final HashSet<Collider> colliders = new HashSet<>(2);
+    private final HashSet<Joint> joints = new HashSet<>(2);
 
     @Override
     public void onInitialize() {
@@ -45,8 +46,13 @@ public final class RigidBody extends PhysicsComponent {
         body = world.createBody(bodyDef);
         bodyDef.delete();
 
-        for (Collider c : colliders)
-            c.createFixture(body);
+        for (Collider collider : colliders)
+            collider.createFixture(body);
+
+        for (Joint joint : joints) {
+            joint.createJoint(world);
+            joint.rigidBodyB.joints.add(joint);
+        }
 
         body.setUserData(this);
         body.setLinearDamping(linearDamping);
@@ -57,8 +63,14 @@ public final class RigidBody extends PhysicsComponent {
     public void onRemove() {
         super.onRemove();
 
-        for (Collider c : colliders)
-            c.dispose();
+        for (Joint joint : joints) {
+            joint.rigidBodyA.joints.remove(joint);
+            joint.rigidBodyB.joints.remove(joint);
+            joint.dispose(world);
+        }
+
+        for (Collider collider : colliders)
+            collider.dispose();
 
         colliders.clear();
 
@@ -175,6 +187,29 @@ public final class RigidBody extends PhysicsComponent {
         if (collider.owner == this) {
             collider.dispose();
             colliders.remove(collider);
+        }
+    }
+
+    public void addJoint(Joint joint) {
+        if (joint.rigidBodyA != null)
+            throw new RuntimeException("Joint is already attached to another RigidBody");
+
+        joint.rigidBodyA = this;
+        joints.add(joint);
+
+        if (body != null) {
+            joint.createJoint(world);
+            joint.rigidBodyB.joints.add(joint);
+        }
+    }
+
+    public void removeJoint(Joint joint) {
+        if (joint.rigidBodyA == this || joint.rigidBodyB == this) {
+            joint.rigidBodyA.joints.remove(joint);
+            joint.rigidBodyB.joints.remove(joint);
+
+            if (body != null)
+                joint.dispose(world);
         }
     }
 

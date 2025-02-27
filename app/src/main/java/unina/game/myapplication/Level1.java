@@ -180,8 +180,6 @@ public class Level1 extends Scene {
             menuButton.setInteractable(false);
             buttonInputComponent.setInteractable(false);
 
-//            promptRenderer.setTint(Color.TRANSPARENT);
-
             animator.clear();
             animator.add(ParallelAnimation.build(
                     WaitAnimation.build(0.4f),

@@ -375,18 +375,20 @@ public class Level2 extends Scene {
         }
 
         // Pressure plate
-        float pressurePlateWidth = 3;
-        float pressurePlateHeight = 1;
-        GameObject pressurePlateGO = createGameObject(0, 3);
+        float pressurePlateWidth = 4;
+        float pressurePlateHeight = 4;
+        GameObject pressurePlateGO = createGameObject(0, 2.5f);
 
-        RectRenderer pressurePlateRenderer = pressurePlateGO.addComponent(RectRenderer.class);
-        pressurePlateRenderer.color = Color.RED;
-        pressurePlateRenderer.width = pressurePlateWidth;
-        pressurePlateRenderer.height = pressurePlateHeight;
+        SpriteRenderer pressurePlateRenderer = pressurePlateGO.addComponent(SpriteRenderer.class);
+        pressurePlateRenderer.setImage(elementsImage);
+        pressurePlateRenderer.setPivot(0.5f, 1f);
+        pressurePlateRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
+        pressurePlateRenderer.setSrcSize(128, 128);
+        pressurePlateRenderer.setSrcPosition(0, 384);
 
         RigidBody pressurePlateRigidBody = pressurePlateGO.addComponent(RigidBody.class);
         pressurePlateRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlateRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+        pressurePlateRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, 1, true));
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
 
@@ -407,7 +409,7 @@ public class Level2 extends Scene {
         pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlatePlatformRigidBody.addCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
 
-        //Linea tra pulsante e ponte
+        // Bridge activation line
         GameObject lineRendererGO = createGameObject();
         DottedLineRenderer lineRenderer = lineRendererGO.addComponent(DottedLineRenderer.class);
         lineRenderer.setPointA(pressurePlateGO.x, pressurePlateGO.y - 1.25f);
@@ -427,8 +429,7 @@ public class Level2 extends Scene {
             removeGameObject(menuButtonGO);
 
             buttonSound.play(1);
-            pressurePlateRenderer.color = Color.GREEN;
-            pressurePlateRigidBody.setTransform(pressurePlateGO.x, pressurePlateGO.y - 0.5f);
+            pressurePlateRenderer.setSrcPosition(128, 384);
 
             lineRenderer.setColor(PALETTE_PRIMARY);
 
@@ -446,7 +447,7 @@ public class Level2 extends Scene {
             saveProgress();
         });
 
-        //Piattaforma noBugRight
+        // Inclined platform
         GameObject noBugPlatformRight = createGameObject(-2.5f, 2.5f, -45);
 
         if (DEBUG) {

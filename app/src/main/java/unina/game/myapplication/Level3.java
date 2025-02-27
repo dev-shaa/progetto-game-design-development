@@ -3,6 +3,7 @@ package unina.game.myapplication;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -13,6 +14,7 @@ import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
 import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
@@ -21,7 +23,6 @@ import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
-import unina.game.myapplication.logic.PressableComponent;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CircleRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
@@ -35,14 +36,12 @@ public class Level3 extends Scene {
     private static final int PALETTE_PRIMARY = 0xff2B2B2C;
 
     private Sound buttonSound;
-    private Sound buttonsAppearSound;
     private Sound movingPlatformSound;
-    private Sound winSound;
+    private Sound winSound, fallSound;
 
-    private Sound fallSound;
+    private Music backgroundMusic;
 
-    private Pixmap backgroundImage;
-    private Pixmap elementsImage;
+    private Pixmap backgroundImage, elementsImage, uiSpriteSheet;
 
     private RectRenderer fullScreenRenderer;
     private AnimationSequence animator;
@@ -59,55 +58,68 @@ public class Level3 extends Scene {
     public void initialize() {
         super.initialize();
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/background-level3.jpg", Graphics.PixmapFormat.RGB565);
+        backgroundImage = game.getGraphics().newPixmap("graphics/environment-construction-site.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-dark.png", Graphics.PixmapFormat.ARGB8888);
+        uiSpriteSheet = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
 
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
         movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
         winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
-        fallSound = game.getAudio().newSound("sounds/fall.mp3");
+        fallSound = game.getAudio().newSound("sounds/fall.wav");
+
+        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(1);
 
         Camera.getInstance().setSize(20);
 
-        //Background
+        // Background
         setClearColor(PALETTE_BACKGROUND);
 
-        GameObject backgroundGO = createGameObject();
-        SpriteRenderer backgroundRenderer = backgroundGO.addComponent(SpriteRenderer.class);
+        SpriteRenderer backgroundRenderer = createGameObject().addComponent(SpriteRenderer.class);
         backgroundRenderer.setImage(backgroundImage);
         backgroundRenderer.setSize(20, 20 / backgroundImage.getAspectRatio());
-        backgroundRenderer.setLayer(-10);
+        backgroundRenderer.setLayer(16);
 
         // Transition panel
-        GameObject fade = createGameObject();
-        fullScreenRenderer = fade.addComponent(RectRenderer.class);
+        fullScreenRenderer = createGameObject().addComponent(RectRenderer.class);
         fullScreenRenderer.setSize(50, 50);
         fullScreenRenderer.setLayer(Integer.MAX_VALUE);
         fullScreenRenderer.setColor(Color.TRANSPARENT);
 
         // Animator
-        GameObject animatorGO = createGameObject();
-        animator = animatorGO.addComponent(AnimationSequence.class);
+        animator = createGameObject().addComponent(AnimationSequence.class);
         animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
-        float floorW = 6;
-        float floorH = 15;
+        // Level selection button
+        float levelSelectionButtonWidth = 4f;
+        float levelSelectionButtonHeight = 4f;
 
-        // Right floor
-        GameObject rightFloor = createGameObject(6, -14);
+        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
 
-        if (DEBUG) {
-            PlatformRenderComponent rightFloorRenderer = rightFloor.addComponent(PlatformRenderComponent.class);
-            rightFloorRenderer.color = Color.MAGENTA;
-            rightFloorRenderer.setSize(floorW,floorH);
-            rightFloorRenderer.setLayer(64);
-        }
+        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
+        menuButtonRenderer.setImage(uiSpriteSheet);
+        menuButtonRenderer.setSrcPosition(0, 0);
+        menuButtonRenderer.setSrcSize(128, 128);
+        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+        menuButtonRenderer.setLayer(32);
+        menuButtonRenderer.setPivot(0.5f, 0.5f);
 
-        RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
-        rightFloorRigidBody.setType(RigidBody.Type.STATIC);
-        rightFloorRigidBody.setCollider(BoxCollider.build(floorW, floorH));
+        Button menuButton = menuButtonGO.addComponent(Button.class);
+        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+        menuButton.setOnClick(() -> {
+            // Prevent user from clicking again
+            menuButton.setInteractable(false);
+
+            // Play the sound
+            buttonSound.play(1);
+
+            // Fade animation and load main menu
+            animator.clear();
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+            animator.start();
+        });
 
         //TODO cambiare nomi bridge
 
@@ -144,7 +156,7 @@ public class Level3 extends Scene {
         characterRenderer.setPivot(0.5f, 1);
         characterRenderer.setLayer(-2);
 
-        //Rock
+        // Rock
         GameObject rock = createGameObject(1, 14);
 
         SpriteRenderer rockRenderer = rock.addComponent(SpriteRenderer.class);
@@ -155,79 +167,55 @@ public class Level3 extends Scene {
 
         RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
-        rockRigidBody.setCollider(CircleCollider.build(1, 100, 0, 1, false));
+        rockRigidBody.addCollider(CircleCollider.build(1, 100, 0, 1, false));
         rockRigidBody.setSleepingAllowed(false);
 
-        //Platform Rock
-//        float platW = 11;
-//        float platH = 0.7f;
-//        GameObject platformRock = createGameObject(-4, 13, 130);
-//
-//        PlatformRenderComponent platformRockRenderComponent = platformRock.addComponent(PlatformRenderComponent.class);
-//        platformRockRenderComponent.color = PALETTE_PRIMARY;
-//        platformRockRenderComponent.width = platW;
-//        platformRockRenderComponent.height = platH;
-//        RigidBody platformRockRigidBody = platformRock.addComponent(RigidBody.class);
-//        platformRockRigidBody.setType(RigidBody.Type.STATIC);
-//        platformRockRigidBody.setCollider(BoxCollider.build(platW, platH));
-
-        //Right wall
+        // Right wall
         float rightWallWidth = 0.7f;
         float rightWallHeight = 17;
 
-        GameObject rightWall = createGameObject(8,7);
+        GameObject rightWall = createGameObject(8, 7);
 
         RigidBody rightWallRigidBody = rightWall.addComponent(RigidBody.class);
         rightWallRigidBody.setType(RigidBody.Type.STATIC);
-        rightWallRigidBody.setCollider(BoxCollider.build(rightWallWidth,rightWallHeight));
+        rightWallRigidBody.addCollider(BoxCollider.build(rightWallWidth, rightWallHeight));
 
         if (DEBUG) {
             PlatformRenderComponent rightWallRenderComponent = rightWall.addComponent(PlatformRenderComponent.class);
             rightWallRenderComponent.color = Color.MAGENTA;
-            rightWallRenderComponent.setSize(rightWallWidth,rightWallHeight);
+            rightWallRenderComponent.setSize(rightWallWidth, rightWallHeight);
             rightWallRenderComponent.setLayer(64);
         }
 
-        //Left wall
+        // Left wall
         float leftWallWidht = 0.7f;
         float leftWallHeight = 8f;
 
-        GameObject leftWall = createGameObject(-0.75f,4.5f);
+        GameObject leftWall = createGameObject(-0.75f, 4.5f);
 
         RigidBody leftWallRigidBody = leftWall.addComponent(RigidBody.class);
         leftWallRigidBody.setType(RigidBody.Type.STATIC);
-        leftWallRigidBody.setCollider(BoxCollider.build(leftWallWidht,leftWallHeight));
+        leftWallRigidBody.addCollider(BoxCollider.build(leftWallWidht, leftWallHeight));
 
         if (DEBUG) {
             PlatformRenderComponent leftWallRenderComponent = leftWall.addComponent(PlatformRenderComponent.class);
             leftWallRenderComponent.color = Color.MAGENTA;
-            leftWallRenderComponent.setSize(leftWallWidht,leftWallHeight);
+            leftWallRenderComponent.setSize(leftWallWidht, leftWallHeight);
             leftWallRenderComponent.setLayer(64);
         }
-
-
-//        GameObject platform2 = createGameObject(9, 9, 90);
-//
-//        PlatformRenderComponent platform2RenderComponent = platform2.addComponent(PlatformRenderComponent.class);
-//        platform2RenderComponent.color = Color.MAGENTA;
-//        platform2RenderComponent.width = plat2W;
-//        platform2RenderComponent.height = plat2H;
-//        RigidBody rigidPlatform2 = platform2.addComponent(RigidBody.class);
-//        rigidPlatform2.setType(RigidBody.Type.STATIC);
-//        rigidPlatform2.setCollider(BoxCollider.build(plat2W, plat2H));
 
         //Ponte Masso
         GameObject bridgeRock = createGameObject(1, 13);
 
         RigidBody bridgeRockRigidBody = bridgeRock.addComponent(RigidBody.class);
         bridgeRockRigidBody.setType(RigidBody.Type.KINEMATIC);
-        bridgeRockRigidBody.setCollider(BoxCollider.build(4, 0.7f));
+        bridgeRockRigidBody.addCollider(BoxCollider.build(4, 0.7f));
 
         SpriteRenderer bridgeRockRender = bridgeRock.addComponent(SpriteRenderer.class);
         bridgeRockRender.setImage(elementsImage);
         bridgeRockRender.setSrcPosition(128, 48);
         bridgeRockRender.setSrcSize(128, 32);
-        bridgeRockRender.setSize(4,0.7f);
+        bridgeRockRender.setSize(4, 0.7f);
         bridgeRockRender.setLayer(-3);
 
 //        PlatformRenderComponent bridgeRockRenderComponent = bridgeRock.addComponent(PlatformRenderComponent.class);
@@ -244,12 +232,12 @@ public class Level3 extends Scene {
 
         RigidBody rigidDrag = platformDragged.addComponent(RigidBody.class);
         rigidDrag.setType(RigidBody.Type.KINEMATIC);
-        rigidDrag.setCollider(BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
+        rigidDrag.addCollider(BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
         rigidDrag.setSleepingAllowed(false);
 
         PlatformRenderComponent platformDraggedRenderComponent = platformDragged.addComponent(PlatformRenderComponent.class);
         platformDraggedRenderComponent.color = Color.DARKCYAN;
-        platformDraggedRenderComponent.setSize(dragPlatformWidth,dragPlatformHeight);
+        platformDraggedRenderComponent.setSize(dragPlatformWidth, dragPlatformHeight);
         platformDraggedRenderComponent.setStart(-4, 13);
         platformDraggedRenderComponent.setEnd(5, 5);
 
@@ -261,11 +249,11 @@ public class Level3 extends Scene {
         platformDraggingComponent.setEnd(5, 3f);
 
         //Button
-        CircleRenderer buttonCircleRender = createGameObject(-6,5).addComponent(CircleRenderer.class);
+        CircleRenderer buttonCircleRender = createGameObject(-6, 5).addComponent(CircleRenderer.class);
         buttonCircleRender.setRadius(0.6f);
         buttonCircleRender.setColor(PALETTE_PRIMARY);
 
-        GameObject button = createGameObject(-6,5);
+        GameObject button = createGameObject(-6, 5);
 
         SpriteRenderer buttonRenderComponent = button.addComponent(SpriteRenderer.class);
         buttonRenderComponent.setImage(elementsImage);
@@ -304,14 +292,9 @@ public class Level3 extends Scene {
             lineVerticalRenderer.setColor(Color.GREY);
             lineHorizontalRenderer.setColor(Color.GREY);
 
-//            float oldX = -2.5f;
-//            float oldY = 14.5f;
-//            float newX = (float) (oldX - 4 * Math.cos(Math.toRadians(50)));
-//            float newY = (float) (oldY - 4 * Math.sin(Math.toRadians(50)));
-
             animator.clear();
             animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveRigidBodyTo.build(bridgeRockRigidBody, bridgeRock.x-4, bridgeRock.y,0.25f, EaseFunction.CUBIC_IN_OUT));
+            animator.add(MoveRigidBodyTo.build(bridgeRockRigidBody, bridgeRock.x - 4, bridgeRock.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
             animator.start();
         });
 
@@ -323,11 +306,11 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent pressurePlateLoseRenderer = pressurePlateLoseGO.addComponent(PlatformRenderComponent.class);
         pressurePlateLoseRenderer.color = Color.RED;
-        pressurePlateLoseRenderer.setSize(pressurePlateWidth,pressurePlateHeight);
+        pressurePlateLoseRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
 
         RigidBody pressurePlateLoseRigidBody = pressurePlateLoseGO.addComponent(RigidBody.class);
         pressurePlateLoseRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlateLoseRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+        pressurePlateLoseRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlateLose = pressurePlateLoseGO.addComponent(PhysicsButton.class);
 
@@ -335,7 +318,7 @@ public class Level3 extends Scene {
         GameObject lineRenderLoseHorizzontalGO = createGameObject();
         DottedLineRenderer lineRendererLoseHorizzontal = lineRenderLoseHorizzontalGO.addComponent(DottedLineRenderer.class);
         lineRendererLoseHorizzontal.setPointA(pressurePlateLoseGO.x - 1.5f, pressurePlateLoseGO.y);
-        lineRendererLoseHorizzontal.setPointB(-5,pressurePlateLoseGO.y);
+        lineRendererLoseHorizzontal.setPointB(-5, pressurePlateLoseGO.y);
         lineRendererLoseHorizzontal.setColor(PALETTE_PRIMARY);
         lineRendererLoseHorizzontal.setRadius(0.2f);
         lineRendererLoseHorizzontal.setLayer(-3);
@@ -345,7 +328,7 @@ public class Level3 extends Scene {
         GameObject lineRenderLoseVerticalGO = createGameObject();
         DottedLineRenderer lineRendererLoseVertical = lineRenderLoseVerticalGO.addComponent(DottedLineRenderer.class);
         lineRendererLoseVertical.setPointA(-5, pressurePlateLoseGO.y);
-        lineRendererLoseVertical.setPointB(-5,bridge1.y + 0.5f);
+        lineRendererLoseVertical.setPointB(-5, bridge1.y + 0.5f);
         lineRendererLoseVertical.setColor(PALETTE_PRIMARY);
         lineRendererLoseVertical.setRadius(0.2f);
         lineRendererLoseVertical.setLayer(-3);
@@ -356,19 +339,19 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent pressurePlateWinRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
         pressurePlateWinRenderer.color = Color.BLUE;
-        pressurePlateWinRenderer.setSize(pressurePlateWidth,pressurePlateHeight);
+        pressurePlateWinRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
 
         RigidBody pressurePlateWinRigidBody = pressurePlateWinGO.addComponent(RigidBody.class);
         pressurePlateWinRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlateWinRigidBody.setCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
+        pressurePlateWinRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
         PhysicsButton pressurePlateWin = pressurePlateWinGO.addComponent(PhysicsButton.class);
 
         //Linea verticale win
         GameObject lineRenderWinVerticalGO = createGameObject();
         DottedLineRenderer lineRendererWinVertical = lineRenderWinVerticalGO.addComponent(DottedLineRenderer.class);
-        lineRendererWinVertical.setPointA(pressurePlateWinGO.x, pressurePlateWinGO.y-1);
-        lineRendererWinVertical.setPointB(pressurePlateWinGO.x,bridgeCharacter.y + 0.5f);
+        lineRendererWinVertical.setPointA(pressurePlateWinGO.x, pressurePlateWinGO.y - 1);
+        lineRendererWinVertical.setPointB(pressurePlateWinGO.x, bridgeCharacter.y + 0.5f);
         lineRendererWinVertical.setColor(PALETTE_PRIMARY);
         lineRendererWinVertical.setRadius(0.2f);
         lineRendererWinVertical.setLayer(-3);
@@ -389,13 +372,13 @@ public class Level3 extends Scene {
 
             animator.clear();
             animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveToAnimation.build(bridge1,-9,bridge1.y,0.35f));
+            animator.add(MoveToAnimation.build(bridge1, -9, bridge1.y, 0.35f));
             animator.add(WaitAnimation.build(0.2f), () -> {
                 fallSound.play(1);
-                characterRenderer.setSrcPosition(128,128);
+                characterRenderer.setSrcPosition(128, 128);
                 character.angle = 90;
             });
-            animator.add(MoveToAnimation.build(character, character.x, -20,0.25f));
+            animator.add(MoveToAnimation.build(character, character.x, -20, 0.25f));
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
             animator.start();
         });
@@ -404,23 +387,28 @@ public class Level3 extends Scene {
             if (isPressedWin)
                 return;
 
+            menuButton.setInteractable(false);
+
             isPressedWin = true;
 
             buttonSound.play(1);
             pressurePlateWinRenderer.color = Color.GREEN;
-            pressurePlateWinRigidBody.setTransform(pressurePlateWinGO.x,pressurePlateWinGO.y - 0.25f);
+            pressurePlateWinRigidBody.setTransform(pressurePlateWinGO.x, pressurePlateWinGO.y - 0.25f);
 
             lineRendererWinVertical.setColor(Color.GREY);
 
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveToAnimation.build(bridgeCharacter,3.8f,bridgeCharacter.y,0.35f));
+            animator.add(ParallelAnimation.build(
+                    WaitAnimation.build(0.4f),
+                    MoveToAnimation.build(menuButtonGO, menuButtonGO.x - 20, menuButtonGO.y, 0.25f)
+            ), () -> movingPlatformSound.play(1));
+            animator.add(MoveToAnimation.build(bridgeCharacter, 3.8f, bridgeCharacter.y, 0.35f));
             animator.add(WaitAnimation.build(0.2f), () -> {
-                characterRenderer.setSrcPosition(128,128);
+                characterRenderer.setSrcPosition(128, 128);
                 winSound.play(1);
             });
-            animator.add(MoveToAnimation.build(character,rightFloor.x,character.y,0.3f));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
+            animator.add(MoveToAnimation.build(character, 6, character.y, 0.3f));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level4.class));
             animator.start();
         });
 
@@ -430,10 +418,10 @@ public class Level3 extends Scene {
         GameObject platform3 = createGameObject(3.5f, 0.5f);
         PlatformRenderComponent platformRenderComponent3 = platform3.addComponent(PlatformRenderComponent.class);
         platformRenderComponent3.color = PALETTE_PRIMARY;
-        platformRenderComponent3.setSize(plat3W,plat3H);
+        platformRenderComponent3.setSize(plat3W, plat3H);
         RigidBody rigidPlatform3 = platform3.addComponent(RigidBody.class);
         rigidPlatform3.setType(RigidBody.Type.STATIC);
-        rigidPlatform3.setCollider(BoxCollider.build(plat3W, plat3H));
+        rigidPlatform3.addCollider(BoxCollider.build(plat3W, plat3H));
 
         //Piattaforma di divisione pedane
         float plat4W = 4;
@@ -442,9 +430,39 @@ public class Level3 extends Scene {
 
         PlatformRenderComponent platformRenderComponent4 = platform4.addComponent(PlatformRenderComponent.class);
         platformRenderComponent4.color = PALETTE_PRIMARY;
-        platformRenderComponent4.setSize(plat4W,plat4H);
+        platformRenderComponent4.setSize(plat4W, plat4H);
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);
-        rigidPlatform4.setCollider(BoxCollider.build(plat4W, plat4H));
+        rigidPlatform4.addCollider(BoxCollider.build(plat4W, plat4H));
+
     }
+
+    @Override
+    public void pause() {
+        super.pause();
+        backgroundMusic.pause();
+    }
+
+    @Override
+    public void resume() {
+        super.resume();
+        backgroundMusic.play();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+
+        backgroundImage.dispose();
+        elementsImage.dispose();
+        uiSpriteSheet.dispose();
+
+        buttonSound.dispose();
+        movingPlatformSound.dispose();
+        winSound.dispose();
+        fallSound.dispose();
+
+        backgroundMusic.dispose();
+    }
+
 }

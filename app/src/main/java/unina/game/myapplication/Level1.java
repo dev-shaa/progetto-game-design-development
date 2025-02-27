@@ -18,6 +18,7 @@ import unina.game.myapplication.core.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.common.CircleRenderer;
 import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
@@ -34,11 +35,10 @@ public class Level1 extends Scene {
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
     private Pixmap backgroundImage;
-    private Pixmap elementsImage;
-    private Pixmap elementsUIImage;
+    private Pixmap spriteSheet;
+    private Pixmap uiSpriteSheet;
 
-    private Sound buttonSound;
-    private Sound buttonsAppearSound;
+    private Sound uiButtonSound, buttonSound;
     private Sound movingPlatformSound;
     private Sound winSound;
 
@@ -59,18 +59,18 @@ public class Level1 extends Scene {
 
         setClearColor(PALETTE_BACKGROUND);
 
-        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic = game.getAudio().newMusic(Assets.SOUND_MUSIC_LEVEL_1);
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(1);
+        backgroundMusic.setVolume(0.5f);
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/environment-roundabout.png", Graphics.PixmapFormat.RGB565);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.RGB565);
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
+        backgroundImage = game.getGraphics().newPixmap(Assets.GRAPHICS_BACKGROUND_LEVEL_1, Graphics.PixmapFormat.RGB565);
+        spriteSheet = game.getGraphics().newPixmap(Assets.GRAPHICS_GAME_SPRITES_LIGHT, Graphics.PixmapFormat.RGB565);
+        uiSpriteSheet = game.getGraphics().newPixmap(Assets.GRAPHICS_UI_SPRITES, Graphics.PixmapFormat.RGB565);
 
-        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
-        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
-        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        uiButtonSound = game.getAudio().newSound(Assets.SOUND_UI_BUTTON_CLICK);
+        buttonSound = game.getAudio().newSound(Assets.SOUND_GAME_BUTTON_CLICK);
+        winSound = game.getAudio().newSound(Assets.SOUND_GAME_WIN);
+        movingPlatformSound = game.getAudio().newSound(Assets.SOUND_GAME_PLATFORM_MOVE);
 
         // Background
         SpriteRenderer backgroundRenderer = createGameObject().addComponent(SpriteRenderer.class);
@@ -86,7 +86,7 @@ public class Level1 extends Scene {
 
         // Prompt Renderer
         promptRenderer = createGameObject(-1, 2f).addComponent(SpriteRenderer.class);
-        promptRenderer.setImage(elementsUIImage);
+        promptRenderer.setImage(uiSpriteSheet);
         promptRenderer.setSize(1.75f, 1.75f);
         promptRenderer.setSrcSize(128, 128);
         promptRenderer.setSrcPosition(0, 256);
@@ -98,7 +98,7 @@ public class Level1 extends Scene {
         GameObject bridge = createGameObject(-2.5f, -1.35f);
 
         SpriteRenderer bridgeRenderComponent = bridge.addComponent(SpriteRenderer.class);
-        bridgeRenderComponent.setImage(elementsImage);
+        bridgeRenderComponent.setImage(spriteSheet);
         bridgeRenderComponent.setSrcPosition(128, 48);
         bridgeRenderComponent.setSrcSize(128, 32);
         bridgeRenderComponent.setSize(2.2f, 2f / 4f);
@@ -109,7 +109,7 @@ public class Level1 extends Scene {
         GameObject character = createGameObject(-43f, -1.3f);
 
         SpriteRenderer characterRenderer = character.addComponent(SpriteRenderer.class);
-        characterRenderer.setImage(elementsImage);
+        characterRenderer.setImage(spriteSheet);
         characterRenderer.setSize(1, 1);
         characterRenderer.setSrcPosition(128, 128);
         characterRenderer.setSrcSize(128, 128);
@@ -124,7 +124,7 @@ public class Level1 extends Scene {
         GameObject button = createGameObject(-1f, 2.5f);
 
         SpriteRenderer buttonRenderComponent = button.addComponent(SpriteRenderer.class);
-        buttonRenderComponent.setImage(elementsImage);
+        buttonRenderComponent.setImage(spriteSheet);
         buttonRenderComponent.setSize(2.5f, 2.5f);
         buttonRenderComponent.setSrcPosition(0, 0);
         buttonRenderComponent.setSrcSize(128, 128);
@@ -147,7 +147,7 @@ public class Level1 extends Scene {
         GameObject menuButtonGO = createGameObject(-20, 9);
 
         SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(elementsUIImage);
+        menuButtonRenderer.setImage(uiSpriteSheet);
         menuButtonRenderer.setSrcPosition(0, 0);
         menuButtonRenderer.setSrcSize(128, 128);
         menuButtonRenderer.setSize(3f, 3f);
@@ -160,7 +160,7 @@ public class Level1 extends Scene {
         menuButton.setOnClick(() -> {
             menuButton.setInteractable(false);
             buttonInputComponent.setInteractable(false);
-            buttonSound.play(1);
+            uiButtonSound.play(1);
 
             animator.clear();
             animator.add(ParallelAnimation.build(
@@ -237,11 +237,11 @@ public class Level1 extends Scene {
         backgroundMusic.dispose();
 
         backgroundImage.dispose();
-        elementsImage.dispose();
-        elementsUIImage.dispose();
+        spriteSheet.dispose();
+        uiSpriteSheet.dispose();
 
+        uiButtonSound.dispose();
         buttonSound.dispose();
-        buttonsAppearSound.dispose();
         movingPlatformSound.dispose();
         winSound.dispose();
 

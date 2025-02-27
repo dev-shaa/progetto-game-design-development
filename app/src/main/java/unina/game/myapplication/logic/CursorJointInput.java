@@ -8,11 +8,17 @@ public class CursorJointInput extends PressableComponent {
 
     private float maxForce;
     private float offsetX, offsetY;
+    private boolean snap;
 
     @Override
     public void onInitialize() {
         super.onInitialize();
-        joint.setMaxForce(0);
+
+        if (snap)
+            joint.setMaxForce(maxForce);
+        else
+            joint.setMaxForce(0);
+
         offsetX = offsetY = 0;
     }
 
@@ -36,7 +42,10 @@ public class CursorJointInput extends PressableComponent {
     @Override
     protected void onPointerUp(int pointer, float x, float y) {
         super.onPointerUp(pointer, x, y);
-        joint.setMaxForce(0);
+
+        if (!snap)
+            joint.setMaxForce(0);
+
         offsetX = 0;
         offsetY = 0;
     }
@@ -55,4 +64,9 @@ public class CursorJointInput extends PressableComponent {
     public void setMaxForce(float maxForce) {
         this.maxForce = maxForce;
     }
+
+    public void setSnap(boolean snap) {
+        this.snap = snap;
+    }
+
 }

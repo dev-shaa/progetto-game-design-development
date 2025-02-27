@@ -268,20 +268,14 @@ public class Level4 extends Scene {
         wreckingBallRigidBody.addCollider(CircleCollider.build(3,100,0,1,false));
 
         //Distance Joint
-        GameObject distanceJointGO = createGameObject();
-        DistanceJoint distanceJoint = distanceJointGO.addComponent(DistanceJoint.class);
-        distanceJoint.setRigidBodyA(wreckingBallRigidBody);
-        distanceJoint.setRigidBodyB(platformCharacterRigidBody);
-        distanceJoint.setLength(15);
-        distanceJoint.setDampingRatio(1);
-        distanceJoint.setFrequency(15);
+        DistanceJoint distanceJoint = DistanceJoint.build(platformCharacterRigidBody,15,10,1);
+        wreckingBallRigidBody.addJoint(distanceJoint);
 
         //Cursor Joint
-        GameObject cursorJointGO = createGameObject();
-        CursorJoint cursorJoint = cursorJointGO.addComponent(CursorJoint.class);
-        cursorJoint.setRigidBody(wreckingBallRigidBody);
+        CursorJoint cursorJoint = CursorJoint.build();
+        wreckingBallRigidBody.addJoint(cursorJoint);
 
-        CursorJointInput cursorJointInput = cursorJointGO.addComponent(CursorJointInput.class);
+        CursorJointInput cursorJointInput = wreckingBall.addComponent(CursorJointInput.class);
         cursorJointInput.setJoint(cursorJoint);
         cursorJointInput.setSize(3,3);
         cursorJointInput.setMaxForce(9000);

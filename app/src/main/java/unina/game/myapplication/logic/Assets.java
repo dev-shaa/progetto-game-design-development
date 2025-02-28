@@ -10,8 +10,8 @@ public class Assets {
 
     public static final String SOUND_UI_BUTTON_CLICK = "sounds/kenney-interface-sounds/click_002.ogg";
     public static final String SOUND_MUSIC_LEVEL_1 = "sounds/HappyLoops/intro.wav";
-    public static final String SOUND_GAME_BUTTON_CLICK = "sounds/kenney-ui-sounds/click2.ogg";
-    public static final String SOUND_GAME_PLATFORM_MOVE = "sounds/kenney-interface-sounds/error_001.ogg";
+    public static final String SOUND_GAME_BUTTON_CLICK = "sounds/kenney-interface-sounds/select_002.ogg";
+    public static final String SOUND_GAME_PLATFORM_MOVE = "sounds/kenney-interface-sounds/open_001.ogg";
     public static final String SOUND_GAME_WIN = "sounds/kenney-sax-jingles/jingles_SAX10.ogg";
 
 }

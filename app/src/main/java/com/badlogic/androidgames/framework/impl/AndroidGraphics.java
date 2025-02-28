@@ -280,4 +280,19 @@ public class AndroidGraphics implements Graphics {
         return frameBuffer.getHeight();
     }
 
+    @Override
+    public void saveCanvas() {
+        canvas.save();
+    }
+
+    @Override
+    public void rotateCanvas(float angle, float pivotX, float pivotY) {
+        canvas.rotate(-angle, pivotX, pivotY);
+    }
+
+    @Override
+    public void restoreCanvas() {
+        canvas.restore();
+    }
+
 }

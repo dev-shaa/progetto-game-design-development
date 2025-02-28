@@ -73,6 +73,12 @@ public interface Graphics {
 
     int getHeight();
 
+    void saveCanvas();
+
+    void rotateCanvas(float angle, float pivotX, float pivotY);
+
+    void restoreCanvas();
+
     default float getAspectRatio() {
         return (float) getWidth() / getHeight();
     }

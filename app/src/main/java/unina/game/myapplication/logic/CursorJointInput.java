@@ -43,7 +43,9 @@ public class CursorJointInput extends PressableComponent {
     protected void onPointerUp(int pointer, float x, float y) {
         super.onPointerUp(pointer, x, y);
 
-        if (!snap)
+        if (snap)
+            joint.setTarget(joint.getRigidBody().getPositionX(), joint.getRigidBody().getPositionY());
+        else
             joint.setMaxForce(0);
 
         offsetX = 0;

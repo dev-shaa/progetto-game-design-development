@@ -1,5 +1,6 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Graphics;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.BodyDef;
 import com.google.fpl.liquidfun.Vec2;
@@ -90,6 +91,15 @@ public final class RigidBody extends PhysicsComponent {
         owner.x = body.getPositionX();
         owner.y = body.getPositionY();
         owner.angle = (float) Math.toDegrees(body.getAngle());
+    }
+
+    @Override
+    public void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
+
+        for (Collider collider : colliders) {
+            collider.onDrawGizmos(graphics);
+        }
     }
 
     /**

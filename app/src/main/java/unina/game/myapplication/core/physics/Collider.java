@@ -1,5 +1,6 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Graphics;
 import com.google.fpl.liquidfun.Body;
 import com.google.fpl.liquidfun.Fixture;
 import com.google.fpl.liquidfun.FixtureDef;
@@ -19,9 +20,6 @@ public abstract class Collider {
 
     abstract Shape createShape();
 
-    /**
-     * Disposes this collider.
-     */
     void dispose() {
         if (fixture != null) {
             fixture.getBody().destroyFixture(fixture);
@@ -46,6 +44,10 @@ public abstract class Collider {
 
         shape.delete();
         fixtureDef.delete();
+    }
+
+    void onDrawGizmos(Graphics graphics) {
+
     }
 
     public RigidBody getOwner() {

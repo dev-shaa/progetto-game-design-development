@@ -49,7 +49,11 @@ public interface Graphics {
 
     void drawRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color);
 
+    void drawWireRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color);
+
     void drawCircle(float x, float y, float radius, int color);
+
+    void drawPath(float[] points, int color);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);
 

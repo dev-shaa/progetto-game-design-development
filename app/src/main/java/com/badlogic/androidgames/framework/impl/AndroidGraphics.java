@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.ArrayMap;
 
@@ -106,10 +107,41 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void drawWireRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color) {
+        canvas.save();
+        canvas.rotate(-angle, pivotX, pivotY);
+
+        paint.setColor(color);
+        paint.setStyle(Style.STROKE);
+        canvas.drawRect(x, y, x + width, y + height, paint);
+
+        canvas.restore();
+    }
+
+    @Override
     public void drawCircle(float x, float y, float radius, int color) {
         paint.setColor(color);
         paint.setStyle(Style.FILL);
         canvas.drawCircle(x, y, radius, paint);
+    }
+
+    @Override
+    public void drawPath(float[] points, int color) {
+        Path path = new Path();
+
+        path.setFillType(Path.FillType.EVEN_ODD);
+        path.reset();
+        path.moveTo(points[0], points[1]);
+
+        for (int i = 2; i < points.length; i += 2) {
+            path.moveTo(points[i], points[i + 1]);
+        }
+
+        path.close();
+
+        paint.setColor(color);
+        paint.setStyle(Style.FILL);
+        canvas.drawPath(path, paint);
     }
 
     @Override

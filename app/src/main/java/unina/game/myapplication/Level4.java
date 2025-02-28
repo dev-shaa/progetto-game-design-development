@@ -1,5 +1,7 @@
 package unina.game.myapplication;
 
+import android.util.Log;
+
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
@@ -21,6 +23,7 @@ import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.CursorJointInput;
+import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformRenderComponent;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CircleRenderer;
@@ -160,6 +163,41 @@ public class Level4 extends Scene {
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
         rockRigidBody.addCollider(CircleCollider.build(2,100,0,1,false));
 
+        //Character
+        GameObject character = createGameObject(-8, 1);
+
+        SpriteRenderer characterRenderer = character.addComponent(SpriteRenderer.class);
+        characterRenderer.setImage(elementsImage);
+        characterRenderer.setSize(3, 3);
+        characterRenderer.setSrcPosition(0, 128);
+        characterRenderer.setSrcSize(128, 128);
+        characterRenderer.setPivot(0.5f, 1);
+        characterRenderer.setLayer(-2);
+
+        GameObject gameOverTriggerGO = createGameObject(-8, 1);
+
+        if (DEBUG) {
+            // Visualize the trigger in debug mode
+            RectRenderer debugTriggerRenderer = gameOverTriggerGO.addComponent(RectRenderer.class);
+            debugTriggerRenderer.setColor(Color.RED);
+            debugTriggerRenderer.setLayer(-16);
+            debugTriggerRenderer.setSize(4, 1);
+        }
+
+        RigidBody gameOverTriggerRigidBody = gameOverTriggerGO.addComponent(RigidBody.class);
+        gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
+        gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
+
+        PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
+        gameOverTrigger.setOnCollisionEnter(() -> {
+            characterRenderer.setSize(6,0.5f);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(2));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level4.class));
+            animator.start();
+        });
+
         //Pulsante ponte down
         CircleRenderer buttonBridgeDownCircleRender = createGameObject(8,13).addComponent(CircleRenderer.class);
         buttonBridgeDownCircleRender.setColor(PALETTE_PRIMARY);
@@ -255,6 +293,20 @@ public class Level4 extends Scene {
             animator.start();
         });
 
+        //Ponte Personaggio
+        GameObject bridgeCharacter = createGameObject(7,0.3f);
+
+        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
+        bridgeCharacterRenderComponent.setImage(elementsImage);
+        bridgeCharacterRenderComponent.setSrcPosition(128,48);
+        bridgeCharacterRenderComponent.setSrcSize(128,32);
+        bridgeCharacterRenderComponent.setSize(bridgeW,bridgeH);
+        bridgeCharacterRenderComponent.setLayer(3);
+
+        RigidBody bridgeCharacterRigidBody = bridgeCharacter.addComponent(RigidBody.class);
+        bridgeCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeCharacterRigidBody.addCollider(BoxCollider.build(bridgeW,bridgeH));
+
         //Palla demolitrice
         GameObject wreckingBall = createGameObject(-8,-15);
 
@@ -265,7 +317,7 @@ public class Level4 extends Scene {
 
         RigidBody wreckingBallRigidBody = wreckingBall.addComponent(RigidBody.class);
         wreckingBallRigidBody.setType(RigidBody.Type.DYNAMIC);
-        wreckingBallRigidBody.addCollider(CircleCollider.build(3,100,0,1,false));
+        wreckingBallRigidBody.addCollider(CircleCollider.build(2,100,0,1,false));
 
         //Distance Joint
         DistanceJoint distanceJoint = DistanceJoint.build(platformCharacterRigidBody,15,10,1);
@@ -279,6 +331,63 @@ public class Level4 extends Scene {
         cursorJointInput.setJoint(cursorJoint);
         cursorJointInput.setSize(3,3);
         cursorJointInput.setMaxForce(9000);
+
+        //Base
+        GameObject platformBase = createGameObject(0,-25);
+
+        if (DEBUG) {
+            PlatformRenderComponent platformBaseRenderComponent = platformBase.addComponent(PlatformRenderComponent.class);
+            platformBaseRenderComponent.setSize(7,1);
+            platformBaseRenderComponent.color = Color.MAGENTA;
+            platformBaseRenderComponent.setLayer(3);
+        }
+
+        RigidBody platformBaseRigidBody = platformBase.addComponent(RigidBody.class);
+        platformBaseRigidBody.setType(RigidBody.Type.STATIC);
+        platformBaseRigidBody.addCollider(BoxCollider.build(7,1));
+
+        //Wall
+        GameObject dynamicWall = createGameObject(0,-9,90);
+
+        PlatformRenderComponent dynamicWallRenderComponent = dynamicWall.addComponent(PlatformRenderComponent.class);
+        dynamicWallRenderComponent.setSize(30,1.5f);
+        dynamicWallRenderComponent.color = PALETTE_PRIMARY;
+        dynamicWallRenderComponent.setLayer(3);
+
+        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
+        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
+        dynamicWallRigidBody.addCollider(BoxCollider.build(30,1.5f,10,0,1,false));
+
+        //Sensor
+        GameObject wallSensorGO = createGameObject(8,-28);
+
+        if (DEBUG) {
+            PlatformRenderComponent wallSensorRenderComponent = wallSensorGO.addComponent(PlatformRenderComponent.class);
+            wallSensorRenderComponent.setSize(10,2);
+            wallSensorRenderComponent.color = Color.MAGENTA;
+            wallSensorRenderComponent.setLayer(-3);
+        }
+
+        RigidBody wallSensorRigidBody = wallSensorGO.addComponent(RigidBody.class);
+        wallSensorRigidBody.setType(RigidBody.Type.STATIC);
+        wallSensorRigidBody.addCollider(BoxCollider.build(10,2,true));
+
+        PhysicsButton wallSensor = wallSensorGO.addComponent(PhysicsButton.class);
+        wallSensor.setOnCollisionEnter(() -> {
+            wallSensorRigidBody.setSleepingAllowed(true);
+            gameOverTriggerRigidBody.setSleepingAllowed(true);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeCharacterRigidBody,0,0.3f,0.4f));
+            animator.add(WaitAnimation.build(0.4f), () -> {
+                characterRenderer.setSrcPosition(128,128);
+                winSound.play(1);
+            });
+            animator.add(MoveToAnimation.build(character, 8, 1, 0.4f));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level4.class));
+            animator.start();
+        });
 
 
 

@@ -146,31 +146,9 @@ public class Level2 extends Scene {
         // Left floor
         GameObject leftFloor = createGameObject(-6, -14);
 
-        if (DEBUG) {
-            RectRenderer leftFloorRenderer = leftFloor.addComponent(RectRenderer.class);
-            leftFloorRenderer.setSize(floorW, floorH);
-            leftFloorRenderer.setColor(Color.MAGENTA);
-            leftFloorRenderer.setLayer(64);
-        }
-
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
         leftFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
-
-        // Right floor
-        GameObject rightFloor = createGameObject(6, -14);
-
-        if (DEBUG) {
-            RectRenderer rightFloorRenderer = rightFloor.addComponent(RectRenderer.class);
-            rightFloorRenderer.color = Color.MAGENTA;
-            rightFloorRenderer.width = floorW;
-            rightFloorRenderer.height = floorH;
-            rightFloorRenderer.setLayer(64);
-        }
-
-        RigidBody rightFloorRigidBody = rightFloor.addComponent(RigidBody.class);
-        rightFloorRigidBody.setType(RigidBody.Type.STATIC);
-        rightFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
 
         // Rock Platform
         float rockPlatformWidth = 9;
@@ -182,27 +160,11 @@ public class Level2 extends Scene {
         rockPlatformRigidBody.setType(RigidBody.Type.STATIC);
         rockPlatformRigidBody.addCollider(BoxCollider.build(rockPlatformWidth, rockPlatformHeight));
 
-        if (DEBUG) {
-            RectRenderer rockPlatformRenderComponent = rockPlatform.addComponent(RectRenderer.class);
-            rockPlatformRenderComponent.color = Color.MAGENTA;
-            rockPlatformRenderComponent.width = rockPlatformWidth;
-            rockPlatformRenderComponent.height = rockPlatformHeight;
-            rockPlatformRenderComponent.setLayer(64);
-        }
-
         // Left wall
         float plat2W = 1;
         float plat2H = 20;
 
         GameObject leftWall = createGameObject(-9.25f, 5);
-
-        if (DEBUG) {
-            RectRenderer leftWallRenderComponent = leftWall.addComponent(RectRenderer.class);
-            leftWallRenderComponent.color = Color.MAGENTA;
-            leftWallRenderComponent.width = plat2W;
-            leftWallRenderComponent.height = plat2H;
-            leftWallRenderComponent.setLayer(64);
-        }
 
         RigidBody LeftWallRigidBody2 = leftWall.addComponent(RigidBody.class);
         LeftWallRigidBody2.setType(RigidBody.Type.STATIC);
@@ -211,17 +173,9 @@ public class Level2 extends Scene {
         // Right wall
         GameObject rightWall = createGameObject(9.25f, 5);
 
-        if (DEBUG) {
-            RectRenderer rightWallRenderComponent = rightWall.addComponent(RectRenderer.class);
-            rightWallRenderComponent.color = Color.MAGENTA;
-            rightWallRenderComponent.width = plat2W;
-            rightWallRenderComponent.height = plat2H;
-            rightWallRenderComponent.setLayer(64);
-        }
-
         RigidBody RightWallRigidBody2 = rightWall.addComponent(RigidBody.class);
         RightWallRigidBody2.setType(RigidBody.Type.STATIC);
-        RightWallRigidBody2.addCollider(BoxCollider.build(plat2W, plat2H));
+        RightWallRigidBody2.addCollider(BoxCollider.build(1, 8));
 
         // Rock
         GameObject rock = createGameObject(5, 15);
@@ -238,46 +192,45 @@ public class Level2 extends Scene {
         rockRigidBody.setSleepingAllowed(false);
 
         CollisionSoundPlayer rockCollisionSoundPlayer = rock.addComponent(CollisionSoundPlayer.class);
-        rockCollisionSoundPlayer.setSound(movingPlatformSound);
+        rockCollisionSoundPlayer.setSound(movingPlatformSound); // TODO: placeholder sound
         rockCollisionSoundPlayer.setVolume(0.2f);
 
         // Right draggable platform
-        float rightDraggablePlatformWidth = 7f;
-        float rightDraggablePlatformHeight = 0.5f;
+        float rightDraggablePlatformWidth = 4f;
+        float rightDraggablePlatformHeight = 1f;
 
         GameObject rightDraggablePlatformGO = createGameObject(3, 12, 90);
 
         RigidBody rightDraggablePlatformRigidBody = rightDraggablePlatformGO.addComponent(RigidBody.class);
         rightDraggablePlatformRigidBody.setType(RigidBody.Type.KINEMATIC);
         rightDraggablePlatformRigidBody.addCollider(BoxCollider.build(rightDraggablePlatformWidth, rightDraggablePlatformHeight));
-        rightDraggablePlatformRigidBody.setSleepingAllowed(false);
 
         SpriteRenderer rightDraggablePlatformRenderer = rightDraggablePlatformGO.addComponent(SpriteRenderer.class);
         rightDraggablePlatformRenderer.setImage(elementsImage);
-        rightDraggablePlatformRenderer.setSrcPosition(128, 48);
-        rightDraggablePlatformRenderer.setSrcSize(128, 32);
+        rightDraggablePlatformRenderer.setSrcPosition(256, 418);
+        rightDraggablePlatformRenderer.setSrcSize(128, 34);
         rightDraggablePlatformRenderer.setSize(rightDraggablePlatformWidth, rightDraggablePlatformHeight);
 
         PlatformDraggingComponent rightDraggablePlatform = rightDraggablePlatformGO.addComponent(PlatformDraggingComponent.class);
         rightDraggablePlatform.width = 10;
         rightDraggablePlatform.height = 10;
         rightDraggablePlatform.setStart(rightDraggablePlatformGO.x, 12);
-        rightDraggablePlatform.setEnd(rightDraggablePlatformGO.x, 3f + rightDraggablePlatformWidth / 2f + 0.25f);
+        rightDraggablePlatform.setEnd(rightDraggablePlatformGO.x, 5.75f + rightDraggablePlatformWidth / 2f + 0.25f);
         rightDraggablePlatform.setRigidBody(rightDraggablePlatformRigidBody);
 
         DraggablePlatformLineRenderer rightDraggablePlatformLineRenderer = createGameObject().addComponent(DraggablePlatformLineRenderer.class);
         rightDraggablePlatformLineRenderer.setStart(rightDraggablePlatformGO.x, 12 + rightDraggablePlatformWidth / 2 + 0.25f);
-        rightDraggablePlatformLineRenderer.setEnd(rightDraggablePlatformGO.x, 3f);
+        rightDraggablePlatformLineRenderer.setEnd(rightDraggablePlatformGO.x, 5.75f);
         rightDraggablePlatformLineRenderer.setRadius(0.25f);
         rightDraggablePlatformLineRenderer.setColor(Color.WHITE);
-        rightDraggablePlatformLineRenderer.setWidth(0.1f);
+        rightDraggablePlatformLineRenderer.setWidth(0.15f);
         rightDraggablePlatformLineRenderer.setLayer(-2);
 
         // Left draggable platform
-        float leftDraggablePlatformWidth = 6;
-        float leftDraggablePlatformHeight = 0.5f;
+        float leftDraggablePlatformWidth = 4f;
+        float leftDraggablePlatformHeight = 1f;
 
-        GameObject leftDraggablePlatformGO = createGameObject(-6, 15, 140);
+        GameObject leftDraggablePlatformGO = createGameObject(-5.5f, 15f, 130f);
 
         RigidBody leftDraggablePlatformRigidBody = leftDraggablePlatformGO.addComponent(RigidBody.class);
         leftDraggablePlatformRigidBody.setType(RigidBody.Type.KINEMATIC);
@@ -286,8 +239,8 @@ public class Level2 extends Scene {
 
         SpriteRenderer leftDraggablePlatformRenderer = leftDraggablePlatformGO.addComponent(SpriteRenderer.class);
         leftDraggablePlatformRenderer.setImage(elementsImage);
-        leftDraggablePlatformRenderer.setSrcPosition(128, 48);
-        leftDraggablePlatformRenderer.setSrcSize(128, 32);
+        leftDraggablePlatformRenderer.setSrcPosition(256, 418);
+        leftDraggablePlatformRenderer.setSrcSize(128, 34);
         leftDraggablePlatformRenderer.setSize(leftDraggablePlatformWidth, leftDraggablePlatformHeight);
 
         PlatformDraggingComponent leftDraggablePlatform = leftDraggablePlatformGO.addComponent(PlatformDraggingComponent.class);
@@ -315,14 +268,14 @@ public class Level2 extends Scene {
         });
 
         // Bridge
-        GameObject bridge = createGameObject(-2.5f, -6.6f);
+        GameObject bridge = createGameObject(2.5f, -6.6f);
 
         SpriteRenderer bridgeRenderer = bridge.addComponent(SpriteRenderer.class);
         bridgeRenderer.setImage(elementsImage);
         bridgeRenderer.setSrcPosition(128, 48);
         bridgeRenderer.setSrcSize(128, 32);
         bridgeRenderer.setSize(6.4f, 1);
-        bridgeRenderer.setPivot(1f, 0f);
+        bridgeRenderer.setPivot(0f, 0f);
         bridgeRenderer.setLayer(-3);
 
         // Character
@@ -366,18 +319,10 @@ public class Level2 extends Scene {
             animator.start();
         });
 
-        if (DEBUG) {
-            // Visualize the trigger in debug mode
-            RectRenderer debugTriggerRenderer = gameOverTriggerGO.addComponent(RectRenderer.class);
-            debugTriggerRenderer.setColor(Color.MAGENTA);
-            debugTriggerRenderer.setLayer(-16);
-            debugTriggerRenderer.setSize(4, 1);
-        }
-
         // Pressure plate
         float pressurePlateWidth = 4;
         float pressurePlateHeight = 4;
-        GameObject pressurePlateGO = createGameObject(0, 2.5f);
+        GameObject pressurePlateGO = createGameObject(6.75f, 0.35f);
 
         SpriteRenderer pressurePlateRenderer = pressurePlateGO.addComponent(SpriteRenderer.class);
         pressurePlateRenderer.setImage(elementsImage);
@@ -386,38 +331,40 @@ public class Level2 extends Scene {
         pressurePlateRenderer.setSrcSize(128, 128);
         pressurePlateRenderer.setSrcPosition(0, 384);
 
+        BoxCollider pressurePlateCollider = BoxCollider.build(pressurePlateWidth, 0.25f, true);
+        pressurePlateCollider.setCenter(0, 0.5f);
+
         RigidBody pressurePlateRigidBody = pressurePlateGO.addComponent(RigidBody.class);
         pressurePlateRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlateRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, 1, true));
+        pressurePlateRigidBody.addCollider(pressurePlateCollider);
 
         PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
 
         // Pressure plate platform
-        float pressurePlatePlatformWidth = 11;
-        float pressurePlatePlatformHeight = 1;
-        GameObject pressurePlatePlatformGO = createGameObject(3.4f, 2);
+        float pressurePlatePlatformWidth = 6.5f;
+        GameObject pressurePlatePlatformGO = createGameObject(1.5f, 0.25f);
 
-        if (DEBUG) {
-            RectRenderer pressurePlatePlatformRenderer = pressurePlatePlatformGO.addComponent(RectRenderer.class);
-            pressurePlatePlatformRenderer.color = Color.MAGENTA;
-            pressurePlatePlatformRenderer.width = pressurePlatePlatformWidth;
-            pressurePlatePlatformRenderer.height = pressurePlatePlatformHeight;
-            pressurePlatePlatformRenderer.setLayer(64);
-        }
+        BoxCollider pressurePlatePlatformCollider = BoxCollider.build(pressurePlatePlatformWidth, 1);
+        pressurePlatePlatformCollider.setCenter(0, 0.5f);
+
+        BoxCollider pressurePlatePlatformSecondaryCollider = BoxCollider.build(4, 0.5f);
+        pressurePlatePlatformSecondaryCollider.setCenter(pressurePlatePlatformWidth / 2 + 2, 0.25f);
+
+        BoxCollider pressurePlatePlatformThirdCollider = BoxCollider.build(2, 1);
+        pressurePlatePlatformThirdCollider.setAngle(-45);
+        pressurePlatePlatformThirdCollider.setCenter(-4.25f, 1.25f);
 
         RigidBody pressurePlatePlatformRigidBody = pressurePlatePlatformGO.addComponent(RigidBody.class);
         pressurePlatePlatformRigidBody.setType(RigidBody.Type.STATIC);
-        pressurePlatePlatformRigidBody.addCollider(BoxCollider.build(pressurePlatePlatformWidth, pressurePlatePlatformHeight));
+        pressurePlatePlatformRigidBody.addCollider(pressurePlatePlatformCollider);
+        pressurePlatePlatformRigidBody.addCollider(pressurePlatePlatformSecondaryCollider);
+        pressurePlatePlatformRigidBody.addCollider(pressurePlatePlatformThirdCollider);
 
         // Bridge activation line
-        GameObject lineRendererGO = createGameObject();
-        DottedLineRenderer lineRenderer = lineRendererGO.addComponent(DottedLineRenderer.class);
-        lineRenderer.setPointA(pressurePlateGO.x, pressurePlateGO.y - 1.25f);
-        lineRenderer.setPointB(pressurePlateGO.x, bridge.y);
-        lineRenderer.setCount(14);
-        lineRenderer.setRadius(0.2f);
-        lineRenderer.setColor(Color.GREY);
-        lineRenderer.setLayer(-4);
+        DottedLineRenderer lineRendererA = createDottedLine(6.75f, 0.15f, 6.75f, -0.4f, 2);
+        DottedLineRenderer lineRendererB = createDottedLine(6.75f, -0.4f, 8.25f, -0.4f, 3);
+        DottedLineRenderer lineRendererC = createDottedLine(8.25f, -0.4f, 8.25f, -7.15f, 9);
+        DottedLineRenderer lineRendererD = createDottedLine(3.75f, -7.15f, 8.25f, -7.15f, 6);
 
         pressurePlate.setOnCollisionEnter(() -> {
             if (isPressed)
@@ -431,11 +378,14 @@ public class Level2 extends Scene {
             buttonSound.play(1);
             pressurePlateRenderer.setSrcPosition(128, 384);
 
-            lineRenderer.setColor(PALETTE_PRIMARY);
+            lineRendererA.setColor(0xff009fff);
+            lineRendererB.setColor(0xff009fff);
+            lineRendererC.setColor(0xff009fff);
+            lineRendererD.setColor(0xff009fff);
 
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveToAnimation.build(bridge, 3, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
+            animator.add(WaitAnimation.build(0.8f), () -> movingPlatformSound.play(1));
+            animator.add(MoveToAnimation.build(bridge, -2.75f, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
             animator.add(WaitAnimation.build(0.2f), () -> {
                 characterRenderer.setSrcPosition(128, 128);
                 winSound.play(1);
@@ -446,21 +396,6 @@ public class Level2 extends Scene {
 
             saveProgress();
         });
-
-        // Inclined platform
-        GameObject noBugPlatformRight = createGameObject(-2.5f, 2.5f, -45);
-
-        if (DEBUG) {
-            RectRenderer noBugPlatformRightRenderComponent = noBugPlatformRight.addComponent(RectRenderer.class);
-            noBugPlatformRightRenderComponent.width = 1;
-            noBugPlatformRightRenderComponent.height = 1;
-            noBugPlatformRightRenderComponent.color = Color.MAGENTA;
-            noBugPlatformRightRenderComponent.setLayer(64);
-        }
-
-        RigidBody noBugPlatfomrRightRigidBody = noBugPlatformRight.addComponent(RigidBody.class);
-        noBugPlatfomrRightRigidBody.setType(RigidBody.Type.STATIC);
-        noBugPlatfomrRightRigidBody.addCollider(BoxCollider.build(1, 1));
 
         menuButton.setOnClick(() -> {
             // Prevent user from clicking again
@@ -502,6 +437,17 @@ public class Level2 extends Scene {
         elementsImage.dispose();
         elementsUIImage.dispose();
         backgroundImage.dispose();
+    }
+
+    private DottedLineRenderer createDottedLine(float startX, float startY, float endX, float endY, int count) {
+        DottedLineRenderer lineRenderer = createGameObject().addComponent(DottedLineRenderer.class);
+        lineRenderer.setPointA(startX, startY);
+        lineRenderer.setPointB(endX, endY);
+        lineRenderer.setCount(count);
+        lineRenderer.setRadius(0.2f);
+        lineRenderer.setColor(Color.GREY);
+        lineRenderer.setLayer(128);
+        return lineRenderer;
     }
 
     private void saveProgress() {

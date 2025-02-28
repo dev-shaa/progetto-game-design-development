@@ -73,10 +73,13 @@ public final class BoxCollider extends Collider {
 
         float w = Camera.getInstance().worldToScreenSizeX(width * 2);
         float h = Camera.getInstance().worldToScreenSizeY(height * 2);
-        float x = rx + Camera.getInstance().worldToScreenSizeX(centerX) - w / 2;
-        float y = ry - Camera.getInstance().worldToScreenSizeY(centerY) - h / 2;
+        float x = rx + Camera.getInstance().worldToScreenSizeX(centerX);
+        float y = ry - Camera.getInstance().worldToScreenSizeY(centerY);
 
-        graphics.drawWireRect(x, y, w, h, getOwner().getOwner().angle, rx, ry, Color.GREEN);
+        graphics.saveCanvas();
+        graphics.rotateCanvas(angle, x, y);
+        graphics.drawWireRect(x - w / 2, y - h / 2, w, h, getOwner().getOwner().angle, rx, ry, Color.GREEN);
+        graphics.restoreCanvas();
     }
 
     public void setCenter(float x, float y) {

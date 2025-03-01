@@ -2,7 +2,6 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
@@ -37,15 +36,8 @@ public class Level2 extends Level {
     private static final int PALETTE_BACKGROUND = 0xff237F52;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
-    private Sound buttonSound;
-    private Sound buttonsAppearSound;
-    private Sound movingPlatformSound;
-    private Sound winSound;
     private Music backgroundMusic;
-
     private boolean isPressed = false;
-
-    private Pixmap backgroundImage, elementsImage, elementsUIImage;
 
     public Level2(Game game) {
         super(game);
@@ -59,14 +51,13 @@ public class Level2 extends Level {
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.6f);
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
+        Pixmap backgroundImage = getImage("graphics/environment-brick-wall.png");
+        Pixmap elementsImage = getImage("graphics/elements-light.png");
+        Pixmap elementsUIImage = getImage("graphics/elements-ui.png");
 
-        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
-        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
-        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        Sound buttonSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
+        Sound movingPlatformSound = getSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
 
         Camera.getInstance().setSize(20);
 
@@ -83,7 +74,6 @@ public class Level2 extends Level {
         float levelSelectionButtonWidth = 4f;
         float levelSelectionButtonHeight = 4f;
 
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
         GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
 
         SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
@@ -420,19 +410,6 @@ public class Level2 extends Level {
     public void pause() {
         super.pause();
         backgroundMusic.pause();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-
-        backgroundMusic.stop();
-        backgroundMusic.dispose();
-        buttonsAppearSound.dispose();
-
-        elementsImage.dispose();
-        elementsUIImage.dispose();
-        backgroundImage.dispose();
     }
 
     private DottedLineRenderer createDottedLine(float startX, float startY, float endX, float endY, int count) {

@@ -6,12 +6,16 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input;
+import com.badlogic.androidgames.framework.Music;
+import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Screen;
+import com.badlogic.androidgames.framework.Sound;
 import com.google.fpl.liquidfun.World;
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -43,6 +47,9 @@ public abstract class Scene extends Screen {
     private final ArrayList<GameObject> gameObjectsToOperate = new ArrayList<>();
 
     private int clearColor = Color.BLACK;
+    private final HashMap<String, Pixmap> images = new HashMap<>();
+    private final HashMap<String, Sound> sounds = new HashMap<>();
+    private final HashMap<String, Music> musics = new HashMap<>();
 
     public Scene(Game game) {
         super(game);
@@ -145,8 +152,6 @@ public abstract class Scene extends Screen {
                 for (Component component : gameObject.getComponents())
                     component.onDrawGizmos(graphics);
             }
-
-            graphics.drawCircle(Camera.getInstance().worldToScreenX(0), Camera.getInstance().worldToScreenY(0), 4, Color.MAGENTA);
         }
     }
 
@@ -163,6 +168,19 @@ public abstract class Scene extends Screen {
     @Override
     public void dispose() {
         sceneToBeLoaded = null;
+
+        for (Music music : musics.values())
+            music.dispose();
+
+        for (Sound sounds : sounds.values())
+            sounds.dispose();
+
+        for (Pixmap image : images.values())
+            image.dispose();
+
+        musics.clear();
+        sounds.clear();
+        images.clear();
 
         for (GameObject gameObject : gameObjects)
             gameObject.dispose();
@@ -275,6 +293,57 @@ public abstract class Scene extends Screen {
      */
     public final void setClearColor(int clearColor) {
         this.clearColor = clearColor;
+    }
+
+    /**
+     * Loads a pixmap. It must not be disposed manually.
+     *
+     * @param name name of the pixmap
+     * @return the desired pixmap
+     */
+    protected final Pixmap getImage(String name) {
+        Pixmap image = images.get(name);
+
+        if (image == null) {
+            image = game.getGraphics().newPixmap(name, Graphics.PixmapFormat.ARGB8888);
+            images.put(name, image);
+        }
+
+        return image;
+    }
+
+    /**
+     * Loads a sound. It must not be disposed manually.
+     *
+     * @param name name of the sound
+     * @return the desired sound
+     */
+    protected final Sound getSound(String name) {
+        Sound sound = sounds.get(name);
+
+        if (sound == null) {
+            sound = game.getAudio().newSound(name);
+            sounds.put(name, sound);
+        }
+
+        return sound;
+    }
+
+    /**
+     * Loads a music. It must not be disposed manually.
+     *
+     * @param name name of the music
+     * @return the desired music
+     */
+    protected final Music getMusic(String name) {
+        Music music = musics.get(name);
+
+        if (music == null) {
+            music = game.getAudio().newMusic(name);
+            musics.put(name, music);
+        }
+
+        return music;
     }
 
     private void applySceneChanges() {

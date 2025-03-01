@@ -2,7 +2,6 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
@@ -31,16 +30,7 @@ public class Level1 extends Level {
     private static final int PALETTE_BACKGROUND = 0xff005387;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
-    private Pixmap backgroundImage;
-    private Pixmap spriteSheet;
-    private Pixmap uiSpriteSheet;
-
-    private Sound uiButtonSound, buttonSound;
-    private Sound movingPlatformSound;
-    private Sound winSound;
-
     private Music backgroundMusic;
-
     private AnimationSequence animator;
     private SpriteRenderer promptRenderer;
 
@@ -56,22 +46,21 @@ public class Level1 extends Level {
 
         setClearColor(PALETTE_BACKGROUND);
 
-        backgroundMusic = game.getAudio().newMusic(Assets.SOUND_MUSIC_LEVEL_1);
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVEL_1);
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
 
-        backgroundImage = game.getGraphics().newPixmap(Assets.GRAPHICS_BACKGROUND_LEVEL_1, Graphics.PixmapFormat.RGB565);
-        spriteSheet = game.getGraphics().newPixmap(Assets.GRAPHICS_GAME_SPRITES_LIGHT, Graphics.PixmapFormat.RGB565);
-        uiSpriteSheet = game.getGraphics().newPixmap(Assets.GRAPHICS_UI_SPRITES, Graphics.PixmapFormat.RGB565);
+        Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
+        Pixmap uiSpriteSheet = getImage(Assets.GRAPHICS_UI_SPRITES);
 
-        uiButtonSound = game.getAudio().newSound(Assets.SOUND_UI_BUTTON_CLICK);
-        buttonSound = game.getAudio().newSound(Assets.SOUND_GAME_BUTTON_CLICK);
-        winSound = game.getAudio().newSound(Assets.SOUND_GAME_WIN);
-        movingPlatformSound = game.getAudio().newSound(Assets.SOUND_GAME_PLATFORM_MOVE);
+        Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
+        Sound buttonSound = getSound(Assets.SOUND_GAME_BUTTON_CLICK);
+        Sound winSound = getSound(Assets.SOUND_GAME_WIN);
+        Sound movingPlatformSound = getSound(Assets.SOUND_GAME_PLATFORM_MOVE);
 
         // Background
         SpriteRenderer backgroundRenderer = createGameObject().addComponent(SpriteRenderer.class);
-        backgroundRenderer.setImage(backgroundImage);
+        backgroundRenderer.setImage(getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_1));
         backgroundRenderer.setSize(Camera.getInstance().getSizeX(), Camera.getInstance().getSizeY());
         backgroundRenderer.setLayer(16);
 
@@ -229,19 +218,6 @@ public class Level1 extends Level {
     @Override
     public void dispose() {
         super.dispose();
-
-        backgroundMusic.stop();
-        backgroundMusic.dispose();
-
-        backgroundImage.dispose();
-        spriteSheet.dispose();
-        uiSpriteSheet.dispose();
-
-        uiButtonSound.dispose();
-        buttonSound.dispose();
-        movingPlatformSound.dispose();
-        winSound.dispose();
-
         animator = null;
     }
 

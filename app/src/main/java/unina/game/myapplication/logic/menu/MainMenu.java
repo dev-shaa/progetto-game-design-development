@@ -27,12 +27,7 @@ public class MainMenu extends Scene {
 
     private static boolean firstTime = true;
 
-    private Pixmap menuBackgroundImage;
-    private Pixmap backgroundImage;
-    private Pixmap spritesImage;
-
     private Music backgroundMusic;
-    private Sound selectSound;
 
     public MainMenu(Game game) {
         super(game);
@@ -42,7 +37,15 @@ public class MainMenu extends Scene {
     public void initialize() {
         super.initialize();
 
-        initializeAssets();
+        Pixmap menuBackgroundImage = getImage("graphics/environment-main-menu.jpg");
+        Pixmap backgroundImage = getImage("graphics/environment-level-selection.png");
+        Pixmap spritesImage = getImage("graphics/elements-ui.png");
+
+        Sound selectSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
+
+        backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(1);
 
         SpriteRenderer menuBackground = createGameObject(0, 0).addComponent(SpriteRenderer.class);
         menuBackground.setImage(menuBackgroundImage);
@@ -181,34 +184,5 @@ public class MainMenu extends Scene {
         super.resume();
         backgroundMusic.play();
     }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-        disposeAssets();
-    }
-
-    private void initializeAssets() {
-        menuBackgroundImage = game.getGraphics().newPixmap("graphics/environment-main-menu.jpg", Graphics.PixmapFormat.RGB565);
-        backgroundImage = game.getGraphics().newPixmap("graphics/environment-level-selection.png", Graphics.PixmapFormat.RGB565);
-        spritesImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
-
-        selectSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-
-        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
-        backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(1);
-    }
-
-    private void disposeAssets() {
-        backgroundMusic.stop();
-        backgroundMusic.dispose();
-
-        selectSound.dispose();
-        backgroundImage.dispose();
-        spritesImage.dispose();
-        menuBackgroundImage.dispose();
-    }
-
 
 }

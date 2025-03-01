@@ -1,5 +1,7 @@
 package unina.game.myapplication.logic;
 
+import com.badlogic.androidgames.framework.Color;
+import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input;
 
 import unina.game.myapplication.core.Camera;
@@ -56,6 +58,18 @@ public abstract class PressableComponent extends InputComponent {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
+
+        float w = camera.worldToScreenSizeX(width);
+        float h = camera.worldToScreenSizeY(height);
+        float x = camera.worldToScreenX(getOwner().x) - w / 2;
+        float y = camera.worldToScreenY(getOwner().y) - h / 2;
+
+        graphics.drawWireRect(x, y, w, h, Color.MAGENTA);
     }
 
     public void setSize(float width, float height) {

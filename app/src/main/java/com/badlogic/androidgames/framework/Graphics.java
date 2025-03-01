@@ -29,9 +29,7 @@ public interface Graphics {
      * @param height the height of the rect
      * @param color  the color of the rect
      */
-    default void drawRect(float x, float y, float width, float height, int color) {
-        drawRect(x, y, width, height, 0, color);
-    }
+    void drawRect(float x, float y, float width, float height, int color);
 
     /**
      * Draws a rectangle on screen, rotated by the given angle.
@@ -44,12 +42,13 @@ public interface Graphics {
      * @param color  the color of the rect
      */
     default void drawRect(float x, float y, float width, float height, float angle, int color) {
-        drawRect(x, y, width, height, angle, x + width / 2, y + height / 2, color);
+        saveCanvas();
+        rotateCanvas(angle, x + width / 2, y + height / 2);
+        drawRect(x, y, width, height, color);
+        restoreCanvas();
     }
 
-    void drawRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color);
-
-    void drawWireRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color);
+    void drawWireRect(float x, float y, float width, float height, int color);
 
     void drawCircle(float x, float y, float radius, int color);
 

@@ -8,10 +8,6 @@ import unina.game.myapplication.core.Utility;
 
 public class DottedLineRenderer extends RenderComponent {
 
-    public static DottedLineRenderer build() {
-        return new DottedLineRenderer();
-    }
-
     private float x1, y1;
     private float x2, y2;
     private int count = 2;

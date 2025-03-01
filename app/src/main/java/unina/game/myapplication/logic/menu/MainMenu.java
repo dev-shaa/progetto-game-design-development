@@ -27,6 +27,7 @@ public class MainMenu extends Scene {
 
     private static boolean firstTime = true;
 
+    private Pixmap menuBackgroundImage;
     private Pixmap backgroundImage;
     private Pixmap spritesImage;
 
@@ -42,6 +43,13 @@ public class MainMenu extends Scene {
         super.initialize();
 
         initializeAssets();
+
+        SpriteRenderer menuBackground = createGameObject(0, 0).addComponent(SpriteRenderer.class);
+        menuBackground.setImage(menuBackgroundImage);
+        menuBackground.setSrcPosition(0, 0);
+        menuBackground.setSrcSize(412, 892);
+        menuBackground.setSize(Camera.getInstance().getSizeX(), Camera.getInstance().getSizeY());
+        menuBackground.setLayer(128);
 
         Localization localization = game.getLocalization();
         LevelSaver levelSaver = LevelSaver.getInstance(game.getFileIO());
@@ -60,14 +68,14 @@ public class MainMenu extends Scene {
         animator.start();
 
         // Main menu
-        GameObject playButtonGO = createGameObject();
+        GameObject playButtonGO = createGameObject(0, -5.5f);
 
-        RectRenderer playButtonRenderer = playButtonGO.addComponent(RectRenderer.class);
-        playButtonRenderer.setSize(2, 1);
-        playButtonRenderer.setColor(Color.RED);
+//        RectRenderer playButtonRenderer = playButtonGO.addComponent(RectRenderer.class);
+//        playButtonRenderer.setSize(2, 1);
+//        playButtonRenderer.setColor(Color.RED);
 
         Button playButton = playButtonGO.addComponent(Button.class);
-        playButton.setSize(2, 1);
+        playButton.setSize(8, 2);
         playButton.setOnClick(() -> {
             animator.clear();
             animator.add(FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> Camera.getInstance().getOwner().setTransform(30, 0, 0));
@@ -114,13 +122,6 @@ public class MainMenu extends Scene {
             label.setText(localization.getString(R.string.level, i + 1));
 
             GameObject buttonGameObject = createGameObject(30, 4f - i * 2f);
-
-            if (DEBUG) {
-                RectRenderer buttonRenderer = buttonGameObject.addComponent(RectRenderer.class);
-                buttonRenderer.setSize(7.5f, 1.5f);
-                buttonRenderer.setColor(Color.MAGENTA);
-                buttonRenderer.setLayer(-8);
-            }
 
             Button button = buttonGameObject.addComponent(Button.class);
             button.setSize(7f, 1.5f);
@@ -188,6 +189,7 @@ public class MainMenu extends Scene {
     }
 
     private void initializeAssets() {
+        menuBackgroundImage = game.getGraphics().newPixmap("graphics/environment-main-menu.jpg", Graphics.PixmapFormat.RGB565);
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-level-selection.png", Graphics.PixmapFormat.RGB565);
         spritesImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
 
@@ -205,6 +207,7 @@ public class MainMenu extends Scene {
         selectSound.dispose();
         backgroundImage.dispose();
         spritesImage.dispose();
+        menuBackgroundImage.dispose();
     }
 
 

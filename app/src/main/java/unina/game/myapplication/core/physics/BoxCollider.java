@@ -76,9 +76,17 @@ public final class BoxCollider extends Collider {
         float x = rx + Camera.getInstance().worldToScreenSizeX(centerX);
         float y = ry - Camera.getInstance().worldToScreenSizeY(centerY);
 
+        // Rotate for collider local rotation
         graphics.saveCanvas();
         graphics.rotateCanvas(angle, x, y);
-        graphics.drawWireRect(x - w / 2, y - h / 2, w, h, getOwner().getOwner().angle, rx, ry, Color.GREEN);
+
+        // Rotate for body rotation
+        graphics.saveCanvas();
+        graphics.rotateCanvas(getOwner().getOwner().angle, rx, ry);
+
+        graphics.drawWireRect(x - w / 2, y - h / 2, w, h, isSensor() ? Color.RED : Color.GREEN);
+
+        graphics.restoreCanvas();
         graphics.restoreCanvas();
     }
 

@@ -99,23 +99,10 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color) {
-        canvas.save();
-        canvas.rotate(-angle, pivotX, pivotY);
-        drawRect(x, y, width, height, color);
-        canvas.restore();
-    }
-
-    @Override
-    public void drawWireRect(float x, float y, float width, float height, float angle, float pivotX, float pivotY, int color) {
-        canvas.save();
-        canvas.rotate(-angle, pivotX, pivotY);
-
+    public void drawWireRect(float x, float y, float width, float height, int color) {
         paint.setColor(color);
         paint.setStyle(Style.STROKE);
         canvas.drawRect(x, y, x + width, y + height, paint);
-
-        canvas.restore();
     }
 
     @Override
@@ -244,6 +231,7 @@ public class AndroidGraphics implements Graphics {
     public void drawText(String text, float x, float y, float size, int color, Align horizontalAlign, Align verticalAlign) {
         paint.setTextSize(size);
         paint.setColor(color);
+        paint.setStyle(Style.FILL);
 
         switch (horizontalAlign) {
             case START:

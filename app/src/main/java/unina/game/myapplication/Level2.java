@@ -212,8 +212,7 @@ public class Level2 extends Scene {
         rightDraggablePlatformRenderer.setSize(rightDraggablePlatformWidth, rightDraggablePlatformHeight);
 
         PlatformDraggingComponent rightDraggablePlatform = rightDraggablePlatformGO.addComponent(PlatformDraggingComponent.class);
-        rightDraggablePlatform.width = 10;
-        rightDraggablePlatform.height = 10;
+        rightDraggablePlatform.setSize(4, 4);
         rightDraggablePlatform.setStart(rightDraggablePlatformGO.x, 12);
         rightDraggablePlatform.setEnd(rightDraggablePlatformGO.x, 5.75f + rightDraggablePlatformWidth / 2f + 0.25f);
         rightDraggablePlatform.setRigidBody(rightDraggablePlatformRigidBody);
@@ -245,7 +244,7 @@ public class Level2 extends Scene {
 
         PlatformDraggingComponent leftDraggablePlatform = leftDraggablePlatformGO.addComponent(PlatformDraggingComponent.class);
         leftDraggablePlatform.setRigidBody(leftDraggablePlatformRigidBody);
-        leftDraggablePlatform.setSize(10, 10);
+        leftDraggablePlatform.setSize(4, 4);
         leftDraggablePlatform.setStart(leftDraggablePlatformGO.x, 15);
         leftDraggablePlatform.setEnd(leftDraggablePlatformGO.x, 7);
 

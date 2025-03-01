@@ -6,6 +6,8 @@ import com.google.fpl.liquidfun.Fixture;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.Shape;
 
+import unina.game.myapplication.core.Camera;
+
 public abstract class Collider {
 
     RigidBody owner;
@@ -18,17 +20,18 @@ public abstract class Collider {
 
     }
 
+    /**
+     * Creates the shape of the collider. The caller is responsible for the resources management.
+     *
+     * @return the shape of the collider
+     */
     abstract Shape createShape();
 
-    void dispose() {
-        if (fixture != null) {
-            fixture.getBody().destroyFixture(fixture);
-            fixture = null;
-        }
-
-        owner = null;
-    }
-
+    /**
+     * Creates the fixture for the given body.
+     *
+     * @param body owner of the fixture
+     */
     final void createFixture(Body body) {
         Shape shape = createShape();
 
@@ -46,7 +49,19 @@ public abstract class Collider {
         fixtureDef.delete();
     }
 
-    void onDrawGizmos(Graphics graphics) {
+    /**
+     *
+     */
+    void dispose() {
+        if (fixture != null) {
+            fixture.getBody().destroyFixture(fixture);
+            fixture = null;
+        }
+
+        owner = null;
+    }
+
+    void onDrawGizmos(Camera camera, Graphics graphics) {
 
     }
 

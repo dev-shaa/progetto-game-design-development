@@ -12,7 +12,10 @@ import unina.game.myapplication.Level3;
 import unina.game.myapplication.Level4;
 import unina.game.myapplication.core.Scene;
 
-public class LevelSaver {
+/**
+ * A manager for save files.
+ */
+public final class LevelSaver {
 
     private final FileIO fileIO;
     private final Class<? extends Scene>[] levels;

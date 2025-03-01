@@ -6,6 +6,9 @@ import java.io.IOException;
 
 import unina.game.myapplication.core.Scene;
 
+/**
+ * Base class for levels.
+ */
 public abstract class Level extends Scene {
 
     private LevelSaver levelSaver;
@@ -20,10 +23,9 @@ public abstract class Level extends Scene {
         levelSaver = LevelSaver.getInstance(game.getFileIO());
     }
 
-    protected final void reloadLevel() {
-        loadScene(getClass());
-    }
-
+    /**
+     * Saves the level as completed.
+     */
     protected final void saveProgress() {
         try {
             levelSaver.saveLevelAsCompleted(getLevelIndex());
@@ -32,10 +34,25 @@ public abstract class Level extends Scene {
         }
     }
 
+    /**
+     * Reloads this scene.
+     */
+    protected final void reloadLevel() {
+        loadScene(getClass());
+    }
+
+    /**
+     * Loads the next level.
+     */
     protected final void loadNextLevel() {
         loadScene(levelSaver.getLevel(getLevelIndex() + 1));
     }
 
+    /**
+     * Returns the level index.
+     *
+     * @return level index
+     */
     protected abstract int getLevelIndex();
 
 }

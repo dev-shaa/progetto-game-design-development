@@ -6,11 +6,10 @@ import com.badlogic.androidgames.framework.Graphics;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
+/**
+ * Draws a rectangle on screen.
+ */
 public class RectRenderer extends RenderComponent {
-
-    public static RectRenderer build() {
-        return new RectRenderer();
-    }
 
     public float width, height;
     public float pivotX, pivotY;
@@ -50,16 +49,34 @@ public class RectRenderer extends RenderComponent {
         graphics.drawRect(x, y, w, h, getOwner().angle, color);
     }
 
+    /**
+     * Sets the size of the rectangle.
+     *
+     * @param width  width of the rectangle
+     * @param height height of the rectangle
+     */
     public void setSize(float width, float height) {
         this.width = width;
         this.height = height;
     }
 
+    /**
+     * Sets the pivot point of the rectangle, where (0, 0) is the top left corner and (1, 1) is the bottom right.
+     *
+     * @param pivotX x coordinate of the pivot point
+     * @param pivotY y coordinate of the pivot point
+     */
     public void setPivot(float pivotX, float pivotY) {
         this.pivotX = pivotX;
         this.pivotY = pivotY;
     }
 
+    /**
+     * Sets the color of the rectangle.
+     *
+     * @param color color of the rectangle
+     * @see Color
+     */
     public void setColor(int color) {
         this.color = color;
     }

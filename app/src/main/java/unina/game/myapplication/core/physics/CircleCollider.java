@@ -1,8 +1,12 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Color;
+import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.CircleShape;
 import com.google.fpl.liquidfun.Shape;
+
+import unina.game.myapplication.core.Camera;
 
 /**
  * A collider shaped as a circle.
@@ -46,6 +50,7 @@ public final class CircleCollider extends Collider {
         return collider;
     }
 
+    private float centerX, centerY;
     private float radius;
 
     private CircleCollider() {
@@ -56,6 +61,7 @@ public final class CircleCollider extends Collider {
     Shape createShape() {
         CircleShape shape = new CircleShape();
         shape.setRadius(radius);
+        shape.setPosition(centerX, centerY);
         return shape;
     }
 
@@ -63,6 +69,28 @@ public final class CircleCollider extends Collider {
     void dispose() {
         super.dispose();
         pool.free(this);
+        centerX = centerY = 0;
+    }
+
+    @Override
+    void onDrawGizmos(Camera camera, Graphics graphics) {
+        super.onDrawGizmos(camera, graphics);
+
+        // WARNING:
+        // this is executed every frame for every collider and it is VERY expensive
+        // but since this is only called in debug mode we can live with it
+
+        float rx = camera.worldToScreenX(getOwner().getPositionX() + centerX);
+        float ry = camera.worldToScreenY(getOwner().getPositionY() + centerY);
+
+        float r = camera.worldToScreenSizeX(radius);
+
+        graphics.drawWireCircle(rx, ry, r, Color.GREEN);
+    }
+
+    public void setCenter(float x, float y) {
+        this.centerX = x;
+        this.centerY = y;
     }
 
 }

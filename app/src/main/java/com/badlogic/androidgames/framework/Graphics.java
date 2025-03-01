@@ -52,7 +52,7 @@ public interface Graphics {
 
     void drawCircle(float x, float y, float radius, int color);
 
-    void drawPath(float[] points, int color);
+    void drawWireCircle(float x, float y, float radius, int color);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);
 
@@ -68,15 +68,15 @@ public interface Graphics {
 
     void drawText(String text, float x, float y, float size, int color, Align horizontalAlign, Align verticalAlign);
 
-    int getWidth();
-
-    int getHeight();
-
     void saveCanvas();
 
     void rotateCanvas(float angle, float pivotX, float pivotY);
 
     void restoreCanvas();
+
+    int getWidth();
+
+    int getHeight();
 
     default float getAspectRatio() {
         return (float) getWidth() / getHeight();

@@ -7,6 +7,7 @@ import com.google.fpl.liquidfun.Vec2;
 
 import java.util.HashSet;
 
+import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.PhysicsComponent;
 
@@ -16,7 +17,7 @@ public final class RigidBody extends PhysicsComponent {
         KINEMATIC, DYNAMIC, STATIC
     }
 
-    Body body;
+    Body body; // NOTE: this may be referred directly from other physics component, but let's keep it hidden from the rest
     private Type type;
     private boolean sleepingAllowed;
     private float linearDamping;
@@ -97,8 +98,10 @@ public final class RigidBody extends PhysicsComponent {
     public void onDrawGizmos(Graphics graphics) {
         super.onDrawGizmos(graphics);
 
+        Camera camera = Camera.getInstance();
+
         for (Collider collider : colliders) {
-            collider.onDrawGizmos(graphics);
+            collider.onDrawGizmos(camera, graphics);
         }
     }
 
@@ -130,6 +133,11 @@ public final class RigidBody extends PhysicsComponent {
         addCollider(collider);
     }
 
+    /**
+     * Sets the RigidBody type.
+     *
+     * @param type type of the body
+     */
     public void setType(Type type) {
         this.type = type;
 
@@ -171,20 +179,35 @@ public final class RigidBody extends PhysicsComponent {
         }
     }
 
+    /**
+     * Returns the x coordinate of this body.
+     *
+     * @return x coordinate of the body
+     */
     public float getPositionX() {
         return body == null ? getOwner().x : body.getPositionX();
     }
 
+    /**
+     * Returns the y coordinate of this body.
+     *
+     * @return y coordinate of the body
+     */
     public float getPositionY() {
         return body == null ? getOwner().y : body.getPositionY();
     }
 
+    /**
+     * Adds a collider to this body.
+     *
+     * @param collider collider to add
+     */
     public void addCollider(Collider collider) {
         if (collider.owner == this)
             return;
 
         if (collider.owner != null)
-            throw new RuntimeException();
+            throw new RuntimeException("Collider is already attached to another RigidBody");
 
         collider.owner = this;
         colliders.add(collider);
@@ -193,6 +216,11 @@ public final class RigidBody extends PhysicsComponent {
             collider.createFixture(body);
     }
 
+    /**
+     * Removes a collider from this body.
+     *
+     * @param collider collider to remove
+     */
     public void removeCollider(Collider collider) {
         if (collider.owner == this) {
             collider.dispose();
@@ -200,6 +228,12 @@ public final class RigidBody extends PhysicsComponent {
         }
     }
 
+    /**
+     * Adds a joint to this body. This will also add the joint to the other referenced body.
+     * The joint can be removed from either one.
+     *
+     * @param joint joint to add
+     */
     public void addJoint(Joint joint) {
         if (joint.rigidBodyA != null)
             throw new RuntimeException("Joint is already attached to another RigidBody");
@@ -213,6 +247,11 @@ public final class RigidBody extends PhysicsComponent {
         }
     }
 
+    /**
+     * Removes a joint from this and the other referenced body.
+     *
+     * @param joint joint to remove
+     */
     public void removeJoint(Joint joint) {
         if (joint.rigidBodyA == this || joint.rigidBodyB == this) {
             joint.rigidBodyA.joints.remove(joint);

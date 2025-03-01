@@ -113,22 +113,10 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawPath(float[] points, int color) {
-        Path path = new Path();
-
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.reset();
-        path.moveTo(points[0], points[1]);
-
-        for (int i = 2; i < points.length; i += 2) {
-            path.moveTo(points[i], points[i + 1]);
-        }
-
-        path.close();
-
+    public void drawWireCircle(float x, float y, float radius, int color) {
         paint.setColor(color);
-        paint.setStyle(Style.FILL);
-        canvas.drawPath(path, paint);
+        paint.setStyle(Style.STROKE);
+        canvas.drawCircle(x, y, radius, paint);
     }
 
     @Override
@@ -259,16 +247,6 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public int getWidth() {
-        return frameBuffer.getWidth();
-    }
-
-    @Override
-    public int getHeight() {
-        return frameBuffer.getHeight();
-    }
-
-    @Override
     public void saveCanvas() {
         canvas.save();
     }
@@ -281,6 +259,16 @@ public class AndroidGraphics implements Graphics {
     @Override
     public void restoreCanvas() {
         canvas.restore();
+    }
+
+    @Override
+    public int getWidth() {
+        return frameBuffer.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return frameBuffer.getHeight();
     }
 
 }

@@ -40,7 +40,9 @@ public class Level2 extends Level {
     private Sound buttonSound;
     private Sound buttonsAppearSound;
     private Sound movingPlatformSound;
+    private Sound movingRock;
     private Sound winSound;
+    private Sound rockCrushSound;
     private Music backgroundMusic;
 
     private boolean isPressed = false;
@@ -62,10 +64,11 @@ public class Level2 extends Level {
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
         elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
-
+        movingRock = game.getAudio().newSound("sounds/moving-rock.mp3");
         buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
         buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
         movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        rockCrushSound = game.getAudio().newSound("sounds/rock-crush.mp3");
         winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
 
         Camera.getInstance().setSize(20);
@@ -189,8 +192,8 @@ public class Level2 extends Level {
         rockRigidBody.setSleepingAllowed(false);
 
         CollisionSoundPlayer rockCollisionSoundPlayer = rock.addComponent(CollisionSoundPlayer.class);
-        rockCollisionSoundPlayer.setSound(movingPlatformSound); // TODO: placeholder sound
-        rockCollisionSoundPlayer.setVolume(0.2f);
+        rockCollisionSoundPlayer.setSound(movingRock); // TODO: placeholder sound
+        rockCollisionSoundPlayer.setVolume(0.7f);
 
         // Right draggable platform
         float rightDraggablePlatformWidth = 4f;
@@ -303,6 +306,7 @@ public class Level2 extends Level {
 
         PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
         gameOverTrigger.setOnCollisionEnter(() -> {
+            rockCrushSound.play(1);
             rightDraggablePlatform.setInteractable(false);
             leftDraggablePlatform.setInteractable(false);
 

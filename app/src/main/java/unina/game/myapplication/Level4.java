@@ -40,7 +40,7 @@ public class Level4 extends Scene {
     private Sound buttonsAppearSound;
     private Sound movingPlatformSound;
     private Sound winSound;
-
+    private Sound rockCrushSound;
     private Sound fallSound;
 
     private Pixmap backgroundImage;
@@ -65,6 +65,7 @@ public class Level4 extends Scene {
         movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
         winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
         fallSound = game.getAudio().newSound("sounds/fall.mp3");
+        rockCrushSound = game.getAudio().newSound("sounds/rock-crush.mp3");
 
         Camera.getInstance().setSize(30);
 
@@ -190,6 +191,7 @@ public class Level4 extends Scene {
 
         PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
         gameOverTrigger.setOnCollisionEnter(() -> {
+            rockCrushSound.play(1);
             characterRenderer.setSize(6,0.5f);
 
             animator.clear();
@@ -284,6 +286,7 @@ public class Level4 extends Scene {
             buttonSound.play(1);
             buttonBallCircleRender.setColor(Color.GREY);
             lineButtonDown.setColor(Color.GREY);
+            buttonBridgeDownInputComponent.setInteractable(false);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.4f),() -> movingPlatformSound.play(1));
@@ -317,7 +320,7 @@ public class Level4 extends Scene {
 
         RigidBody wreckingBallRigidBody = wreckingBall.addComponent(RigidBody.class);
         wreckingBallRigidBody.setType(RigidBody.Type.DYNAMIC);
-        wreckingBallRigidBody.addCollider(CircleCollider.build(2,100,0,1,false));
+        wreckingBallRigidBody.addCollider(CircleCollider.build(2,20,0,1,false));
 
         //Distance Joint
         DistanceJoint distanceJoint = DistanceJoint.build(platformCharacterRigidBody,15,10,1);
@@ -363,14 +366,14 @@ public class Level4 extends Scene {
 
         if (DEBUG) {
             PlatformRenderComponent wallSensorRenderComponent = wallSensorGO.addComponent(PlatformRenderComponent.class);
-            wallSensorRenderComponent.setSize(10,2);
+            wallSensorRenderComponent.setSize(15,2);
             wallSensorRenderComponent.color = Color.MAGENTA;
             wallSensorRenderComponent.setLayer(-3);
         }
 
         RigidBody wallSensorRigidBody = wallSensorGO.addComponent(RigidBody.class);
         wallSensorRigidBody.setType(RigidBody.Type.STATIC);
-        wallSensorRigidBody.addCollider(BoxCollider.build(10,2,true));
+        wallSensorRigidBody.addCollider(BoxCollider.build(15,2,true));
 
         PhysicsButton wallSensor = wallSensorGO.addComponent(PhysicsButton.class);
         wallSensor.setOnCollisionEnter(() -> {

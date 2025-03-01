@@ -28,13 +28,11 @@ public class LevelSaver {
     }
 
     private LevelSaver(FileIO fileIO) {
-        levels = new Class[6];
+        levels = new Class[4];
         levels[0] = Level1.class;
         levels[1] = Level2.class;
         levels[2] = Level3.class;
         levels[3] = Level4.class;
-        levels[4] = Level1.class;
-        levels[5] = Level1.class;
 
         this.fileIO = fileIO;
 

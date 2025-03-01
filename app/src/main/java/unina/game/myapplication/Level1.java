@@ -7,11 +7,8 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
-import java.io.IOException;
-
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
-import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveToAnimation;
@@ -21,7 +18,7 @@ import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.common.CircleRenderer;
 import unina.game.myapplication.logic.common.ColorAnimation;
-import unina.game.myapplication.logic.common.LevelSaver;
+import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
@@ -29,7 +26,7 @@ import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.SoundFadeAnimation;
 import unina.game.myapplication.logic.menu.MainMenu;
 
-public class Level1 extends Scene {
+public class Level1 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xff005387;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
@@ -192,9 +189,9 @@ public class Level1 extends Scene {
             });
             animator.add(MoveToAnimation.build(character, 4f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
             animator.add(ParallelAnimation.build(
-                            FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
-                            SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)),
-                    () -> loadScene(Level2.class));
+                    FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
+                    SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)
+            ), this::loadNextLevel);
             animator.start();
 
             saveProgress();
@@ -248,12 +245,9 @@ public class Level1 extends Scene {
         animator = null;
     }
 
-    private void saveProgress() {
-        try {
-            LevelSaver.getInstance(game.getFileIO()).saveLevelAsCompleted(0);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    protected int getLevelIndex() {
+        return 0;
     }
 
     private void showPrompt() {

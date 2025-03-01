@@ -7,11 +7,8 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
-import java.io.IOException;
-
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
-import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.LoopingAnimation;
@@ -31,11 +28,11 @@ import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.LevelSaver;
+import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.menu.MainMenu;
 
-public class Level2 extends Scene {
+public class Level2 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xff237F52;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
@@ -390,7 +387,7 @@ public class Level2 extends Scene {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 8f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(Level3.class));
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
 
             saveProgress();
@@ -449,12 +446,9 @@ public class Level2 extends Scene {
         return lineRenderer;
     }
 
-    private void saveProgress() {
-        try {
-            LevelSaver.getInstance(game.getFileIO()).saveLevelAsCompleted(1);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    protected int getLevelIndex() {
+        return 1;
     }
 
 }

@@ -2,7 +2,6 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
@@ -35,13 +34,7 @@ public class Level3 extends Level {
     private static final int PALETTE_BACKGROUND = 0xffF9A900;
     private static final int PALETTE_PRIMARY = 0xff2B2B2C;
 
-    private Sound buttonSound;
-    private Sound movingPlatformSound;
-    private Sound winSound, fallSound;
-
     private Music backgroundMusic;
-
-    private Pixmap backgroundImage, elementsImage, uiSpriteSheet;
 
     private RectRenderer fullScreenRenderer;
     private AnimationSequence animator;
@@ -57,16 +50,16 @@ public class Level3 extends Level {
     public void initialize() {
         super.initialize();
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/environment-construction-site.png", Graphics.PixmapFormat.RGB565);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-dark.png", Graphics.PixmapFormat.ARGB8888);
-        uiSpriteSheet = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
+        Pixmap backgroundImage = getImage("graphics/environment-construction-site.png");
+        Pixmap elementsImage = getImage("graphics/elements-dark.png");
+        Pixmap uiSpriteSheet = getImage("graphics/elements-ui.png");
 
-        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
-        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
-        fallSound = game.getAudio().newSound("sounds/fall.wav");
+        Sound buttonSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
+        Sound movingPlatformSound = getSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        Sound fallSound = getSound("sounds/fall.wav");
 
-        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(1);
 
@@ -420,22 +413,6 @@ public class Level3 extends Level {
     public void resume() {
         super.resume();
         backgroundMusic.play();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-
-        backgroundImage.dispose();
-        elementsImage.dispose();
-        uiSpriteSheet.dispose();
-
-        buttonSound.dispose();
-        movingPlatformSound.dispose();
-        winSound.dispose();
-        fallSound.dispose();
-
-        backgroundMusic.dispose();
     }
 
     @Override

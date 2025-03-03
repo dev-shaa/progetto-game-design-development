@@ -18,6 +18,7 @@ import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
@@ -59,7 +60,7 @@ public class Level3 extends Level {
         Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
         Sound fallSound = getSound("sounds/fall.wav");
 
-        backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(1);
 

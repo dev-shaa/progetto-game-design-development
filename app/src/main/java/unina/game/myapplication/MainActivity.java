@@ -29,7 +29,7 @@ public class MainActivity extends AndroidGame {
 
     @Override
     public Screen getStartScreen() {
-        return new Level4(this);
+        return new Level1(this);
     }
 
 }

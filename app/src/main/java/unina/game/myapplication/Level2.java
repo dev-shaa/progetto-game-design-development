@@ -20,6 +20,7 @@ import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
@@ -57,7 +58,7 @@ public class Level2 extends Level {
     public void initialize() {
         super.initialize();
 
-        backgroundMusic = game.getAudio().newMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.6f);
 

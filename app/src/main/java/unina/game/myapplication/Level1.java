@@ -46,7 +46,7 @@ public class Level1 extends Level {
 
         setClearColor(PALETTE_BACKGROUND);
 
-        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVEL_1);
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(0.5f);
 
@@ -155,6 +155,21 @@ public class Level1 extends Level {
                     ),
                     () -> loadScene(MainMenu.class));
             animator.start();
+        });
+
+        //Music Button
+        GameObject musicButtonGO = createGameObject(3,9);
+
+        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
+        musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+        musicButtonRender.setSize(3,2.5f);
+        musicButtonRender.setLayer(100);
+
+        Button musicButton = musicButtonGO.addComponent(Button.class);
+        musicButton.setSize(3,2.5f);
+        musicButton.setOnClick(() -> {
+            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+            backgroundMusic.setVolume(0);
         });
 
         buttonInputComponent.setOnClick(() -> {

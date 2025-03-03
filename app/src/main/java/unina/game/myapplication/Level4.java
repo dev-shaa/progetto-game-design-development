@@ -5,6 +5,7 @@ import android.util.Log;
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -22,6 +23,7 @@ import unina.game.myapplication.core.physics.CursorJoint;
 import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
+import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.CursorJointInput;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformRenderComponent;
@@ -42,6 +44,7 @@ public class Level4 extends Scene {
     private Sound winSound;
     private Sound rockCrushSound;
     private Sound fallSound;
+    private Music backgroundMusic;
 
     private Pixmap backgroundImage;
     private Pixmap elementsImage;
@@ -66,6 +69,10 @@ public class Level4 extends Scene {
         winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
         fallSound = game.getAudio().newSound("sounds/fall.mp3");
         rockCrushSound = game.getAudio().newSound("sounds/rock-crush.mp3");
+
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(1);
 
         Camera.getInstance().setSize(30);
 

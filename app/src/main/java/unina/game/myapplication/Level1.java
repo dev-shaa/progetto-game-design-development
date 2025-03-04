@@ -48,7 +48,10 @@ public class Level1 extends Level {
 
         backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.5f);
+        if (MUSIC_ON)
+            backgroundMusic.setVolume(0.5f);
+        else
+            backgroundMusic.setVolume(0);
 
         Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
         Pixmap uiSpriteSheet = getImage(Assets.GRAPHICS_UI_SPRITES);
@@ -161,15 +164,26 @@ public class Level1 extends Level {
         GameObject musicButtonGO = createGameObject(3,9);
 
         SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
-        musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+        if (MUSIC_ON)
+            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+        else
+            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
         musicButtonRender.setSize(3,2.5f);
         musicButtonRender.setLayer(100);
 
         Button musicButton = musicButtonGO.addComponent(Button.class);
         musicButton.setSize(3,2.5f);
         musicButton.setOnClick(() -> {
-            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-            backgroundMusic.setVolume(0);
+            if (MUSIC_ON) {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+                backgroundMusic.setVolume(0);
+                MUSIC_ON = false;
+            }
+            else {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+                backgroundMusic.setVolume(0.5f);
+                MUSIC_ON = true;
+            }
         });
 
         buttonInputComponent.setOnClick(() -> {

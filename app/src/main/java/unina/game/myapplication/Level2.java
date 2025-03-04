@@ -60,7 +60,10 @@ public class Level2 extends Level {
 
         backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(0.6f);
+        if (MUSIC_ON)
+            backgroundMusic.setVolume(0.5f);
+        else
+            backgroundMusic.setVolume(0);
 
         backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
         elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
@@ -193,7 +196,7 @@ public class Level2 extends Level {
         rockRigidBody.setSleepingAllowed(false);
 
         CollisionSoundPlayer rockCollisionSoundPlayer = rock.addComponent(CollisionSoundPlayer.class);
-        rockCollisionSoundPlayer.setSound(movingRock); // TODO: placeholder sound
+        rockCollisionSoundPlayer.setSound(movingRock);
         rockCollisionSoundPlayer.setVolume(0.7f);
 
         // Right draggable platform
@@ -413,6 +416,32 @@ public class Level2 extends Level {
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
         });
+
+        //Music Button
+        GameObject musicButtonGO = createGameObject(7,19.5f);
+
+        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
+        if (MUSIC_ON)
+            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+        else
+            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+        musicButtonRender.setSize(4,3);
+        musicButtonRender.setLayer(100);
+
+        Button musicButton = musicButtonGO.addComponent(Button.class);
+        musicButton.setSize(3,2.5f);
+        musicButton.setOnClick(() -> {
+            if (MUSIC_ON) {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+                backgroundMusic.setVolume(0);
+                MUSIC_ON = false;
+            }
+            else {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+                backgroundMusic.setVolume(0.5f);
+                MUSIC_ON = true;
+            }
+        });
     }
 
     @Override
@@ -431,8 +460,8 @@ public class Level2 extends Level {
     public void dispose() {
         super.dispose();
 
-        backgroundMusic.stop();
-        backgroundMusic.dispose();
+//        backgroundMusic.stop();
+//        backgroundMusic.dispose();
         buttonsAppearSound.dispose();
 
         elementsImage.dispose();

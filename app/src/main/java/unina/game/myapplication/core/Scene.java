@@ -28,6 +28,8 @@ public abstract class Scene extends Screen {
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
     private static final float GRAVITY_X = 0, GRAVITY_Y = -9.82f;
 
+    public static boolean MUSIC_ON = true;
+
     private World world;
     private CollisionListener collisionListener;
     private GameObject camera;

@@ -62,7 +62,10 @@ public class Level3 extends Level {
 
         backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(1);
+        if (MUSIC_ON)
+            backgroundMusic.setVolume(0.5f);
+        else
+            backgroundMusic.setVolume(0);
 
         Camera.getInstance().setSize(20);
 
@@ -401,6 +404,32 @@ public class Level3 extends Level {
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);
         rigidPlatform4.addCollider(BoxCollider.build(plat4W, plat4H));
+
+        //Music Button
+        GameObject musicButtonGO = createGameObject(7,19.5f);
+
+        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
+        if (MUSIC_ON)
+            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+        else
+            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+        musicButtonRender.setSize(4,3);
+        musicButtonRender.setLayer(100);
+
+        Button musicButton = musicButtonGO.addComponent(Button.class);
+        musicButton.setSize(3,2.5f);
+        musicButton.setOnClick(() -> {
+            if (MUSIC_ON) {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
+                backgroundMusic.setVolume(0);
+                MUSIC_ON = false;
+            }
+            else {
+                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
+                backgroundMusic.setVolume(0.5f);
+                MUSIC_ON = true;
+            }
+        });
 
     }
 

@@ -15,8 +15,11 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.ArrayMap;
+import android.util.Log;
 
+import com.badlogic.androidgames.framework.Font;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
@@ -64,6 +67,12 @@ public class AndroidGraphics implements Graphics {
             format = PixmapFormat.ARGB8888;
 
         return new AndroidPixmap(bitmap, format);
+    }
+
+    @Override
+    public Font newFont(String name) {
+        Typeface typeface = Typeface.createFromAsset(assets, name);
+        return new AndroidFont(typeface);
     }
 
     @Override
@@ -259,6 +268,14 @@ public class AndroidGraphics implements Graphics {
     @Override
     public void restoreCanvas() {
         canvas.restore();
+    }
+
+    @Override
+    public void setFont(Font font) {
+        if (font == null)
+            paint.setTypeface(null);
+        else
+            paint.setTypeface(((AndroidFont) font).getTypeface());
     }
 
     @Override

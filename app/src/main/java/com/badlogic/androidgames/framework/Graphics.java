@@ -12,6 +12,8 @@ public interface Graphics {
 
     Pixmap newPixmap(String fileName, PixmapFormat format);
 
+    Font newFont(String name);
+
     void clear(int color);
 
     void drawPixel(float x, float y, int color);
@@ -73,6 +75,8 @@ public interface Graphics {
     void rotateCanvas(float angle, float pivotX, float pivotY);
 
     void restoreCanvas();
+
+    void setFont(Font font);
 
     int getWidth();
 

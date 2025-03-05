@@ -1,6 +1,7 @@
 package unina.game.myapplication.logic.menu;
 
 import com.badlogic.androidgames.framework.Color;
+import com.badlogic.androidgames.framework.Font;
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Localization;
@@ -43,6 +44,9 @@ public class MainMenu extends Scene {
 
         Sound selectSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
 
+        Font playButtonFont = game.getGraphics().newFont("fonts/RG2014D.ttf");
+        Font cabinFont = game.getGraphics().newFont("fonts/Cabin-Bold.ttf");
+
         backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
         backgroundMusic.setLooping(true);
         backgroundMusic.setVolume(1);
@@ -52,9 +56,10 @@ public class MainMenu extends Scene {
         menuBackground.setSrcPosition(0, 0);
         menuBackground.setSrcSize(412, 892);
         menuBackground.setSize(Camera.getInstance().getSizeX(), Camera.getInstance().getSizeY());
-        menuBackground.setLayer(128);
+        menuBackground.setLayer(0);
 
         Localization localization = game.getLocalization();
+
         LevelSaver levelSaver = LevelSaver.getInstance(game.getFileIO());
         Button[] levelButtons = new Button[levelSaver.getLevelsCount()];
 
@@ -73,9 +78,13 @@ public class MainMenu extends Scene {
         // Main menu
         GameObject playButtonGO = createGameObject(0, -5.5f);
 
-//        RectRenderer playButtonRenderer = playButtonGO.addComponent(RectRenderer.class);
-//        playButtonRenderer.setSize(2, 1);
-//        playButtonRenderer.setColor(Color.RED);
+        TextRenderer playButtonRenderer = playButtonGO.addComponent(TextRenderer.class);
+        playButtonRenderer.setHorizontalAlign(Graphics.Align.CENTER);
+        playButtonRenderer.setVerticalAlign(Graphics.Align.CENTER);
+        playButtonRenderer.setColor(0xffECECE7);
+        playButtonRenderer.setSize(32);
+        playButtonRenderer.setFont(playButtonFont);
+        playButtonRenderer.setText(localization.getString(R.string.menu_button_play));
 
         Button playButton = playButtonGO.addComponent(Button.class);
         playButton.setSize(8, 2);
@@ -103,6 +112,7 @@ public class MainMenu extends Scene {
         TextRenderer levelSelectionLabel = levelSelectionLabelGO.addComponent(TextRenderer.class);
         levelSelectionLabel.setText(localization.getString(R.string.select_level));
         levelSelectionLabel.setSize(32);
+        levelSelectionLabel.setFont(cabinFont);
         levelSelectionLabel.setHorizontalAlign(Graphics.Align.START);
         levelSelectionLabel.setColor(Color.WHITE);
 
@@ -120,6 +130,7 @@ public class MainMenu extends Scene {
             label.setSize(24);
             label.setColor(Color.WHITE);
             label.setLayer(2);
+            label.setFont(cabinFont);
             label.setHorizontalAlign(Graphics.Align.START);
             label.setVerticalAlign(Graphics.Align.CENTER);
             label.setText(localization.getString(R.string.level, i + 1));

@@ -66,10 +66,15 @@ public final class RigidBody extends PhysicsComponent {
         super.onRemove();
 
         for (Joint joint : joints) {
-            joint.rigidBodyA.joints.remove(joint);
-            joint.rigidBodyB.joints.remove(joint);
+            if (joint.rigidBodyA == this)
+                joint.rigidBodyB.joints.remove(joint);
+            else
+                joint.rigidBodyA.joints.remove(joint);
+
             joint.dispose(world);
         }
+
+        joints.clear();
 
         for (Collider collider : colliders)
             collider.dispose();

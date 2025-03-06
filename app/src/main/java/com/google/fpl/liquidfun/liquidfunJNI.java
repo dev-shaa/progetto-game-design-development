@@ -75,6 +75,7 @@ public class liquidfunJNI {
   public final static native void EdgeShape_set(long jarg1, EdgeShape jarg1_, float jarg2, float jarg3, float jarg4, float jarg5);
   public final static native void delete_EdgeShape(long jarg1);
   public final static native long new_PolygonShape();
+  public final static native void PolygonShape_setAsTriangle(long jarg1, PolygonShape jarg1_, float jarg2, float jarg3, float jarg4, float jarg5, float jarg6, float jarg7);
   public final static native void PolygonShape_setAsBox__SWIG_0(long jarg1, PolygonShape jarg1_, float jarg2, float jarg3);
   public final static native void PolygonShape_setCentroid(long jarg1, PolygonShape jarg1_, float jarg2, float jarg3);
   public final static native void PolygonShape_setAsBox__SWIG_1(long jarg1, PolygonShape jarg1_, float jarg2, float jarg3, float jarg4, float jarg5, float jarg6);
@@ -723,7 +724,8 @@ public class liquidfunJNI {
   public final static native void MouseJoint_setDampingRatio(long jarg1, MouseJoint jarg1_, float jarg2);
   public final static native float MouseJoint_getDampingRatio(long jarg1, MouseJoint jarg1_);
   public final static native void MouseJoint_dump(long jarg1, MouseJoint jarg1_);
-  public final static native void MouseJoint_shiftOrigin(long jarg1, MouseJoint jarg1_, long jarg2, Vec2 jarg2_);
+  public final static native void MouseJoint_shiftOrigin__SWIG_0(long jarg1, MouseJoint jarg1_, long jarg2, Vec2 jarg2_);
+  public final static native void MouseJoint_shiftOrigin__SWIG_1(long jarg1, MouseJoint jarg1_, float jarg2, float jarg3);
   public final static native void delete_MouseJoint(long jarg1);
   public final static native long new_PrismaticJointDef();
   public final static native void PrismaticJointDef_initialize(long jarg1, PrismaticJointDef jarg1_, long jarg2, Body jarg2_, long jarg3, Body jarg3_, long jarg4, Vec2 jarg4_, long jarg5, Vec2 jarg5_);

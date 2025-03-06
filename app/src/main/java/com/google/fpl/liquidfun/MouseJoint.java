@@ -105,7 +105,11 @@ public class MouseJoint extends Joint {
   }
 
   public void shiftOrigin(Vec2 newOrigin) {
-    liquidfunJNI.MouseJoint_shiftOrigin(swigCPtr, this, Vec2.getCPtr(newOrigin), newOrigin);
+    liquidfunJNI.MouseJoint_shiftOrigin__SWIG_0(swigCPtr, this, Vec2.getCPtr(newOrigin), newOrigin);
+  }
+
+  public void shiftOrigin(float x, float y) {
+    liquidfunJNI.MouseJoint_shiftOrigin__SWIG_1(swigCPtr, this, x, y);
   }
 
 }

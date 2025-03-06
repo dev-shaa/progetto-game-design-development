@@ -52,6 +52,10 @@ public class PolygonShape extends Shape {
     this(liquidfunJNI.new_PolygonShape(), true);
   }
 
+  public void setAsTriangle(float ax, float ay, float bx, float by, float cx, float cy) {
+    liquidfunJNI.PolygonShape_setAsTriangle(swigCPtr, this, ax, ay, bx, by, cx, cy);
+  }
+
   public void setAsBox(float hx, float hy) {
     liquidfunJNI.PolygonShape_setAsBox__SWIG_0(swigCPtr, this, hx, hy);
   }

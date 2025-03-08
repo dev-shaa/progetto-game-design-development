@@ -12,7 +12,7 @@ import com.google.fpl.liquidfun.PolygonShape;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.PhysicsComponent;
 
-public class ParticleSystem extends PhysicsComponent {
+public final class ParticleSystem extends PhysicsComponent {
 
     public static final int FLAG_GROUP_SOLID = ParticleGroupFlag.solidParticleGroup;
     public static final int FLAG_GROUP_RIGID = ParticleGroupFlag.rigidParticleGroup;

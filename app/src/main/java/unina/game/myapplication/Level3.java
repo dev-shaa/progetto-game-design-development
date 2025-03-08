@@ -35,7 +35,7 @@ public class Level3 extends Level {
     private static final int PALETTE_BACKGROUND = 0xffF9A900;
     private static final int PALETTE_PRIMARY = 0xff2B2B2C;
 
-    private Music backgroundMusic;
+//    private Music backgroundMusic;
 
     private RectRenderer fullScreenRenderer;
     private AnimationSequence animator;
@@ -60,12 +60,12 @@ public class Level3 extends Level {
         Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
         Sound fallSound = getSound("sounds/fall.wav");
 
-        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
-        backgroundMusic.setLooping(true);
-        if (MUSIC_ON)
-            backgroundMusic.setVolume(0.5f);
-        else
-            backgroundMusic.setVolume(0);
+//        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
+//        backgroundMusic.setLooping(true);
+//        if (MUSIC_ON)
+//            backgroundMusic.setVolume(0.5f);
+//        else
+//            backgroundMusic.setVolume(0);
 
         Camera.getInstance().setSize(20);
 
@@ -404,50 +404,16 @@ public class Level3 extends Level {
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);
         rigidPlatform4.addCollider(BoxCollider.build(plat4W, plat4H));
-
-        //Music Button
-        GameObject musicButtonGO = createGameObject(7,19.5f);
-
-        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
-        if (MUSIC_ON)
-            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-        else
-            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(4,3);
-        musicButtonRender.setLayer(100);
-
-        Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(3,2.5f);
-        musicButton.setOnClick(() -> {
-            if (MUSIC_ON) {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-                backgroundMusic.setVolume(0);
-                MUSIC_ON = false;
-            }
-            else {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-                backgroundMusic.setVolume(0.5f);
-                MUSIC_ON = true;
-            }
-        });
-
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        backgroundMusic.pause();
-    }
-
-    @Override
-    public void resume() {
-        super.resume();
-        backgroundMusic.play();
     }
 
     @Override
     protected int getLevelIndex() {
         return 2;
+    }
+
+    @Override
+    protected String getBackgroundMusic() {
+        return Assets.SOUND_MUSIC_LEVELS;
     }
 
 }

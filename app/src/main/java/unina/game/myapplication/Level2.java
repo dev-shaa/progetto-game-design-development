@@ -36,8 +36,6 @@ public class Level2 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xff237F52;
 
-    private boolean isPressed = false;
-
     public Level2(Game game) {
         super(game);
     }
@@ -45,13 +43,6 @@ public class Level2 extends Level {
     @Override
     public void initialize() {
         super.initialize();
-
-        Music backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
-        backgroundMusic.setLooping(true);
-        if (MUSIC_ON)
-            backgroundMusic.setVolume(0.5f);
-        else
-            backgroundMusic.setVolume(0);
 
         Pixmap backgroundImage = getImage("graphics/environment-brick-wall.png");
         Pixmap elementsImage = getImage("graphics/elements-light.png");
@@ -73,20 +64,6 @@ public class Level2 extends Level {
         backgroundRenderer.setImage(backgroundImage);
         backgroundRenderer.setSize(20, 20 / backgroundImage.getAspectRatio());
         backgroundRenderer.setLayer(16);
-
-        // Level selection button
-        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + 2, Camera.getInstance().getSizeY() / 2 - 1 - 0.25f);
-
-        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(elementsUIImage);
-        menuButtonRenderer.setSrcPosition(0, 0);
-        menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(4, 4);
-        menuButtonRenderer.setLayer(32);
-        menuButtonRenderer.setPivot(0.5f, 0.5f);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(4, 4);
 
         // Transition panel
         GameObject fade = createGameObject();
@@ -349,13 +326,8 @@ public class Level2 extends Level {
         DottedLineRenderer lineRendererD = createDottedLine(3.75f, -7.15f, 8.25f, -7.15f, 6);
 
         pressurePlate.setOnCollisionEnter(() -> {
-            if (isPressed)
-                return;
-
-            isPressed = true;
-
-            menuButton.setInteractable(false);
-            removeGameObject(menuButtonGO);
+            setUIButtonsInteractable(false);
+            saveProgress();
 
             buttonSound.play(1);
             pressurePlateRenderer.setSrcPosition(128, 384);
@@ -375,49 +347,6 @@ public class Level2 extends Level {
             animator.add(MoveToAnimation.build(character, 8f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
-
-            saveProgress();
-        });
-
-        menuButton.setOnClick(() -> {
-            // Prevent user from clicking again
-            menuButton.setInteractable(false);
-
-            // Disable the pressure plate so the win condition can't happen in the small interval when fading to menu
-            pressurePlate.setOnCollisionEnter(null);
-
-            // Play the sound
-            buttonSound.play(1);
-
-            // Fade animation and load main menu
-            animator.clear();
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
-            animator.start();
-        });
-
-        //Music Button
-        GameObject musicButtonGO = createGameObject(7, 19.5f);
-
-        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
-        if (MUSIC_ON)
-            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-        else
-            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(4, 3);
-        musicButtonRender.setLayer(100);
-
-        Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(3, 2.5f);
-        musicButton.setOnClick(() -> {
-            if (MUSIC_ON) {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-                backgroundMusic.setVolume(0);
-                MUSIC_ON = false;
-            } else {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-                backgroundMusic.setVolume(0.5f);
-                MUSIC_ON = true;
-            }
         });
     }
 
@@ -435,6 +364,11 @@ public class Level2 extends Level {
     @Override
     protected int getLevelIndex() {
         return 1;
+    }
+
+    @Override
+    protected String getBackgroundMusic() {
+        return Assets.SOUND_MUSIC_LEVELS;
     }
 
 }

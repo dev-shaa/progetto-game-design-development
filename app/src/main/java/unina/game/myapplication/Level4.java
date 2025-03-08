@@ -2,17 +2,16 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
-import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.MoveRigidBodyTo;
 import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
@@ -28,10 +27,11 @@ import unina.game.myapplication.logic.common.CircleRenderer;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
 import unina.game.myapplication.logic.menu.MainMenu;
 
-public class Level4 extends Scene {
+public class Level4 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xff005387;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
@@ -43,8 +43,6 @@ public class Level4 extends Scene {
     public void initialize() {
         super.initialize();
 
-        Pixmap uiSpriteSheet = getImage("graphics/elements-ui.png");
-
         Pixmap backgroundImage = getImage("graphics/environment-bus-stop.png");
         Pixmap elementsImage = getImage("graphics/elements-light.png");
 
@@ -53,13 +51,6 @@ public class Level4 extends Scene {
         Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
         Sound movingRock = getSound("sounds/moving-rock.mp3");
         Sound rockCrushSound = getSound("sounds/rock-crush.mp3");
-
-        Music backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
-        backgroundMusic.setLooping(true);
-        if (MUSIC_ON)
-            backgroundMusic.setVolume(0.5f);
-        else
-            backgroundMusic.setVolume(0);
 
         Camera.getInstance().setSize(30);
 
@@ -135,6 +126,7 @@ public class Level4 extends Scene {
         RigidBody rockRigidBody = rock.addComponent(RigidBody.class);
         rockRigidBody.setType(RigidBody.Type.DYNAMIC);
         rockRigidBody.addCollider(CircleCollider.build(2, 100, 0, 1, false));
+        rockRigidBody.setSleepingAllowed(false);
 
         CollisionSoundPlayer rockCollisionSoundPlayer = rock.addComponent(CollisionSoundPlayer.class);
         rockCollisionSoundPlayer.setSound(movingRock);
@@ -210,7 +202,7 @@ public class Level4 extends Scene {
             lineBridgeDownB.setColor(0xff009fff);
 
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
             animator.add(MoveRigidBodyTo.build(bridgeRockDownRigidBody, -8, bridgeRockDown.y, 0.4f, EaseFunction.CUBIC_IN_OUT));
             animator.start();
         });
@@ -261,14 +253,15 @@ public class Level4 extends Scene {
         buttonBallInputComponent.setOnClick(() -> {
             buttonSound.play(1);
             buttonBallCircleRender.setColor(Color.GREY);
-            lineButtonDown.setColor(Color.GREY);
+            lineButtonDown.setColor(0xff009fff);
             buttonBridgeDownInputComponent.setInteractable(false);
 
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveRigidBodyTo.build(bridgeWreckingBallRigidBody, bridgeWreckingBall.x, -23, 0.4f));
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
-            animator.add(MoveRigidBodyTo.build(bridgeRockUpRigidBody, 0, bridgeRockUp.y, 0.4f));
+            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
+            animator.add(ParallelAnimation.build(
+                    MoveRigidBodyTo.build(bridgeWreckingBallRigidBody, bridgeWreckingBall.x, -23, 0.5f),
+                    MoveRigidBodyTo.build(bridgeRockUpRigidBody, 0, bridgeRockUp.y, 0.5f)
+            ));
             animator.start();
         });
 
@@ -326,8 +319,6 @@ public class Level4 extends Scene {
         dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
         dynamicWallRigidBody.addCollider(BoxCollider.build(1.5f, 30f, 10, 0, 1, false));
 
-//        dynamicWall.addComponent(BreakableDetector.class);
-
         // Sensor
         GameObject wallSensorGO = createGameObject(0, -28);
 
@@ -337,11 +328,11 @@ public class Level4 extends Scene {
 
         PhysicsButton wallSensor = wallSensorGO.addComponent(PhysicsButton.class);
         wallSensor.setOnCollisionEnter(() -> {
-            wallSensorRigidBody.setSleepingAllowed(true);
-            gameOverTriggerRigidBody.setSleepingAllowed(true);
+            saveProgress();
+            setUIButtonsInteractable(false);
 
             animator.clear();
-            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
+            animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
             animator.add(MoveRigidBodyTo.build(bridgeCharacterRigidBody, 0, 0.3f, 0.4f));
             animator.add(WaitAnimation.build(0.4f), () -> {
                 characterRenderer.setSrcPosition(128, 128);
@@ -351,59 +342,15 @@ public class Level4 extends Scene {
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
         });
+    }
 
-        // Level selection button
-        float levelSelectionButtonWidth = 6f;
-        float levelSelectionButtonHeight = 6f;
+    @Override
+    protected int getLevelIndex() {
+        return 3;
+    }
 
-        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
-
-        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(uiSpriteSheet);
-        menuButtonRenderer.setSrcPosition(0, 0);
-        menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
-        menuButtonRenderer.setLayer(128);
-        menuButtonRenderer.setPivot(0.5f, 0.5f);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
-        menuButton.setOnClick(() -> {
-            // Prevent user from clicking again
-            menuButton.setInteractable(false);
-
-            // Play the sound
-            buttonSound.play(1);
-
-            // Fade animation and load main menu
-            animator.clear();
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
-            animator.start();
-        });
-
-        // Music Button
-        GameObject musicButtonGO = createGameObject(10, 29);
-
-        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
-        if (MUSIC_ON)
-            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-        else
-            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(6, 5);
-        musicButtonRender.setLayer(100);
-
-        Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(6, 5);
-        musicButton.setOnClick(() -> {
-            if (MUSIC_ON) {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-                backgroundMusic.setVolume(0.5f);
-                MUSIC_ON = false;
-            } else {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-                backgroundMusic.setVolume(0);
-                MUSIC_ON = true;
-            }
-        });
+    @Override
+    protected String getBackgroundMusic() {
+        return Assets.SOUND_MUSIC_LEVELS;
     }
 }

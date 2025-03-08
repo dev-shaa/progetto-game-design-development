@@ -45,17 +45,9 @@ public class Level1 extends Level {
 
         setClearColor(PALETTE_BACKGROUND);
 
-        Music backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
-        backgroundMusic.setLooping(true);
-        if (MUSIC_ON)
-            backgroundMusic.setVolume(0.5f);
-        else
-            backgroundMusic.setVolume(0);
-
         Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
         Pixmap uiSpriteSheet = getImage(Assets.GRAPHICS_UI_SPRITES);
 
-        Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
         Sound buttonSound = getSound(Assets.SOUND_GAME_BUTTON_CLICK);
         Sound winSound = getSound(Assets.SOUND_GAME_WIN);
         Sound movingPlatformSound = getSound(Assets.SOUND_GAME_PLATFORM_MOVE);
@@ -120,7 +112,7 @@ public class Level1 extends Level {
 
         Button buttonInputComponent = button.addComponent(Button.class);
         buttonInputComponent.setSize(3, 3);
-        buttonInputComponent.setInteractable(false);
+        buttonInputComponent.setInteractable(true);
 
         GameObject lineRendererGO = createGameObject();
         DottedLineRenderer lineRenderer = lineRendererGO.addComponent(DottedLineRenderer.class);
@@ -131,67 +123,13 @@ public class Level1 extends Level {
         lineRenderer.setColor(Color.GREY);
         lineRenderer.setLayer(-4);
 
-        // Level selection button
-        GameObject menuButtonGO = createGameObject(-20, 9);
-
-        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(uiSpriteSheet);
-        menuButtonRenderer.setSrcPosition(0, 0);
-        menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(3f, 3f);
-        menuButtonRenderer.setLayer(28);
-        menuButtonRenderer.setPivot(0.5f, 0.5f);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(6, 3);
-        menuButton.setInteractable(false);
-        menuButton.setOnClick(() -> {
-            menuButton.setInteractable(false);
-            buttonInputComponent.setInteractable(false);
-            uiButtonSound.play(1);
-
-            animator.clear();
-            animator.add(ParallelAnimation.build(
-                            FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
-                            SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)
-                    ),
-                    () -> loadScene(MainMenu.class));
-            animator.start();
-        });
-
-        //Music Button
-        GameObject musicButtonGO = createGameObject(3, 9);
-
-        SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
-        if (MUSIC_ON)
-            musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-        else
-            musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(3, 2.5f);
-        musicButtonRender.setLayer(100);
-
-        Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(3, 2.5f);
-        musicButton.setOnClick(() -> {
-            if (MUSIC_ON) {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-                backgroundMusic.setVolume(0);
-                MUSIC_ON = false;
-            } else {
-                musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
-                backgroundMusic.setVolume(0.5f);
-                MUSIC_ON = true;
-            }
-        });
-
         buttonInputComponent.setOnClick(() -> {
             buttonSound.play(1);
 
             lineRenderer.setColor(PALETTE_PRIMARY);
             circleRenderer.setColor(Color.GREY);
 
-            menuButton.setInteractable(false);
-            buttonInputComponent.setInteractable(false);
+            setUIButtonsInteractable(false);
 
             animator.clear();
             animator.add(ParallelAnimation.build(
@@ -204,10 +142,7 @@ public class Level1 extends Level {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 4f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(ParallelAnimation.build(
-                    FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f),
-                    SoundFadeAnimation.build(backgroundMusic, 1, 0, 0.75f)
-            ), this::loadNextLevel);
+            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
 
             saveProgress();
@@ -217,15 +152,9 @@ public class Level1 extends Level {
         animator = animatorGO.addComponent(AnimationSequence.class);
         animator.add(ParallelAnimation.build(
                         FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.4f),
-                        MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT),
-                        SoundFadeAnimation.build(backgroundMusic, 0, 1, 0.4f)
+                        MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT)
                 ),
                 () -> characterRenderer.setSrcPosition(0, 128));
-        animator.add(MoveToAnimation.build(menuButtonGO, -Camera.getInstance().getSizeX() / 2 + 1.5f, menuButtonGO.y, 0.25f, EaseFunction.CUBIC_IN_OUT),
-                () -> {
-                    buttonInputComponent.interactable = true;
-                    menuButton.interactable = true;
-                });
         animator.add(WaitAnimation.build(1), this::showPrompt);
         animator.start();
     }
@@ -239,6 +168,11 @@ public class Level1 extends Level {
     @Override
     protected int getLevelIndex() {
         return 0;
+    }
+
+    @Override
+    protected String getBackgroundMusic() {
+        return Assets.SOUND_MUSIC_LEVELS;
     }
 
     private void showPrompt() {

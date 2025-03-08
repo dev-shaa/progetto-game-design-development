@@ -30,7 +30,6 @@ public class Level1 extends Level {
     private static final int PALETTE_BACKGROUND = 0xff005387;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
-    private Music backgroundMusic;
     private AnimationSequence animator;
     private SpriteRenderer promptRenderer;
 
@@ -46,7 +45,7 @@ public class Level1 extends Level {
 
         setClearColor(PALETTE_BACKGROUND);
 
-        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
+        Music backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
         if (MUSIC_ON)
             backgroundMusic.setVolume(0.5f);
@@ -161,25 +160,24 @@ public class Level1 extends Level {
         });
 
         //Music Button
-        GameObject musicButtonGO = createGameObject(3,9);
+        GameObject musicButtonGO = createGameObject(3, 9);
 
         SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
         if (MUSIC_ON)
             musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
         else
             musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(3,2.5f);
+        musicButtonRender.setSize(3, 2.5f);
         musicButtonRender.setLayer(100);
 
         Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(3,2.5f);
+        musicButton.setSize(3, 2.5f);
         musicButton.setOnClick(() -> {
             if (MUSIC_ON) {
                 musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
                 backgroundMusic.setVolume(0);
                 MUSIC_ON = false;
-            }
-            else {
+            } else {
                 musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
                 backgroundMusic.setVolume(0.5f);
                 MUSIC_ON = true;
@@ -230,18 +228,6 @@ public class Level1 extends Level {
                 });
         animator.add(WaitAnimation.build(1), this::showPrompt);
         animator.start();
-    }
-
-    @Override
-    public void resume() {
-        super.resume();
-        backgroundMusic.play();
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        backgroundMusic.pause();
     }
 
     @Override

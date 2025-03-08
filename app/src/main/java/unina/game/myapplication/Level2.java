@@ -2,7 +2,6 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
@@ -36,19 +35,8 @@ import unina.game.myapplication.logic.menu.MainMenu;
 public class Level2 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xff237F52;
-    private static final int PALETTE_PRIMARY = 0xffECECE7;
-
-    private Sound buttonSound;
-    private Sound buttonsAppearSound;
-    private Sound movingPlatformSound;
-    private Sound movingRock;
-    private Sound winSound;
-    private Sound rockCrushSound;
-    private Music backgroundMusic;
 
     private boolean isPressed = false;
-
-    private Pixmap backgroundImage, elementsImage, elementsUIImage;
 
     public Level2(Game game) {
         super(game);
@@ -58,22 +46,22 @@ public class Level2 extends Level {
     public void initialize() {
         super.initialize();
 
-        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
+        Music backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
         if (MUSIC_ON)
             backgroundMusic.setVolume(0.5f);
         else
             backgroundMusic.setVolume(0);
 
-        backgroundImage = game.getGraphics().newPixmap("graphics/environment-brick-wall.png", Graphics.PixmapFormat.RGB565);
-        elementsImage = game.getGraphics().newPixmap("graphics/elements-light.png", Graphics.PixmapFormat.ARGB8888);
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
-        movingRock = game.getAudio().newSound("sounds/moving-rock.mp3");
-        buttonSound = game.getAudio().newSound("sounds/kenney-interface-sounds/click_002.ogg");
-        buttonsAppearSound = game.getAudio().newSound("sounds/kenney-ui-sounds/switch4.ogg");
-        movingPlatformSound = game.getAudio().newSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
-        rockCrushSound = game.getAudio().newSound("sounds/rock-crush.mp3");
-        winSound = game.getAudio().newSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        Pixmap backgroundImage = getImage("graphics/environment-brick-wall.png");
+        Pixmap elementsImage = getImage("graphics/elements-light.png");
+        Pixmap elementsUIImage = getImage("graphics/elements-ui.png");
+
+        Sound movingRock = getSound("sounds/moving-rock.mp3");
+        Sound buttonSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
+        Sound movingPlatformSound = getSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        Sound rockCrushSound = getSound("sounds/rock-crush.mp3");
+        Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
 
         Camera.getInstance().setSize(20);
 
@@ -87,22 +75,18 @@ public class Level2 extends Level {
         backgroundRenderer.setLayer(16);
 
         // Level selection button
-        float levelSelectionButtonWidth = 4f;
-        float levelSelectionButtonHeight = 4f;
-
-        elementsUIImage = game.getGraphics().newPixmap("graphics/elements-ui.png", Graphics.PixmapFormat.RGB565);
-        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
+        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + 2, Camera.getInstance().getSizeY() / 2 - 1 - 0.25f);
 
         SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
         menuButtonRenderer.setImage(elementsUIImage);
         menuButtonRenderer.setSrcPosition(0, 0);
         menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+        menuButtonRenderer.setSize(4, 4);
         menuButtonRenderer.setLayer(32);
         menuButtonRenderer.setPivot(0.5f, 0.5f);
 
         Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+        menuButton.setSize(4, 4);
 
         // Transition panel
         GameObject fade = createGameObject();
@@ -155,24 +139,18 @@ public class Level2 extends Level {
         leftFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
 
         // Rock Platform
-        float rockPlatformWidth = 9;
-        float rockPlatformHeight = 0.5f;
-
         GameObject rockPlatform = createGameObject(4.5f, 11, 30);
 
         RigidBody rockPlatformRigidBody = rockPlatform.addComponent(RigidBody.class);
         rockPlatformRigidBody.setType(RigidBody.Type.STATIC);
-        rockPlatformRigidBody.addCollider(BoxCollider.build(rockPlatformWidth, rockPlatformHeight));
+        rockPlatformRigidBody.addCollider(BoxCollider.build(9, 0.5f));
 
         // Left wall
-        float plat2W = 1;
-        float plat2H = 20;
-
         GameObject leftWall = createGameObject(-9.25f, 5);
 
         RigidBody LeftWallRigidBody2 = leftWall.addComponent(RigidBody.class);
         LeftWallRigidBody2.setType(RigidBody.Type.STATIC);
-        LeftWallRigidBody2.addCollider(BoxCollider.build(plat2W, plat2H));
+        LeftWallRigidBody2.addCollider(BoxCollider.build(1, 20));
 
         // Right wall
         GameObject rightWall = createGameObject(9.25f, 5);
@@ -418,55 +396,29 @@ public class Level2 extends Level {
         });
 
         //Music Button
-        GameObject musicButtonGO = createGameObject(7,19.5f);
+        GameObject musicButtonGO = createGameObject(7, 19.5f);
 
         SpriteRenderer musicButtonRender = musicButtonGO.addComponent(SpriteRenderer.class);
         if (MUSIC_ON)
             musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
         else
             musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
-        musicButtonRender.setSize(4,3);
+        musicButtonRender.setSize(4, 3);
         musicButtonRender.setLayer(100);
 
         Button musicButton = musicButtonGO.addComponent(Button.class);
-        musicButton.setSize(3,2.5f);
+        musicButton.setSize(3, 2.5f);
         musicButton.setOnClick(() -> {
             if (MUSIC_ON) {
                 musicButtonRender.setImage(getImage("graphics/nota-musicale-barra.png"));
                 backgroundMusic.setVolume(0);
                 MUSIC_ON = false;
-            }
-            else {
+            } else {
                 musicButtonRender.setImage(getImage("graphics/nota-musicale.png"));
                 backgroundMusic.setVolume(0.5f);
                 MUSIC_ON = true;
             }
         });
-    }
-
-    @Override
-    public void resume() {
-        super.resume();
-        backgroundMusic.play();
-    }
-
-    @Override
-    public void pause() {
-        super.pause();
-        backgroundMusic.pause();
-    }
-
-    @Override
-    public void dispose() {
-        super.dispose();
-
-//        backgroundMusic.stop();
-//        backgroundMusic.dispose();
-        buttonsAppearSound.dispose();
-
-        elementsImage.dispose();
-        elementsUIImage.dispose();
-        backgroundImage.dispose();
     }
 
     private DottedLineRenderer createDottedLine(float startX, float startY, float endX, float endY, int count) {

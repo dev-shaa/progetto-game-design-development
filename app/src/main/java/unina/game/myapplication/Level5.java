@@ -43,7 +43,7 @@ public class Level5 extends Scene {
         else
             backgroundMusic.setVolume(0);
 
-        Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
+        Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_DARK);
         Pixmap uiSpriteSheet = getImage(Assets.GRAPHICS_UI_SPRITES);
 
         Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
@@ -74,17 +74,101 @@ public class Level5 extends Scene {
         promptRenderer.setLayer(8);
 
         //Pavimento Character
-        float floorW = 23;
+        float floorW = 16;
         float floorH = 1;
-        GameObject floorCharacter = createGameObject(0,-20);
+        GameObject floorCharacter = createGameObject(3.5f,-20);
 
-        PlatformRenderComponent floorCharacterRenderComponent = floorCharacter.addComponent(PlatformRenderComponent.class);
-        floorCharacterRenderComponent.setSize(floorW,floorH);
-        floorCharacterRenderComponent.color = PALETTE_PRIMARY;
-        floorCharacterRenderComponent.setLayer(20);
+        if (DEBUG) {
+            PlatformRenderComponent floorCharacterRenderComponent = floorCharacter.addComponent(PlatformRenderComponent.class);
+            floorCharacterRenderComponent.setSize(floorW,floorH);
+            floorCharacterRenderComponent.color = PALETTE_PRIMARY;
+            floorCharacterRenderComponent.setLayer(20);
+        }
 
         RigidBody floorCharacterRigidBody = floorCharacter.addComponent(RigidBody.class);
         floorCharacterRigidBody.setType(RigidBody.Type.STATIC);
         floorCharacterRigidBody.addCollider(BoxCollider.build(floorW,floorH));
+
+        //Muro sinistra Character
+        float wallLeftW = 12;
+        float wallH = 1;
+        GameObject wallCharacterLeft = createGameObject(-11,-13.5f,90);
+
+        if (DEBUG) {
+            PlatformRenderComponent wallCharacterLeftRenderComponent = wallCharacterLeft.addComponent(PlatformRenderComponent.class);
+            wallCharacterLeftRenderComponent.setSize(wallLeftW, wallH);
+            wallCharacterLeftRenderComponent.color = PALETTE_PRIMARY;
+            wallCharacterLeftRenderComponent.setLayer(20);
+        }
+
+        RigidBody wallCharacterLeftRigidBody = wallCharacterLeft.addComponent(RigidBody.class);
+        wallCharacterLeftRigidBody.setType(RigidBody.Type.STATIC);
+        wallCharacterLeftRigidBody.addCollider(BoxCollider.build(wallLeftW, wallH));
+
+        //Muro destra Character
+        float wallRightW = 6;
+        GameObject wallCharacterRight = createGameObject(-5,-10.5f,90);
+
+        if (DEBUG) {
+            PlatformRenderComponent wallCharacterRightRenderComponent = wallCharacterRight.addComponent(PlatformRenderComponent.class);
+            wallCharacterRightRenderComponent.setSize(wallRightW, wallH);
+            wallCharacterRightRenderComponent.color = PALETTE_PRIMARY;
+            wallCharacterRightRenderComponent.setLayer(20);
+        }
+
+        RigidBody wallCharacterRightRigidBody = wallCharacterRight.addComponent(RigidBody.class);
+        wallCharacterRightRigidBody.setType(RigidBody.Type.STATIC);
+        wallCharacterRightRigidBody.addCollider(BoxCollider.build(wallRightW,wallH));
+
+        //Character
+        GameObject character = createGameObject(-8,-18.5f);
+
+        SpriteRenderer characterRenderComponent = character.addComponent(SpriteRenderer.class);
+        characterRenderComponent.setImage(spriteSheet);
+        characterRenderComponent.setSrcPosition(0,128);
+        characterRenderComponent.setSrcSize(128,128);
+        characterRenderComponent.setSize(2,2);
+        characterRenderComponent.setLayer(20);
+
+        //Ponte Character
+        GameObject bridgeCharacter = createGameObject(-5,-16.5f,90);
+
+        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
+        bridgeCharacterRenderComponent.setImage(spriteSheet);
+        bridgeCharacterRenderComponent.setSrcPosition(128,48);
+        bridgeCharacterRenderComponent.setSrcSize(128,32);
+        bridgeCharacterRenderComponent.setSize(wallRightW,wallH);
+        bridgeCharacterRenderComponent.setLayer(20);
+
+        RigidBody bridgeCharacterRigidBody = bridgeCharacter.addComponent(RigidBody.class);
+        bridgeCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeCharacterRigidBody.addCollider(BoxCollider.build(wallRightW,wallH));
+
+        //Ponte floor Character
+        float bridgeFloorW = 7;
+        GameObject bridgeFloorCharacter = createGameObject(-8,-20);
+
+        SpriteRenderer bridgeFloorCharacterRenderComponent = bridgeFloorCharacter.addComponent(SpriteRenderer.class);
+        bridgeFloorCharacterRenderComponent.setImage(spriteSheet);
+        bridgeFloorCharacterRenderComponent.setSrcPosition(128,48);
+        bridgeFloorCharacterRenderComponent.setSrcSize(128,32);
+        bridgeFloorCharacterRenderComponent.setSize(bridgeFloorW,wallH);
+        bridgeFloorCharacterRenderComponent.setLayer(20);
+
+        RigidBody bridgeFloorCharacterRigidBody = bridgeFloorCharacter.addComponent(RigidBody.class);
+        bridgeFloorCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
+        bridgeFloorCharacterRigidBody.addCollider(BoxCollider.build(bridgeFloorW,wallH));
+
+        //Pavimento Vasca principale
+        GameObject floorTub = createGameObject(3.5f,0);
+
+        PlatformRenderComponent floorTubRenderComponent = floorTub.addComponent(PlatformRenderComponent.class);
+        floorTubRenderComponent.setSize(floorW,floorH);
+        floorTubRenderComponent.color = PALETTE_PRIMARY;
+        floorTubRenderComponent.setLayer(20);
+
+        RigidBody floorTubRigidBody = floorTub.addComponent(RigidBody.class);
+        floorTubRigidBody.setType(RigidBody.Type.STATIC);
+        floorTubRigidBody.addCollider(BoxCollider.build(floorW,floorH));
     }
 }

@@ -22,6 +22,22 @@ public final class TriangleCollider extends Collider {
         return collider;
     }
 
+    public static TriangleCollider build(float ax, float ay, float bx, float by, float cx, float cy, float density, float restitution, float friction, boolean isSensor) {
+        TriangleCollider collider = new TriangleCollider();
+
+        collider.ax = ax;
+        collider.ay = ay;
+        collider.bx = bx;
+        collider.by = by;
+        collider.cx = cx;
+        collider.cy = cy;
+        collider.density = density;
+        collider.restitution = restitution;
+        collider.friction = friction;
+
+        return collider;
+    }
+
     private float ax, ay, bx, by, cx, cy;
 
     private TriangleCollider() {

@@ -8,16 +8,18 @@ import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
-import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.physics.BoxCollider;
+import unina.game.myapplication.core.physics.ParticleSystem;
 import unina.game.myapplication.core.physics.RigidBody;
+import unina.game.myapplication.core.physics.TriangleCollider;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.PlatformRenderComponent;
+import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
 
-public class Level5 extends Scene {
+public class Level5 extends Level {
 
     private static final int PALETTE_BACKGROUND = 0xffF9A900;
     private static final int PALETTE_PRIMARY = 0xff2B2B2C;
@@ -38,10 +40,6 @@ public class Level5 extends Scene {
 
         backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
         backgroundMusic.setLooping(true);
-        if (MUSIC_ON)
-            backgroundMusic.setVolume(0.5f);
-        else
-            backgroundMusic.setVolume(0);
 
         Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_DARK);
         Pixmap uiSpriteSheet = getImage(Assets.GRAPHICS_UI_SPRITES);
@@ -160,15 +158,67 @@ public class Level5 extends Scene {
         bridgeFloorCharacterRigidBody.addCollider(BoxCollider.build(bridgeFloorW,wallH));
 
         //Pavimento Vasca principale
-        GameObject floorTub = createGameObject(3.5f,0);
+        float poolFloorW = 11;
+        GameObject floorPool = createGameObject(5,0);
 
-        PlatformRenderComponent floorTubRenderComponent = floorTub.addComponent(PlatformRenderComponent.class);
-        floorTubRenderComponent.setSize(floorW,floorH);
-        floorTubRenderComponent.color = PALETTE_PRIMARY;
-        floorTubRenderComponent.setLayer(20);
+        PlatformRenderComponent floorPoolRenderComponent = floorPool.addComponent(PlatformRenderComponent.class);
+        floorPoolRenderComponent.setSize(poolFloorW,floorH);
+        floorPoolRenderComponent.color = PALETTE_PRIMARY;
+        floorPoolRenderComponent.setLayer(20);
 
-        RigidBody floorTubRigidBody = floorTub.addComponent(RigidBody.class);
-        floorTubRigidBody.setType(RigidBody.Type.STATIC);
-        floorTubRigidBody.addCollider(BoxCollider.build(floorW,floorH));
+        RigidBody floorPoolRigidBody = floorPool.addComponent(RigidBody.class);
+        floorPoolRigidBody.setType(RigidBody.Type.STATIC);
+        floorPoolRigidBody.addCollider(BoxCollider.build(poolFloorW,floorH));
+
+        //Muro Vasca destra
+        float poolWallW = 10;
+        GameObject wallRightPool = createGameObject(10,5.5f,90);
+
+        PlatformRenderComponent wallRightPoolRenderComponent = wallRightPool.addComponent(PlatformRenderComponent.class);
+        wallRightPoolRenderComponent.setSize(poolWallW,wallH);
+        wallRightPoolRenderComponent.color = PALETTE_PRIMARY;
+        wallRightPoolRenderComponent.setLayer(20);
+
+        RigidBody wallRightPoolRigidBody = wallRightPool.addComponent(RigidBody.class);
+        wallRightPoolRigidBody.setType(RigidBody.Type.STATIC);
+        wallRightPoolRigidBody.addCollider(BoxCollider.build(poolWallW,wallH));
+
+        //Muro Vasca destra
+        GameObject wallLeftPool = createGameObject(0,5.5f,90);
+
+        PlatformRenderComponent wallLeftPoolRenderComponent = wallLeftPool.addComponent(PlatformRenderComponent.class);
+        wallLeftPoolRenderComponent.setSize(poolWallW,wallH);
+        wallLeftPoolRenderComponent.color = PALETTE_PRIMARY;
+        wallLeftPoolRenderComponent.setLayer(20);
+
+        RigidBody wallLeftPoolRigidBody = wallLeftPool.addComponent(RigidBody.class);
+        wallLeftPoolRigidBody.setType(RigidBody.Type.STATIC);
+        wallLeftPoolRigidBody.addCollider(BoxCollider.build(poolWallW,wallH));
+
+        //Acqua vasca
+        GameObject water = createGameObject(5,2);
+
+        ParticleSystem waterParticleSystem = water.addComponent(ParticleSystem.class);
+        waterParticleSystem.setRadius(0.15f);
+        waterParticleSystem.setSize(4,2);
+        waterParticleSystem.setGroupFlags(ParticleSystem.FLAG_GROUP_SOLID);
+        waterParticleSystem.setFlags(ParticleSystem.FLAG_PARTICLE_WATER);
+
+        //Piattaforma Triangolo
+        GameObject trianglePlatform = createGameObject(5,6);
+
+        RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
+        trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
+        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3,-1,3,-1,-3,2,4,0,1,false));
+    }
+
+    @Override
+    protected int getLevelIndex() {
+        return 4;
+    }
+
+    @Override
+    protected String getBackgroundMusic() {
+        return Assets.SOUND_MUSIC_LEVELS;
     }
 }

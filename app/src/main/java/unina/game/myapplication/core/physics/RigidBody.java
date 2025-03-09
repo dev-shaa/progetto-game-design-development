@@ -7,7 +7,6 @@ import com.google.fpl.liquidfun.Vec2;
 
 import java.util.HashSet;
 
-import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.PhysicsComponent;
 
@@ -18,7 +17,7 @@ public final class RigidBody extends PhysicsComponent {
     }
 
     Body body; // NOTE: this may be referred directly from other physics component, but let's keep it hidden from the rest
-    private Type type;
+    private Type type = Type.DYNAMIC;
     private boolean sleepingAllowed;
     private float linearDamping;
     private final HashSet<Collider> colliders = new HashSet<>(2);
@@ -66,10 +65,12 @@ public final class RigidBody extends PhysicsComponent {
         super.onRemove();
 
         for (Joint joint : joints) {
-            if (joint.rigidBodyA == this)
-                joint.rigidBodyB.joints.remove(joint);
-            else
-                joint.rigidBodyA.joints.remove(joint);
+            if (joint.rigidBodyA != joint.rigidBodyB) {
+                if (joint.rigidBodyA == this)
+                    joint.rigidBodyB.joints.remove(joint);
+                else
+                    joint.rigidBodyA.joints.remove(joint);
+            }
 
             joint.dispose(world);
         }
@@ -103,10 +104,8 @@ public final class RigidBody extends PhysicsComponent {
     public void onDrawGizmos(Graphics graphics) {
         super.onDrawGizmos(graphics);
 
-        Camera camera = Camera.getInstance();
-
         for (Collider collider : colliders) {
-            collider.onDrawGizmos(camera, graphics);
+            collider.onDrawGizmos(graphics);
         }
     }
 

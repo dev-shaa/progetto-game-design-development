@@ -14,29 +14,16 @@ public class CircleRenderer extends RenderComponent {
     public float radius = 0.5f;
     public int color = Color.WHITE;
 
-    private Camera camera;
-
-    @Override
-    public void onInitialize() {
-        super.onInitialize();
-        camera = Camera.getInstance();
-    }
-
     @Override
     public void onRemove() {
         super.onRemove();
-        camera = null;
         color = Color.WHITE;
         radius = 0.5f;
     }
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        float r = camera.worldToScreenSizeX(radius);
-        float x = camera.worldToScreenX(getOwner().x);
-        float y = camera.worldToScreenY(getOwner().y);
-
-        graphics.drawCircle(x, y, r, color);
+        graphics.drawCircle(getOwner().x, -getOwner().y, radius, color);
     }
 
     /**

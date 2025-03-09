@@ -15,6 +15,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.ArrayMap;
 import android.util.Log;
@@ -30,11 +31,13 @@ public class AndroidGraphics implements Graphics {
     private final Canvas canvas;
     private final Paint paint;
     private final Rect srcRect = new Rect();
-    private final Rect dstRect = new Rect();
+    private final RectF dstRect = new RectF();
     private final Rect textRect = new Rect();
 
     private final float[] colorMatrixArray;
     private final ArrayMap<Integer, ColorMatrixColorFilter> filters;
+
+    private int saveCount;
 
     public AndroidGraphics(AssetManager assets, Bitmap frameBuffer) {
         this.assets = assets;
@@ -44,6 +47,8 @@ public class AndroidGraphics implements Graphics {
 
         this.colorMatrixArray = new float[4 * 5];
         this.filters = new ArrayMap<>();
+
+        saveCount = 0;
     }
 
     @Override
@@ -129,43 +134,10 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
-    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
-        int alpha = Color.alpha(color);
-
-        if (alpha == 0)
-            return;
-
-        if (color != Color.WHITE) {
-            ColorMatrixColorFilter filter = filters.get(color);
-
-            if (filter == null) {
-                colorMatrixArray[0] = Color.red(color) / 255.0f;
-                colorMatrixArray[6] = Color.green(color) / 255.0f;
-                colorMatrixArray[12] = Color.blue(color) / 255.0f;
-                colorMatrixArray[18] = alpha / 255.0f;
-                filter = new ColorMatrixColorFilter(colorMatrixArray);
-
-                filters.put(color, filter);
-            }
-
-            paint.setColorFilter(filter);
-        } else {
-            paint.setColor(Color.WHITE);
-        }
-
-        drawPixmap(pixmap, x, y, angle, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
-
-        paint.setColorFilter(null);
-    }
-
-    @Override
-    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, float pivotPointX, float pivotPointY, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
+    public void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color) {
         int alpha = Color.alpha(color);
 
         if (alpha != 0) {
-            canvas.save();
-            canvas.rotate(-angle, pivotPointX, pivotPointY);
-
             if (color != Color.WHITE) {
                 ColorMatrixColorFilter filter = filters.get(color);
 
@@ -187,16 +159,7 @@ public class AndroidGraphics implements Graphics {
             drawPixmap(pixmap, x, y, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
 
             paint.setColorFilter(null);
-            canvas.restore();
         }
-    }
-
-    @Override
-    public void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight) {
-        canvas.save();
-        canvas.rotate(-angle, x + dstWidth / 2, y + dstHeight / 2);
-        drawPixmap(pixmap, x, y, dstWidth, dstHeight, srcX, srcY, srcWidth, srcHeight);
-        canvas.restore();
     }
 
     @Override
@@ -206,10 +169,10 @@ public class AndroidGraphics implements Graphics {
         srcRect.right = srcX + srcWidth;
         srcRect.bottom = srcY + srcHeight;
 
-        dstRect.left = (int) x;
-        dstRect.top = (int) y;
-        dstRect.right = (int) (x + dstWidth);
-        dstRect.bottom = (int) (y + dstHeight);
+        dstRect.left = x;
+        dstRect.top = y;
+        dstRect.right = (x + dstWidth);
+        dstRect.bottom = (y + dstHeight);
 
         canvas.drawBitmap(((AndroidPixmap) pixmap).bitmap, srcRect, dstRect, paint);
     }
@@ -258,6 +221,7 @@ public class AndroidGraphics implements Graphics {
     @Override
     public void saveCanvas() {
         canvas.save();
+        saveCount++;
     }
 
     @Override
@@ -266,8 +230,21 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void translateCanvas(float x, float y) {
+        canvas.translate(x, y);
+    }
+
+    @Override
+    public void scaleCanvas(float dx, float dy) {
+        canvas.scale(dx, dy);
+    }
+
+    @Override
     public void restoreCanvas() {
-        canvas.restore();
+        if (saveCount > 0) {
+            canvas.restore();
+            saveCount--;
+        }
     }
 
     @Override

@@ -73,19 +73,17 @@ public final class CircleCollider extends Collider {
     }
 
     @Override
-    void onDrawGizmos(Camera camera, Graphics graphics) {
-        super.onDrawGizmos(camera, graphics);
+    void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
 
         // WARNING:
         // this is executed every frame for every collider and it is VERY expensive
         // but since this is only called in debug mode we can live with it
 
-        float rx = camera.worldToScreenX(getOwner().getPositionX() + centerX);
-        float ry = camera.worldToScreenY(getOwner().getPositionY() + centerY);
+        float rx = getOwner().getPositionX() + centerX;
+        float ry = getOwner().getPositionY() + centerY;
 
-        float r = camera.worldToScreenSizeX(radius);
-
-        graphics.drawWireCircle(rx, ry, r, Color.GREEN);
+        graphics.drawWireCircle(rx, -ry, radius, Color.GREEN);
     }
 
     public void setCenter(float x, float y) {

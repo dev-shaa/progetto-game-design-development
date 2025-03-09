@@ -16,7 +16,6 @@ public class SpriteRenderer extends RenderComponent {
 
     private Pixmap image;
     private float pivotX, pivotY;
-    private Camera camera;
 
     public SpriteRenderer() {
         this.color = Color.WHITE;
@@ -64,18 +63,11 @@ public class SpriteRenderer extends RenderComponent {
     }
 
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-        camera = Camera.getInstance();
-    }
-
-    @Override
     public void onRemove() {
         super.onRemove();
         image = null;
-        camera = null;
         color = Color.WHITE;
-        this.pivotX = this.pivotY = 0.5f;
+        pivotX = pivotY = 0.5f;
     }
 
     @Override
@@ -83,21 +75,13 @@ public class SpriteRenderer extends RenderComponent {
         if (image == null)
             return;
 
-        float screenWidth = camera.worldToScreenSizeX(width);
-        float screenHeight = camera.worldToScreenSizeY(height);
-        float screenX = camera.worldToScreenX(getOwner().x);
-        float screenY = camera.worldToScreenY(getOwner().y);
+        float screenX = getOwner().x;
+        float screenY = -getOwner().y;
 
-        graphics.drawPixmap(image, screenX - pivotX * screenWidth, screenY - pivotY * screenHeight, getOwner().angle, screenWidth, screenHeight, screenX, screenY, srcX, srcY, srcWidth, srcHeight, color);
+        graphics.saveCanvas();
+        graphics.rotateCanvas(getOwner().angle, screenX, screenY);
+        graphics.drawPixmap(image, screenX - pivotX * width, screenY - pivotY * height, width, height, srcX, srcY, srcWidth, srcHeight, color);
+        graphics.restoreCanvas();
     }
 
-    @Override
-    public void onDrawGizmos(Graphics graphics) {
-        super.onDrawGizmos(graphics);
-
-        float screenX = camera.worldToScreenX(getOwner().x);
-        float screenY = camera.worldToScreenY(getOwner().y);
-
-        graphics.drawCircle(screenX, screenY, 2, Color.GREEN);
-    }
 }

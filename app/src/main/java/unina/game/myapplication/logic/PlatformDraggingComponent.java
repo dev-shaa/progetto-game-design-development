@@ -28,13 +28,7 @@ public class PlatformDraggingComponent extends PressableComponent {
     @Override
     public void onDrawGizmos(Graphics graphics) {
         super.onDrawGizmos(graphics);
-
-        float x1 = Camera.getInstance().worldToScreenX(startX);
-        float y1 = Camera.getInstance().worldToScreenY(startY);
-        float x2 = Camera.getInstance().worldToScreenX(endX);
-        float y2 = Camera.getInstance().worldToScreenY(endY);
-
-        graphics.drawLine(x1, y1, x2, y2, Color.MAGENTA);
+        graphics.drawLine(startX, -startY, endX, -endY, Color.MAGENTA);
     }
 
     @Override

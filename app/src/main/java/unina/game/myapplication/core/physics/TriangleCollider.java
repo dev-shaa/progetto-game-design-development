@@ -57,24 +57,24 @@ public final class TriangleCollider extends Collider {
     }
 
     @Override
-    void onDrawGizmos(Camera camera, Graphics graphics) {
-        super.onDrawGizmos(camera, graphics);
+    void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
 
         // WARNING:
         // this is executed every frame for every collider and it is VERY expensive
         // but since this is only called in debug mode we can live with it
 
-        float rx = camera.worldToScreenX(getOwner().getPositionX());
-        float ry = camera.worldToScreenY(getOwner().getPositionY());
+        float rx = getOwner().getPositionX();
+        float ry = -getOwner().getPositionY();
 
-        float x1 = rx + camera.worldToScreenSizeX(ax);
-        float y1 = ry - camera.worldToScreenSizeY(ay);
+        float x1 = rx + ax;
+        float y1 = ry - ay;
 
-        float x2 = rx + camera.worldToScreenSizeX(bx);
-        float y2 = ry - camera.worldToScreenSizeY(by);
+        float x2 = rx + bx;
+        float y2 = ry - by;
 
-        float x3 = rx + camera.worldToScreenSizeX(cx);
-        float y3 = ry - camera.worldToScreenSizeY(cy);
+        float x3 = rx + cx;
+        float y3 = ry - cy;
 
         // Rotate for body rotation
         graphics.saveCanvas();
@@ -85,8 +85,6 @@ public final class TriangleCollider extends Collider {
         graphics.drawLine(x1, y1, x3, y3, Color.GREEN);
 
         graphics.restoreCanvas();
-
-//        graphics.drawWireRect(x - w / 2, y - h / 2, w, h, isSensor() ? Color.RED : Color.GREEN);
     }
 
 }

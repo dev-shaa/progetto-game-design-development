@@ -75,19 +75,11 @@ public final class ParticleSystem extends PhysicsComponent {
 
         int count = particleSystem.getParticleCount();
 
-//        particlePositionsBuffer.clear();
-//        particleSystem.copyPositionBuffer(0, count, particlePositionsBuffer);
-//        particlePositionsBuffer.flip();
-
-        float r = Camera.getInstance().worldToScreenSizeX(radius);
-
         for (int i = 0; i < count; i++) {
             float x = particleSystem.getParticlePositionX(i);
-            float y = particleSystem.getParticlePositionY(i);
+            float y = -particleSystem.getParticlePositionY(i);
 
-            x = Camera.getInstance().worldToScreenX(x);
-            y = Camera.getInstance().worldToScreenY(y);
-            graphics.drawWireCircle(x, y, r, Color.BLUE);
+            graphics.drawWireCircle(x, y, radius, Color.BLUE);
         }
     }
 

@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import unina.game.myapplication.core.physics.CollisionListener;
@@ -33,8 +32,8 @@ public abstract class Scene extends Screen {
     private GameObject camera;
 
     // TODO: check for possible better collection
-    private final HashSet<GameObject> gameObjects = new HashSet<>(8);
-    private final List<InputComponent> inputComponents = new ArrayList<>(4);
+    private final ArraySet<GameObject> gameObjects = new ArraySet<>(8);
+    private final ArraySet<InputComponent> inputComponents = new ArraySet<>(4);
     private final ArraySet<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final ArraySet<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
     private final ArraySet<AnimationComponent> animationComponents = new ArraySet<>(4);
@@ -117,7 +116,7 @@ public abstract class Scene extends Screen {
             Input.TouchEvent event = events.get(i);
 
             for (int j = 0; j < inputComponents.size(); j++)
-                inputComponents.get(j).process(event);
+                inputComponents.valueAt(j).process(event);
         }
 
         // Process behaviour components
@@ -141,6 +140,8 @@ public abstract class Scene extends Screen {
             renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
             layerDirty = false;
         }
+
+        Camera.getInstance().update();
 
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)

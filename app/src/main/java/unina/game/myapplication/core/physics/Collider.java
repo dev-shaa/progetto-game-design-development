@@ -61,7 +61,7 @@ public abstract class Collider {
         owner = null;
     }
 
-    void onDrawGizmos(Camera camera, Graphics graphics) {
+    void onDrawGizmos(Graphics graphics) {
 
     }
 

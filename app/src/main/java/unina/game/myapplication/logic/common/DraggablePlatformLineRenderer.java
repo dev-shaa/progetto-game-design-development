@@ -14,34 +14,18 @@ public class DraggablePlatformLineRenderer extends RenderComponent {
     private float width;
     private int color;
 
-    private Camera camera;
-
-    @Override
-    public void onInitialize() {
-        super.onInitialize();
-        camera = Camera.getInstance();
-    }
-
     @Override
     public void onRemove() {
         super.onRemove();
         color = Color.WHITE;
         handleRadius = 0.5f;
-        camera = null;
     }
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        float radius = camera.worldToScreenSizeX(handleRadius);
-        float x1 = camera.worldToScreenX(startX);
-        float y1 = camera.worldToScreenY(startY);
-        float x2 = camera.worldToScreenX(endX);
-        float y2 = camera.worldToScreenY(endY);
-        float screenWidth = camera.worldToScreenSizeX(width);
-
-        graphics.drawLine(x1, y1, x2, y2, screenWidth, color);
-        graphics.drawCircle(x1, y1, radius, color);
-        graphics.drawCircle(x2, y2, radius, color);
+        graphics.drawLine(startX, -startY, endX, -endY, width, color);
+        graphics.drawCircle(startX, -startY, handleRadius, color);
+        graphics.drawCircle(endX, -endY, handleRadius, color);
     }
 
     public void setStart(float x, float y) {

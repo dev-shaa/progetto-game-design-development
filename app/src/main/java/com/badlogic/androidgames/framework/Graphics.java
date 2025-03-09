@@ -56,11 +56,7 @@ public interface Graphics {
 
     void drawWireCircle(float x, float y, float radius, int color);
 
-    void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);
-
-    void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, float pivotPointX, float pivotPointY, int srcX, int srcY, int srcWidth, int srcHeight, int color);
-
-    void drawPixmap(Pixmap pixmap, float x, float y, float angle, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
+    void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight, int color);
 
     void drawPixmap(Pixmap pixmap, float x, float y, float dstWidth, float dstHeight, int srcX, int srcY, int srcWidth, int srcHeight);
 
@@ -73,6 +69,10 @@ public interface Graphics {
     void saveCanvas();
 
     void rotateCanvas(float angle, float pivotX, float pivotY);
+
+    void translateCanvas(float x, float y);
+
+    void scaleCanvas(float dx, float dy);
 
     void restoreCanvas();
 

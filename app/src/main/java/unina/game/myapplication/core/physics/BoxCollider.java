@@ -61,20 +61,20 @@ public final class BoxCollider extends Collider {
     }
 
     @Override
-    void onDrawGizmos(Camera camera, Graphics graphics) {
-        super.onDrawGizmos(camera, graphics);
+    void onDrawGizmos(Graphics graphics) {
+        super.onDrawGizmos(graphics);
 
         // WARNING:
         // this is executed every frame for every collider and it is VERY expensive
         // but since this is only called in debug mode we can live with it
 
-        float rx = camera.worldToScreenX(getOwner().getPositionX());
-        float ry = camera.worldToScreenY(getOwner().getPositionY());
+        float rx = getOwner().getPositionX();
+        float ry = -getOwner().getPositionY();
 
-        float w = camera.worldToScreenSizeX(width * 2);
-        float h = camera.worldToScreenSizeY(height * 2);
-        float x = rx + camera.worldToScreenSizeX(centerX);
-        float y = ry - camera.worldToScreenSizeY(centerY);
+        float w = width * 2;
+        float h = height * 2;
+        float x = rx + centerX;
+        float y = ry - centerY;
 
         // Rotate for collider local rotation
         graphics.saveCanvas();

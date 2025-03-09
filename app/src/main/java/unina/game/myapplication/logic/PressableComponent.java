@@ -63,13 +63,7 @@ public abstract class PressableComponent extends InputComponent {
     @Override
     public void onDrawGizmos(Graphics graphics) {
         super.onDrawGizmos(graphics);
-
-        float w = camera.worldToScreenSizeX(width);
-        float h = camera.worldToScreenSizeY(height);
-        float x = camera.worldToScreenX(getOwner().x) - w / 2;
-        float y = camera.worldToScreenY(getOwner().y) - h / 2;
-
-        graphics.drawWireRect(x, y, w, h, Color.MAGENTA);
+        graphics.drawWireRect(getOwner().x - width / 2, -getOwner().y - height / 2, width, height, Color.MAGENTA);
     }
 
     public void setSize(float width, float height) {

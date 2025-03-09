@@ -16,19 +16,10 @@ public class TextRenderer extends RenderComponent {
     private int color = Color.WHITE;
     private Font font;
 
-    private Camera camera;
-
-    @Override
-    public void onInitialize() {
-        super.onInitialize();
-        camera = Camera.getInstance();
-    }
-
     @Override
     public void onRemove() {
         super.onRemove();
         text = null;
-        camera = null;
         font = null;
         size = 11;
         color = Color.WHITE;
@@ -40,11 +31,20 @@ public class TextRenderer extends RenderComponent {
         if (text == null)
             return;
 
-        float x = camera.worldToScreenX(getOwner().x);
-        float y = camera.worldToScreenY(getOwner().y);
+        // Text spacing is weird at low sizes
+
+        float sx = 0.025f;
+        float x = getOwner().x / sx;
+        float y = -getOwner().y / sx;
+
+        graphics.saveCanvas();
+        graphics.scaleCanvas(sx, sx);
+        graphics.translateCanvas(x, y);
 
         graphics.setFont(font);
-        graphics.drawText(text, x, y, size, color, horizontalAlign, verticalAlign);
+        graphics.drawText(text, 0, 0, size, color, horizontalAlign, verticalAlign);
+
+        graphics.restoreCanvas();
     }
 
     public void setText(String text) {

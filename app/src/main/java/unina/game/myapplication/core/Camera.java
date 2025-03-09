@@ -24,14 +24,10 @@ public final class Camera extends Component {
     }
 
     @Override
-    public void onInitialize() {
-        super.onInitialize();
-    }
-
-    @Override
     public void onRemove() {
         super.onRemove();
 
+        graphics.restoreCanvas();
         graphics = null;
 
         if (instance == this)
@@ -40,6 +36,17 @@ public final class Camera extends Component {
 
     void setGraphics(Graphics graphics) {
         this.graphics = graphics;
+    }
+
+    void update() {
+        graphics.restoreCanvas();
+        graphics.saveCanvas();
+
+        float sx = graphics.getWidth() / (halfSizeX * 2);
+
+        graphics.translateCanvas((float) graphics.getWidth() / 2, (float) graphics.getHeight() / 2);
+        graphics.scaleCanvas(sx, sx);
+        graphics.translateCanvas(-getOwner().x, getOwner().y);
     }
 
     /**
@@ -60,22 +67,10 @@ public final class Camera extends Component {
         return halfSizeY * 2;
     }
 
-    /**
-     * Converts the x coordinate from world space to screen space.
-     *
-     * @param v the x coordinate in world space
-     * @return the x coordinate in screen space
-     */
     public float worldToScreenX(float v) {
         return worldToViewportX(v) * graphics.getWidth();
     }
 
-    /**
-     * Converts the y coordinate from world space to screen space.
-     *
-     * @param v the y coordinate in world space
-     * @return the y coordinate in screen space
-     */
     public float worldToScreenY(float v) {
         return worldToViewportY(v) * graphics.getHeight();
     }
@@ -104,42 +99,12 @@ public final class Camera extends Component {
         return Utility.lerp(getOwner().y + halfSizeY, getOwner().y - halfSizeY, screenToViewportY(v));
     }
 
-    /**
-     * Converts the given x coordinate from screen space to viewport space.
-     *
-     * @param x screen space value
-     * @return the non-clamped corresponding value in viewport space
-     */
     public float screenToViewportX(float x) {
         return Utility.inverseLerp(0, graphics.getWidth(), x);
     }
 
-    /**
-     * Converts the given y coordinate from screen space to viewport space.
-     *
-     * @param y screen space value
-     * @return the non-clamped corresponding value in viewport space
-     */
     public float screenToViewportY(float y) {
         return Utility.inverseLerp(0, graphics.getHeight(), y);
-    }
-
-    /**
-     * Returns the width of the screen.
-     *
-     * @return screen width
-     */
-    public float getScreenWidth() {
-        return graphics.getWidth();
-    }
-
-    /**
-     * Returns the height of the screen.
-     *
-     * @return screen height
-     */
-    public float getScreenHeight() {
-        return graphics.getHeight();
     }
 
     @Override

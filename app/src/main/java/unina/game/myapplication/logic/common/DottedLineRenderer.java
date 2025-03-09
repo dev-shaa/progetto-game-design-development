@@ -14,36 +14,14 @@ public class DottedLineRenderer extends RenderComponent {
     private float radius;
     private int color;
 
-    private Camera camera;
-
-    @Override
-    public void onInitialize() {
-        super.onInitialize();
-        camera = Camera.getInstance();
-    }
-
-    @Override
-    public void onRemove() {
-        super.onRemove();
-        camera = null;
-    }
-
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        float sx1 = camera.worldToScreenX(x1);
-        float sy1 = camera.worldToScreenY(y1);
-
-        float sx2 = camera.worldToScreenX(x2);
-        float sy2 = camera.worldToScreenY(y2);
-        float screenRadius = camera.worldToScreenSizeX(radius);
-
         for (int i = 0; i < count; i++) {
             float t = (float) i / (count - 1);
-            float smx = Utility.lerp(sx1, sx2, t);
-            float smy = Utility.lerp(sy1, sy2, t);
-            graphics.drawCircle(smx, smy, screenRadius, color);
+            float smx = Utility.lerp(x1, x2, t);
+            float smy = Utility.lerp(y1, y2, t);
+            graphics.drawCircle(smx, -smy, radius, color);
         }
-
     }
 
     public void setPointA(float x, float y) {

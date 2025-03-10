@@ -6,6 +6,7 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
+import kotlin.io.LineReader;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
@@ -15,7 +16,9 @@ import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.physics.TriangleCollider;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.Assets;
+import unina.game.myapplication.logic.PlatformDraggingComponent;
 import unina.game.myapplication.logic.PlatformRenderComponent;
+import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
 import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
 
@@ -171,8 +174,8 @@ public class Level5 extends Level {
         floorPoolRigidBody.addCollider(BoxCollider.build(poolFloorW,floorH));
 
         //Muro Vasca destra
-        float poolWallW = 10;
-        GameObject wallRightPool = createGameObject(10,5.5f,90);
+        float poolWallW = 11;
+        GameObject wallRightPool = createGameObject(10,5,90);
 
         PlatformRenderComponent wallRightPoolRenderComponent = wallRightPool.addComponent(PlatformRenderComponent.class);
         wallRightPoolRenderComponent.setSize(poolWallW,wallH);
@@ -184,7 +187,7 @@ public class Level5 extends Level {
         wallRightPoolRigidBody.addCollider(BoxCollider.build(poolWallW,wallH));
 
         //Muro Vasca destra
-        GameObject wallLeftPool = createGameObject(0,5.5f,90);
+        GameObject wallLeftPool = createGameObject(0,5,90);
 
         PlatformRenderComponent wallLeftPoolRenderComponent = wallLeftPool.addComponent(PlatformRenderComponent.class);
         wallLeftPoolRenderComponent.setSize(poolWallW,wallH);
@@ -209,7 +212,28 @@ public class Level5 extends Level {
 
         RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
         trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
-        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3,-1,3,-1,-3,2,4,0,1,false));
+        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3,-1,3,-1,-3,2,2,0,1,false));
+
+        //Piattaforma scorrevole acqua destra
+        float draggingSizeW = 8;
+        GameObject draggingPlatformRight = createGameObject(-2,18,40);
+
+        RigidBody draggingPlatformRightRigidBody = draggingPlatformRight.addComponent(RigidBody.class);
+        draggingPlatformRightRigidBody.setType(RigidBody.Type.KINEMATIC);
+        draggingPlatformRightRigidBody.addCollider(BoxCollider.build(draggingSizeW,1));
+
+        PlatformDraggingComponent draggingPlatformRightDraggingComponent = draggingPlatformRight.addComponent(PlatformDraggingComponent.class);
+        draggingPlatformRightDraggingComponent.setRigidBody(draggingPlatformRightRigidBody);
+        draggingPlatformRightDraggingComponent.setSize(draggingSizeW,draggingSizeW);
+        draggingPlatformRightDraggingComponent.setStart(-2,18);
+        draggingPlatformRightDraggingComponent.setEnd(-4,10);
+
+        DraggablePlatformLineRenderer draggingPlatformRightLineRender = createGameObject().addComponent(DraggablePlatformLineRenderer.class);
+        draggingPlatformRightLineRender.setStart(-2,18.5f);
+        draggingPlatformRightLineRender.setEnd(-4,10.5f);
+        draggingPlatformRightLineRender.setRadius(0.25f);
+        draggingPlatformRightLineRender.setColor(Color.WHITE);
+        draggingPlatformRightLineRender.setLayer(-2);
     }
 
     @Override

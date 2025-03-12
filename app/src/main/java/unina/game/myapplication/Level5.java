@@ -6,7 +6,6 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
-import kotlin.io.LineReader;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
@@ -202,7 +201,7 @@ public class Level5 extends Level {
         GameObject water = createGameObject(5,2);
 
         ParticleSystem waterParticleSystem = water.addComponent(ParticleSystem.class);
-        waterParticleSystem.setRadius(0.15f);
+        waterParticleSystem.setRadius(0.5f);
         waterParticleSystem.setSize(4,2);
         waterParticleSystem.setGroupFlags(ParticleSystem.FLAG_GROUP_SOLID);
         waterParticleSystem.setFlags(ParticleSystem.FLAG_PARTICLE_WATER);
@@ -212,11 +211,12 @@ public class Level5 extends Level {
 
         RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
         trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
-        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3,-1,3,-1,-3,2,2,0,1,false));
+        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3,-1,3,-1,-3,2,0.5f,0,1,false));
 
         //Piattaforma scorrevole acqua destra
-        float draggingSizeW = 8;
-        GameObject draggingPlatformRight = createGameObject(-2,18,40);
+        float draggingSizeW = 14;
+        float draggingRightX = 0;
+        GameObject draggingPlatformRight = createGameObject(draggingRightX,20,40);
 
         RigidBody draggingPlatformRightRigidBody = draggingPlatformRight.addComponent(RigidBody.class);
         draggingPlatformRightRigidBody.setType(RigidBody.Type.KINEMATIC);
@@ -224,16 +224,62 @@ public class Level5 extends Level {
 
         PlatformDraggingComponent draggingPlatformRightDraggingComponent = draggingPlatformRight.addComponent(PlatformDraggingComponent.class);
         draggingPlatformRightDraggingComponent.setRigidBody(draggingPlatformRightRigidBody);
-        draggingPlatformRightDraggingComponent.setSize(draggingSizeW,draggingSizeW);
-        draggingPlatformRightDraggingComponent.setStart(-2,18);
-        draggingPlatformRightDraggingComponent.setEnd(-4,10);
+        draggingPlatformRightDraggingComponent.setSize(draggingSizeW/2,draggingSizeW/2);
+        draggingPlatformRightDraggingComponent.setStart(draggingRightX,20);
+        draggingPlatformRightDraggingComponent.setEnd(draggingRightX,16);
 
         DraggablePlatformLineRenderer draggingPlatformRightLineRender = createGameObject().addComponent(DraggablePlatformLineRenderer.class);
-        draggingPlatformRightLineRender.setStart(-2,18.5f);
-        draggingPlatformRightLineRender.setEnd(-4,10.5f);
+        draggingPlatformRightLineRender.setStart(draggingRightX,20);
+        draggingPlatformRightLineRender.setEnd(draggingRightX,16);
         draggingPlatformRightLineRender.setRadius(0.25f);
         draggingPlatformRightLineRender.setColor(Color.WHITE);
         draggingPlatformRightLineRender.setLayer(-2);
+
+        //Piattaforma scorrevole acqua sinistra
+        float draggingLeftX = -8;
+        GameObject draggingPlatformLeft = createGameObject(draggingLeftX,20,140);
+
+        RigidBody draggingPlatformLeftRigidBody = draggingPlatformLeft.addComponent(RigidBody.class);
+        draggingPlatformLeftRigidBody.setType(RigidBody.Type.KINEMATIC);
+        draggingPlatformLeftRigidBody.addCollider(BoxCollider.build(draggingSizeW,1));
+
+        PlatformDraggingComponent draggingPlatformLeftDraggingComponent = draggingPlatformLeft.addComponent(PlatformDraggingComponent.class);
+        draggingPlatformLeftDraggingComponent.setRigidBody(draggingPlatformLeftRigidBody);
+        draggingPlatformLeftDraggingComponent.setSize(draggingSizeW/2,draggingSizeW/2);
+        draggingPlatformLeftDraggingComponent.setStart(draggingLeftX,20);
+        draggingPlatformLeftDraggingComponent.setEnd(draggingLeftX,16);
+
+        DraggablePlatformLineRenderer draggingPlatformLeftLineRender = createGameObject().addComponent(DraggablePlatformLineRenderer.class);
+        draggingPlatformLeftLineRender.setStart(draggingLeftX,20);
+        draggingPlatformLeftLineRender.setEnd(draggingLeftX,16);
+        draggingPlatformLeftLineRender.setRadius(0.25f);
+        draggingPlatformLeftLineRender.setColor(Color.WHITE);
+        draggingPlatformLeftLineRender.setLayer(-2);
+
+        //Muro acqua destra
+        float wallWaterW = 20;
+        GameObject wallWaterRight = createGameObject(2,30,90);
+
+        RigidBody wallWaterRightRigidBody = wallWaterRight.addComponent(RigidBody.class);
+        wallWaterRightRigidBody.setType(RigidBody.Type.STATIC);
+        wallWaterRightRigidBody.addCollider(BoxCollider.build(wallWaterW,wallH));
+
+        //Muro acqua sinistra
+        GameObject wallWaterLeft = createGameObject(-10,30,90);
+
+        RigidBody wallWaterLeftRigidBody = wallWaterLeft.addComponent(RigidBody.class);
+        wallWaterLeftRigidBody.setType(RigidBody.Type.STATIC);
+        wallWaterLeftRigidBody.addCollider(BoxCollider.build(wallWaterW,wallH));
+
+        //Acqua piattaforme
+        GameObject waterPlatform = createGameObject(-4,30);
+
+        ParticleSystem waterPlatformParticleSystem = waterPlatform.addComponent(ParticleSystem.class);
+        waterPlatformParticleSystem.setRadius(0.5f);
+        waterPlatformParticleSystem.setSize(8,20);
+        waterPlatformParticleSystem.setGroupFlags(ParticleSystem.FLAG_GROUP_SOLID);
+        waterPlatformParticleSystem.setFlags(ParticleSystem.FLAG_PARTICLE_WATER);
+
     }
 
     @Override

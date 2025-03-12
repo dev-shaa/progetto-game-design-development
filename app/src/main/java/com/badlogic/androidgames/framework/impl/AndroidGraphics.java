@@ -13,12 +13,10 @@ import android.graphics.Color;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.ArrayMap;
-import android.util.Log;
 
 import com.badlogic.androidgames.framework.Font;
 import com.badlogic.androidgames.framework.Graphics;
@@ -44,6 +42,7 @@ public class AndroidGraphics implements Graphics {
         this.frameBuffer = frameBuffer;
         this.canvas = new Canvas(frameBuffer);
         this.paint = new Paint();
+        this.paint.setFlags(Paint.ANTI_ALIAS_FLAG);
 
         this.colorMatrixArray = new float[4 * 5];
         this.filters = new ArrayMap<>();

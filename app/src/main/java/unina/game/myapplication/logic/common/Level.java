@@ -19,7 +19,7 @@ import unina.game.myapplication.logic.menu.MainMenu;
  */
 public abstract class Level extends Scene {
 
-    private static boolean ENABLE_MUSIC = true;
+    private static boolean ENABLE_MUSIC;
 
     private LevelSaver levelSaver;
     private Music backgroundMusic;
@@ -42,13 +42,14 @@ public abstract class Level extends Scene {
 
         if (firstResume) {
             levelSaver = LevelSaver.getInstance(game.getFileIO());
+            ENABLE_MUSIC = levelSaver.isMusicEnabled();
 
             backgroundMusic = getMusic(getBackgroundMusic());
             backgroundMusic.setLooping(true);
             backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
 
-            Pixmap uiPixmap = getImage("graphics/elements-ui.png");
-            Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
+            final Pixmap uiPixmap = getImage("graphics/elements-ui.png");
+            final Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
 
             float size = 1.6f * Camera.getInstance().getSizeX() / 10;
 
@@ -66,6 +67,9 @@ public abstract class Level extends Scene {
             musicButton.setOnClick(() -> {
                 uiButtonSound.play(1);
                 ENABLE_MUSIC = !ENABLE_MUSIC;
+
+                saveMusicToggle(ENABLE_MUSIC);
+
                 backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
                 musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
             });
@@ -130,6 +134,14 @@ public abstract class Level extends Scene {
      */
     protected final void loadNextLevel() {
         loadScene(levelSaver.getLevel(getLevelIndex() + 1));
+    }
+
+    private void saveMusicToggle(boolean status) {
+        try {
+            levelSaver.saveMusicToggle(status);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

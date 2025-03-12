@@ -8,8 +8,8 @@ import java.io.IOException;
 
 import unina.game.myapplication.Level1;
 import unina.game.myapplication.Level2;
-import unina.game.myapplication.Level3;
 import unina.game.myapplication.Level4;
+import unina.game.myapplication.Level5;
 import unina.game.myapplication.core.Scene;
 
 /**
@@ -20,6 +20,7 @@ public final class LevelSaver {
     private final FileIO fileIO;
     private final Class<? extends Scene>[] levels;
     private int latestCompletedLevel;
+    private boolean isMusicEnabled;
 
     private static LevelSaver instance;
 
@@ -30,11 +31,12 @@ public final class LevelSaver {
         return instance;
     }
 
+    @SuppressWarnings("unchecked")
     private LevelSaver(FileIO fileIO) {
         levels = new Class[4];
         levels[0] = Level1.class;
         levels[1] = Level2.class;
-        levels[2] = Level3.class;
+        levels[2] = Level5.class;
         levels[3] = Level4.class;
 
         this.fileIO = fileIO;
@@ -44,6 +46,13 @@ public final class LevelSaver {
         } catch (IOException e) {
             latestCompletedLevel = -1;
         }
+
+        try (DataInputStream stream = new DataInputStream(fileIO.readFile("music.txt"))) {
+            isMusicEnabled = stream.readBoolean();
+        } catch (IOException e) {
+            isMusicEnabled = true;
+        }
+
     }
 
     /**
@@ -100,6 +109,17 @@ public final class LevelSaver {
             stream.writeInt(-1);
             latestCompletedLevel = -1;
         }
+    }
+
+    public void saveMusicToggle(boolean status) throws IOException {
+        try (DataOutputStream stream = new DataOutputStream(fileIO.writeFile("music.txt"))) {
+            stream.writeBoolean(status);
+            isMusicEnabled = status;
+        }
+    }
+
+    public boolean isMusicEnabled() {
+        return isMusicEnabled;
     }
 
 }

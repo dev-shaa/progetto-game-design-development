@@ -65,7 +65,7 @@ public abstract class Collider {
 
     }
 
-    public RigidBody getOwner() {
+    public final RigidBody getOwner() {
         return owner;
     }
 

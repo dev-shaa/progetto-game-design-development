@@ -6,7 +6,7 @@ public final class Collision {
     public float relativeVelocityX, relativeVelocityY;
 
     Collision() {
-
+        // It must not be instantiated from outside the package
     }
 
     @Override

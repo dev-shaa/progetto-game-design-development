@@ -52,7 +52,7 @@ public final class GameObject {
      * Initializes the components attached to this GameObject.
      */
     void initialize() {
-        for (Component component : getComponents())
+        for (Component component : components.values())
             component.onInitialize();
 
         initialized = true;
@@ -62,7 +62,7 @@ public final class GameObject {
      * Disposes this GameObject and all attached components.
      */
     void dispose() {
-        for (Component component : getComponents())
+        for (Component component : components.values())
             disposeComponent(component);
 
         components.clear();

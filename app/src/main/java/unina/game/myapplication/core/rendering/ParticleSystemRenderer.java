@@ -21,8 +21,9 @@ public class ParticleSystemRenderer extends RenderComponent {
     @Override
     public void onInitialize() {
         super.onInitialize();
+
         buffer = ByteBuffer.allocateDirect(MAX_PARTICLES * PARTICLES_SIZE);
-        buffer.order(ByteOrder.nativeOrder());
+        buffer.order(ByteOrder.nativeOrder()); // Make sure the buffer has the same byte order of the system, otherwise particles positions are not read correctly from native memory
     }
 
     @Override

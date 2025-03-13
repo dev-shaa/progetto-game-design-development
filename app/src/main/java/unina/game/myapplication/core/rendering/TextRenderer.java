@@ -4,7 +4,6 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Font;
 import com.badlogic.androidgames.framework.Graphics;
 
-import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
 public class TextRenderer extends RenderComponent {
@@ -32,6 +31,7 @@ public class TextRenderer extends RenderComponent {
             return;
 
         // Text spacing is weird at low sizes
+        // Scale it before drawing and then restore che original canvas
 
         float sx = 0.025f;
         float x = getOwner().x / sx;

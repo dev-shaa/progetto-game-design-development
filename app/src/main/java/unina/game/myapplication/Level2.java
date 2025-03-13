@@ -2,7 +2,6 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -24,13 +23,11 @@ import unina.game.myapplication.logic.common.ColorAnimation;
 import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.PlatformDraggingComponent;
-import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
 import unina.game.myapplication.logic.common.DottedLineRenderer;
 import unina.game.myapplication.logic.common.FadeAnimation;
 import unina.game.myapplication.logic.common.Level;
 import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.menu.MainMenu;
 
 public class Level2 extends Level {
 
@@ -44,15 +41,15 @@ public class Level2 extends Level {
     public void initialize() {
         super.initialize();
 
-        Pixmap backgroundImage = getImage("graphics/environment-brick-wall.png");
-        Pixmap elementsImage = getImage("graphics/elements-light.png");
-        Pixmap elementsUIImage = getImage("graphics/elements-ui.png");
+        Pixmap backgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_2);
+        Pixmap elementsImage = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
+        Pixmap elementsUIImage = getImage(Assets.GRAPHICS_UI_SPRITES);
 
         Sound movingRock = getSound("sounds/moving-rock.mp3");
-        Sound buttonSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
-        Sound movingPlatformSound = getSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
+        Sound buttonSound = getSound(Assets.SOUND_GAME_BUTTON_CLICK);
+        Sound movingPlatformSound = getSound(Assets.SOUND_GAME_PLATFORM_MOVE);
         Sound rockCrushSound = getSound("sounds/rock-crush.mp3");
-        Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        Sound winSound = getSound(Assets.SOUND_GAME_WIN);
 
         Camera.getInstance().setSize(20);
 

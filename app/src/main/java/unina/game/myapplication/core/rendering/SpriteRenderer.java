@@ -4,7 +4,6 @@ import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Pixmap;
 
-import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
 public class SpriteRenderer extends RenderComponent {
@@ -47,12 +46,6 @@ public class SpriteRenderer extends RenderComponent {
         this.height = height;
     }
 
-    /**
-     * Sets the drawing origin of the sprite, where (0, 0) means the origin is the top-left corner and (1, 1) the bottom-right corner.
-     *
-     * @param x
-     * @param y
-     */
     public void setPivot(float x, float y) {
         this.pivotX = x;
         this.pivotY = y;

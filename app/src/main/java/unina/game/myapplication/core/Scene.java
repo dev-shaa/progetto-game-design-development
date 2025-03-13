@@ -29,7 +29,7 @@ public abstract class Scene extends Screen {
 
     private World world;
     private CollisionListener collisionListener;
-    private GameObject camera;
+    private Camera camera;
 
     // TODO: check for possible better collection
     private final ArraySet<GameObject> gameObjects = new ArraySet<>(8);
@@ -61,11 +61,11 @@ public abstract class Scene extends Screen {
         world = new World(GRAVITY_X, GRAVITY_Y);
         world.setContactListener(collisionListener);
 
-        camera = GameObject.create(this);
-        Camera cameraComponent = camera.addComponent(Camera.class);
-        cameraComponent.setGraphics(game.getGraphics());
-        cameraComponent.setSize(10);
-        camera.initialize();
+        GameObject cameraGO = GameObject.create(this);
+        camera = cameraGO.addComponent(Camera.class);
+        camera.setGraphics(game.getGraphics());
+        camera.setSize(10);
+        cameraGO.initialize();
 
         sceneToBeLoaded = null;
     }
@@ -86,13 +86,16 @@ public abstract class Scene extends Screen {
             physicsComponents.valueAt(i).update(deltaTime);
 
         collisionListener.forEachEnter(collision -> {
-            if (collision.a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) collision.a.getOwner().getComponent(Component.Type.BEHAVIOUR);
+            GameObject gameObjectA = collision.a.getOwner();
+            GameObject gameObjectB = collision.b.getOwner();
+
+            if (gameObjectA.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) gameObjectA.getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionEnter(collision.b, collision.relativeVelocityX, collision.relativeVelocityY);
             }
 
-            if (collision.b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) collision.b.getOwner().getComponent(Component.Type.BEHAVIOUR);
+            if (gameObjectB.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) gameObjectB.getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionEnter(collision.a, collision.relativeVelocityX, collision.relativeVelocityY);
             }
         });
@@ -141,7 +144,7 @@ public abstract class Scene extends Screen {
             layerDirty = false;
         }
 
-        Camera.getInstance().update();
+        camera.update();
 
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)
@@ -201,7 +204,7 @@ public abstract class Scene extends Screen {
         gameObjectsToOperate.clear();
         gameObjectsOperations.clear();
 
-        camera.dispose();
+        camera.getOwner().dispose();
     }
 
     /**
@@ -278,7 +281,7 @@ public abstract class Scene extends Screen {
      * @param gameObject GameObject to remove
      */
     public final void removeGameObject(GameObject gameObject) {
-        if (gameObject == camera)
+        if (gameObject == camera.getOwner())
             throw new RuntimeException("Can't remove Camera");
 
         if (gameObject != null && gameObject.scene == this) {
@@ -401,22 +404,22 @@ public abstract class Scene extends Screen {
         switch (component.getType()) {
             case PHYSICS:
                 physicsComponents.remove((PhysicsComponent) component);
-                return;
+                break;
             case BEHAVIOUR:
                 behaviourComponents.remove((BehaviourComponent) component);
-                return;
+                break;
             case INPUT:
                 inputComponents.remove((InputComponent) component);
-                return;
+                break;
             case RENDER:
-                if (renderComponents.remove((RenderComponent) component)) {
+                if (renderComponents.remove((RenderComponent) component))
                     layerDirty = true;
-                }
-                return;
+                break;
             case ANIMATION:
                 animationComponents.remove((AnimationComponent) component);
-                return;
+                break;
             default:
+                break;
         }
     }
 

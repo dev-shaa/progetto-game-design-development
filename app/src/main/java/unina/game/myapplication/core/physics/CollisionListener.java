@@ -70,9 +70,6 @@ public final class CollisionListener extends ContactListener {
         collision.relativeVelocityX = Math.abs(ba.getLinearVelocity().getX() - bb.getLinearVelocity().getX());
         collision.relativeVelocityY = Math.abs(ba.getLinearVelocity().getY() - bb.getLinearVelocity().getY());
 
-//        Log.d("Collision", "Velocity: " + bb.getLinearVelocity().getX() + ", " + bb.getLinearVelocity().getY());
-//        Log.d("Collision", "Speed: " + contact.getTangentSpeed());
-
         buffer.add(collision);
     }
 

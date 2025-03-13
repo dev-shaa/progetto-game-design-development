@@ -21,6 +21,7 @@ import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.Assets;
 import unina.game.myapplication.logic.CursorJointInput;
+import unina.game.myapplication.logic.LineRenderer;
 import unina.game.myapplication.logic.PhysicsButton;
 import unina.game.myapplication.logic.common.Button;
 import unina.game.myapplication.logic.common.CircleRenderer;
@@ -301,6 +302,12 @@ public class Level4 extends Level {
         cursorJointInput.setJoint(cursorJoint);
         cursorJointInput.setSize(4, 4);
         cursorJointInput.setMaxForce(9000);
+
+        LineRenderer wreckingBallLineRenderer = createGameObject().addComponent(LineRenderer.class);
+        wreckingBallLineRenderer.setA(platformCharacterRigidBody.getOwner());
+        wreckingBallLineRenderer.setB(wreckingBall);
+        wreckingBallLineRenderer.setColor(Color.WHITE);
+        wreckingBallLineRenderer.setWidth(0.2f);
 
         // Base
         RigidBody platformBaseRigidBody = createGameObject(0, -25).addComponent(RigidBody.class);

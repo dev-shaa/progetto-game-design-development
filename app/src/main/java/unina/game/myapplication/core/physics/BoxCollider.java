@@ -13,7 +13,7 @@ import unina.game.myapplication.core.Camera;
  */
 public final class BoxCollider extends Collider {
 
-    private static final Pool<BoxCollider> pool = new Pool<>(BoxCollider::new, 16);
+    private static Pool<BoxCollider> pool;
 
     public static BoxCollider build(float width, float height) {
         return build(width, height, false);
@@ -24,6 +24,9 @@ public final class BoxCollider extends Collider {
     }
 
     public static BoxCollider build(float width, float height, float density, float restitution, float friction, boolean isSensor) {
+        if (pool == null)
+            pool = new Pool<>(BoxCollider::new, 16);
+
         BoxCollider box = pool.get();
 
         box.width = width / 2;

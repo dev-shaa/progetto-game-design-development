@@ -1,13 +1,19 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.MouseJoint;
 import com.google.fpl.liquidfun.MouseJointDef;
 import com.google.fpl.liquidfun.World;
 
 public final class CursorJoint extends Joint {
 
+    private static Pool<CursorJoint> pool;
+
     public static CursorJoint build() {
-        return new CursorJoint();
+        if (pool == null)
+            pool = new Pool<>(CursorJoint::new, 4);
+
+        return pool.get();
     }
 
     private MouseJoint joint;
@@ -48,6 +54,7 @@ public final class CursorJoint extends Joint {
         }
 
         x = y = maxForce = 0;
+        pool.free(this);
     }
 
     /**

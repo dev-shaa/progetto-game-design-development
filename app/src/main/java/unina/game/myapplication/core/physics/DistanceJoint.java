@@ -1,15 +1,21 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.DistanceJointDef;
 import com.google.fpl.liquidfun.World;
 
 public final class DistanceJoint extends Joint {
 
+    private static Pool<DistanceJoint> pool;
+
     private float length, dampingRatio, frequency;
     private com.google.fpl.liquidfun.Joint joint;
 
     public static DistanceJoint build(RigidBody anchor, float length, float frequency, float dampingRatio) {
-        DistanceJoint joint = new DistanceJoint();
+        if (pool == null)
+            pool = new Pool<>(DistanceJoint::new, 4);
+
+        DistanceJoint joint = pool.get();
 
         joint.rigidBodyB = anchor;
         joint.length = length;
@@ -49,6 +55,8 @@ public final class DistanceJoint extends Joint {
             world.destroyJoint(joint);
             joint = null;
         }
+
+        pool.free(this);
     }
 
 }

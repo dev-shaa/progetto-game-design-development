@@ -2,6 +2,7 @@ package unina.game.myapplication.core.physics;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.PolygonShape;
 import com.google.fpl.liquidfun.Shape;
 
@@ -9,21 +10,17 @@ import unina.game.myapplication.core.Camera;
 
 public final class TriangleCollider extends Collider {
 
+    private static Pool<TriangleCollider> pool;
+
     public static TriangleCollider build(float ax, float ay, float bx, float by, float cx, float cy) {
-        TriangleCollider collider = new TriangleCollider();
-
-        collider.ax = ax;
-        collider.ay = ay;
-        collider.bx = bx;
-        collider.by = by;
-        collider.cx = cx;
-        collider.cy = cy;
-
-        return collider;
+        return build(ax, ay, bx, by, cx, cy, 1, 0.2f, 0.5f, false);
     }
 
     public static TriangleCollider build(float ax, float ay, float bx, float by, float cx, float cy, float density, float restitution, float friction, boolean isSensor) {
-        TriangleCollider collider = new TriangleCollider();
+        if (pool == null)
+            pool = new Pool<>(TriangleCollider::new, 8);
+
+        TriangleCollider collider = pool.get();
 
         collider.ax = ax;
         collider.ay = ay;
@@ -34,6 +31,7 @@ public final class TriangleCollider extends Collider {
         collider.density = density;
         collider.restitution = restitution;
         collider.friction = friction;
+        collider.isSensor = isSensor;
 
         return collider;
     }
@@ -54,6 +52,7 @@ public final class TriangleCollider extends Collider {
     @Override
     void dispose() {
         super.dispose();
+        pool.free(this);
     }
 
     @Override

@@ -7,9 +7,12 @@ import com.google.fpl.liquidfun.World;
 
 public final class PrismaticJoint extends Joint {
 
-    private static final Pool<PrismaticJoint> pool = new Pool<>(PrismaticJoint::new, 8);
+    private static Pool<PrismaticJoint> pool;
 
     public static PrismaticJoint build(RigidBody anchor, float axisX, float axisY) {
+        if (pool == null)
+            pool = new Pool<>(PrismaticJoint::new, 8);
+
         PrismaticJoint joint = pool.get();
 
         joint.rigidBodyB = anchor;

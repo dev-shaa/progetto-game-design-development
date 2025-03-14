@@ -1,18 +1,28 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.RevoluteJointDef;
 import com.google.fpl.liquidfun.World;
 
-public class RevoluteJoint extends Joint {
+public final class RevoluteJoint extends Joint {
+
+    private static Pool<RevoluteJoint> pool;
 
     private com.google.fpl.liquidfun.Joint joint;
 
     public static RevoluteJoint build(RigidBody anchor) {
-        RevoluteJoint joint = new RevoluteJoint();
+        if (pool == null)
+            pool = new Pool<>(RevoluteJoint::new, 4);
+
+        RevoluteJoint joint = pool.get();
 
         joint.rigidBodyB = anchor;
 
         return joint;
+    }
+
+    private RevoluteJoint() {
+
     }
 
     @Override
@@ -29,8 +39,12 @@ public class RevoluteJoint extends Joint {
     void dispose(World world) {
         super.dispose(world);
 
-        world.destroyJoint(joint);
-        joint = null;
+        if (joint != null) {
+            world.destroyJoint(joint);
+            joint = null;
+        }
+
+        pool.free(this);
     }
 
 }

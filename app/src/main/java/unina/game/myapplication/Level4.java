@@ -276,9 +276,9 @@ public class Level4 extends Level {
         bridgeCharacterRenderComponent.setSize(8, 1);
         bridgeCharacterRenderComponent.setLayer(3);
 
-        RigidBody bridgeCharacterRigidBody = bridgeCharacter.addComponent(RigidBody.class);
-        bridgeCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
-        bridgeCharacterRigidBody.addCollider(BoxCollider.build(8, 1));
+//        RigidBody bridgeCharacterRigidBody = bridgeCharacter.addComponent(RigidBody.class);
+//        bridgeCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
+//        bridgeCharacterRigidBody.addCollider(BoxCollider.build(8, 1));
 
         // Wrecking ball
         GameObject wreckingBall = createGameObject(-8, -15);
@@ -290,7 +290,7 @@ public class Level4 extends Level {
 
         RigidBody wreckingBallRigidBody = wreckingBall.addComponent(RigidBody.class);
         wreckingBallRigidBody.setType(RigidBody.Type.DYNAMIC);
-        wreckingBallRigidBody.addCollider(CircleCollider.build(2, 20, 0, 1, false));
+        wreckingBallRigidBody.addCollider(CircleCollider.build(2, 5, 0, 1, false));
 
         DistanceJoint distanceJoint = DistanceJoint.build(platformCharacterRigidBody, 15, 10, 1);
         wreckingBallRigidBody.addJoint(distanceJoint);
@@ -315,16 +315,22 @@ public class Level4 extends Level {
         platformBaseRigidBody.addCollider(BoxCollider.build(7, 1));
 
         // Wall
-        GameObject dynamicWall = createGameObject(0, -9);
-
-        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
-        dynamicWallRenderComponent.setSize(1.5f, 30);
-        dynamicWallRenderComponent.setColor(PALETTE_PRIMARY);
-        dynamicWallRenderComponent.setLayer(3);
-
-        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
-        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
-        dynamicWallRigidBody.addCollider(BoxCollider.build(1.5f, 30f, 10, 0, 1, false));
+        foo(1.5f, -25.5f + 2.5f, 2, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f, 2, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5, 2, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, 2, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, 2, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, 2, 5);
+//        GameObject dynamicWall = createGameObject(0, -9);
+//
+//        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
+//        dynamicWallRenderComponent.setSize(1.5f, 30);
+//        dynamicWallRenderComponent.setColor(PALETTE_PRIMARY);
+//        dynamicWallRenderComponent.setLayer(3);
+//
+//        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
+//        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
+//        dynamicWallRigidBody.addCollider(BoxCollider.build(1.5f, 30f, 10, 0, 1, false));
 
         // Sensor
         GameObject wallSensorGO = createGameObject(0, -28);
@@ -340,7 +346,7 @@ public class Level4 extends Level {
 
             animator.clear();
             animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
-            animator.add(MoveRigidBodyTo.build(bridgeCharacterRigidBody, 0, 0.3f, 0.4f));
+            animator.add(MoveToAnimation.build(bridgeCharacter, 0, 0.3f, 0.4f));
             animator.add(WaitAnimation.build(0.4f), () -> {
                 characterRenderer.setSrcPosition(128, 128);
                 winSound.play(1);
@@ -348,7 +354,21 @@ public class Level4 extends Level {
             animator.add(MoveToAnimation.build(character, 8, 1, 0.4f));
             animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
+            removeGameObject(wallSensorGO);
         });
+    }
+
+    private void foo(float x, float y, float width, float height) {
+        // Wall
+        GameObject dynamicWall = createGameObject(x, y);
+
+        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
+        dynamicWallRenderComponent.setSize(width, height);
+        dynamicWallRenderComponent.setColor(PALETTE_PRIMARY);
+
+        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
+        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
+        dynamicWallRigidBody.addCollider(BoxCollider.build(width, height));
     }
 
     @Override
@@ -360,4 +380,5 @@ public class Level4 extends Level {
     protected String getBackgroundMusic() {
         return Assets.SOUND_MUSIC_LEVELS;
     }
+
 }

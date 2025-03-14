@@ -1,13 +1,19 @@
 package unina.game.myapplication.core.physics;
 
+import com.badlogic.androidgames.framework.Pool;
 import com.google.fpl.liquidfun.RopeJointDef;
 import com.google.fpl.liquidfun.Vec2;
 import com.google.fpl.liquidfun.World;
 
 public final class RopeJoint extends Joint {
 
+    private static Pool<RopeJoint> pool;
+
     public static RopeJoint build(RigidBody anchor, float maxLength) {
-        RopeJoint joint = new RopeJoint();
+        if (pool == null)
+            pool = new Pool<>(RopeJoint::new, 4);
+
+        RopeJoint joint = pool.get();
 
         joint.rigidBodyB = anchor;
         joint.maxLength = maxLength;
@@ -48,6 +54,8 @@ public final class RopeJoint extends Joint {
             world.destroyJoint(joint);
             joint = null;
         }
+
+        pool.free(this);
     }
 
     public void setMaxLength(float maxLength) {

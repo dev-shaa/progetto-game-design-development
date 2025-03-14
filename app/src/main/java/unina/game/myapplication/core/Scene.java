@@ -101,13 +101,16 @@ public abstract class Scene extends Screen {
         });
 
         collisionListener.forEachExit(collision -> {
-            if (collision.a.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) collision.a.getOwner().getComponent(Component.Type.BEHAVIOUR);
+            GameObject gameObjectA = collision.a.getOwner();
+            GameObject gameObjectB = collision.b.getOwner();
+
+            if (gameObjectA != null && gameObjectA.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) gameObjectA.getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionExit(collision.b, collision.relativeVelocityX, collision.relativeVelocityY);
             }
 
-            if (collision.b.getOwner().hasComponent(Component.Type.BEHAVIOUR)) {
-                BehaviourComponent behaviour = (BehaviourComponent) collision.b.getOwner().getComponent(Component.Type.BEHAVIOUR);
+            if (gameObjectB != null && gameObjectB.hasComponent(Component.Type.BEHAVIOUR)) {
+                BehaviourComponent behaviour = (BehaviourComponent) gameObjectB.getComponent(Component.Type.BEHAVIOUR);
                 behaviour.onCollisionExit(collision.a, collision.relativeVelocityX, collision.relativeVelocityY);
             }
         });

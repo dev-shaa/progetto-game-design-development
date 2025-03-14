@@ -89,33 +89,33 @@ public class Level3 extends Level {
         animator.start();
 
         // Level selection button
-        float levelSelectionButtonWidth = 4f;
-        float levelSelectionButtonHeight = 4f;
-
-        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
-
-        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-        menuButtonRenderer.setImage(uiSpriteSheet);
-        menuButtonRenderer.setSrcPosition(0, 0);
-        menuButtonRenderer.setSrcSize(128, 128);
-        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
-        menuButtonRenderer.setLayer(32);
-        menuButtonRenderer.setPivot(0.5f, 0.5f);
-
-        Button menuButton = menuButtonGO.addComponent(Button.class);
-        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
-        menuButton.setOnClick(() -> {
-            // Prevent user from clicking again
-            menuButton.setInteractable(false);
-
-            // Play the sound
-            buttonSound.play(1);
-
-            // Fade animation and load main menu
-            animator.clear();
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
-            animator.start();
-        });
+//        float levelSelectionButtonWidth = 4f;
+//        float levelSelectionButtonHeight = 4f;
+//
+//        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + levelSelectionButtonWidth / 2, Camera.getInstance().getSizeY() / 2 - levelSelectionButtonHeight / 2 - 0.25f);
+//
+//        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
+//        menuButtonRenderer.setImage(uiSpriteSheet);
+//        menuButtonRenderer.setSrcPosition(0, 0);
+//        menuButtonRenderer.setSrcSize(128, 128);
+//        menuButtonRenderer.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+//        menuButtonRenderer.setLayer(32);
+//        menuButtonRenderer.setPivot(0.5f, 0.5f);
+//
+//        Button menuButton = menuButtonGO.addComponent(Button.class);
+//        menuButton.setSize(levelSelectionButtonWidth, levelSelectionButtonHeight);
+//        menuButton.setOnClick(() -> {
+//            // Prevent user from clicking again
+//            menuButton.setInteractable(false);
+//
+//            // Play the sound
+//            buttonSound.play(1);
+//
+//            // Fade animation and load main menu
+//            animator.clear();
+//            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+//            animator.start();
+//        });
 
         //TODO cambiare nomi bridge
 
@@ -353,7 +353,7 @@ public class Level3 extends Level {
 
             saveProgress();
 
-            menuButton.setInteractable(false);
+//            menuButton.setInteractable(false);
 
             isPressedWin = true;
 
@@ -364,10 +364,7 @@ public class Level3 extends Level {
             lineRendererWinVertical.setColor(Color.GREY);
 
             animator.clear();
-            animator.add(ParallelAnimation.build(
-                    WaitAnimation.build(0.4f),
-                    MoveToAnimation.build(menuButtonGO, menuButtonGO.x - 20, menuButtonGO.y, 0.25f)
-            ), () -> movingPlatformSound.play(1));
+            animator.add(WaitAnimation.build(0.4f), () -> movingPlatformSound.play(1));
             animator.add(MoveToAnimation.build(bridgeCharacter, 3.8f, bridgeCharacter.y, 0.35f));
             animator.add(WaitAnimation.build(0.2f), () -> {
                 characterRenderer.setSrcPosition(128, 128);

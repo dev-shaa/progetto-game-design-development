@@ -13,7 +13,7 @@ import unina.game.myapplication.core.Camera;
  */
 public final class CircleCollider extends Collider {
 
-    private static final Pool<CircleCollider> pool = new Pool<>(CircleCollider::new, 16);
+    private static Pool<CircleCollider> pool;
 
     /**
      * Creates a CircleCollider with the given radius.
@@ -39,6 +39,9 @@ public final class CircleCollider extends Collider {
      * @return a new CircleCollider
      */
     public static CircleCollider build(float radius, float density, float restitution, float friction, boolean isSensor) {
+        if (pool == null)
+            pool = new Pool<>(CircleCollider::new, 16);
+
         CircleCollider collider = pool.get();
 
         collider.radius = radius;

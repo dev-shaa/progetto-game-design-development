@@ -11,17 +11,6 @@ public final class GameObject {
     private static final ArrayMap<Class<?>, PoolManual<Component>> componentPools = new ArrayMap<>();
 
     /**
-     * Creates a GameObject without components.
-     *
-     * @return an empty GameObject
-     */
-    static GameObject create(Scene scene) {
-        GameObject go = new GameObject();
-        go.scene = scene;
-        return go;
-    }
-
-    /**
      * The x coordinate of the GameObject, in world units.
      */
     public float x;

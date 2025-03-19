@@ -8,6 +8,7 @@ import com.badlogic.androidgames.framework.Graphics;
 import com.badlogic.androidgames.framework.Input;
 import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
+import com.badlogic.androidgames.framework.Pool;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.Sound;
 import com.google.fpl.liquidfun.World;
@@ -22,24 +23,25 @@ import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
-    public static final boolean DEBUG = true; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
+    public static final boolean DEBUG = false; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
 
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
-    private static final float GRAVITY_X = 0, GRAVITY_Y = -9.82f;
+    private static final float DEFAULT_GRAVITY_X = 0, DEFAULT_GRAVITY_Y = -9.82f;
+
+    private static final Pool<GameObject> gameObjectsPool = new Pool<>(GameObject::new, 64);
 
     private World world;
     private CollisionListener collisionListener;
     private Camera camera;
 
-    // TODO: check for possible better collection
     private final ArraySet<GameObject> gameObjects = new ArraySet<>(8);
     private final ArraySet<InputComponent> inputComponents = new ArraySet<>(4);
     private final ArraySet<PhysicsComponent> physicsComponents = new ArraySet<>(4);
     private final ArraySet<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
     private final ArraySet<AnimationComponent> animationComponents = new ArraySet<>(4);
-    private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8);
+    private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8); // Render components need to be ordered
 
-    private Scene sceneToBeLoaded;
+    private Scene sceneToBeLoaded = null;
     boolean layerDirty = false;
 
     private final BitSet gameObjectsOperations = new BitSet();
@@ -58,10 +60,11 @@ public abstract class Scene extends Screen {
     public void initialize() {
         collisionListener = new CollisionListener();
 
-        world = new World(GRAVITY_X, GRAVITY_Y);
+        world = new World(DEFAULT_GRAVITY_X, DEFAULT_GRAVITY_Y);
         world.setContactListener(collisionListener);
 
-        GameObject cameraGO = GameObject.create(this);
+        // Camera needs to be initialized before anything else
+        GameObject cameraGO = gameObjectsPool.get();
         camera = cameraGO.addComponent(Camera.class);
         camera.setGraphics(game.getGraphics());
         camera.setSize(10);
@@ -241,12 +244,7 @@ public abstract class Scene extends Screen {
      * @return the created GameObject
      */
     public final GameObject createGameObject() {
-        GameObject gameObject = GameObject.create(this);
-
-        gameObjectsOperations.set(gameObjectsToOperate.size());
-        gameObjectsToOperate.add(gameObject);
-
-        return gameObject;
+        return createGameObject(0, 0, 0);
     }
 
     /**
@@ -257,12 +255,7 @@ public abstract class Scene extends Screen {
      * @return the created GameObject placed at the given position
      */
     public final GameObject createGameObject(float x, float y) {
-        GameObject gameObject = createGameObject();
-
-        gameObject.x = x;
-        gameObject.y = y;
-
-        return gameObject;
+        return createGameObject(x, y, 0);
     }
 
     /**
@@ -274,11 +267,13 @@ public abstract class Scene extends Screen {
      * @return the created GameObject placed at the given position and rotation
      */
     public final GameObject createGameObject(float x, float y, float angle) {
-        GameObject gameObject = createGameObject();
+        GameObject gameObject = gameObjectsPool.get();
 
-        gameObject.x = x;
-        gameObject.y = y;
-        gameObject.angle = angle;
+        gameObject.scene = this;
+        gameObject.setTransform(x, y, angle);
+
+        gameObjectsOperations.set(gameObjectsToOperate.size());
+        gameObjectsToOperate.add(gameObject);
 
         return gameObject;
     }
@@ -305,6 +300,16 @@ public abstract class Scene extends Screen {
      */
     public final void setClearColor(int clearColor) {
         this.clearColor = clearColor;
+    }
+
+    /**
+     * Sets the gravity of the physics world.
+     *
+     * @param gravityX x component of the gravity
+     * @param gravityY y component of the gravity
+     */
+    public final void setGravity(float gravityX, float gravityY) {
+        world.setGravity(gravityX, gravityY);
     }
 
     /**

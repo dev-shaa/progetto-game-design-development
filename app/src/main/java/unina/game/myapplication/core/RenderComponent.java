@@ -42,7 +42,7 @@ public abstract class RenderComponent extends Component {
      */
     public final void setLayer(int layer) {
         this.layer = layer;
-        getOwner().scene.layerDirty = true;
+        getOwner().scene.layerDirty = true; // Not the cleanest thing to do but this is part of the core package so it's fine
     }
 
 }

@@ -1,9 +1,8 @@
-package unina.game.myapplication.logic.common;
+package unina.game.myapplication.logic.common.renderers;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;
 
-import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.RenderComponent;
 
 public class DraggablePlatformLineRenderer extends RenderComponent {

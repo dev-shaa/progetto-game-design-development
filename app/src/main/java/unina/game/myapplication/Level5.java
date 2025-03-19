@@ -2,25 +2,22 @@ package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
-import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.ParticleSystem;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.physics.TriangleCollider;
 import unina.game.myapplication.core.rendering.ParticleSystemRenderer;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.PlatformDraggingComponent;
-import unina.game.myapplication.logic.PlatformRenderComponent;
-import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
-import unina.game.myapplication.logic.common.Level;
-import unina.game.myapplication.logic.common.RectRenderer;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.logic.common.inputs.PlatformDraggingComponent;
+import unina.game.myapplication.logic.common.renderers.DraggablePlatformLineRenderer;
+import unina.game.myapplication.logic.scenes.Level;
+import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class Level5 extends Level {
 
@@ -64,7 +61,7 @@ public class Level5 extends Level {
         GameObject floorCharacter = createGameObject(3.5f, -20);
 
         if (DEBUG) {
-            PlatformRenderComponent floorCharacterRenderComponent = floorCharacter.addComponent(PlatformRenderComponent.class);
+            RectRenderer floorCharacterRenderComponent = floorCharacter.addComponent(RectRenderer.class);
             floorCharacterRenderComponent.setSize(floorW, floorH);
             floorCharacterRenderComponent.color = PALETTE_PRIMARY;
             floorCharacterRenderComponent.setLayer(20);
@@ -80,7 +77,7 @@ public class Level5 extends Level {
         GameObject wallCharacterLeft = createGameObject(-11, -13.5f, 90);
 
         if (DEBUG) {
-            PlatformRenderComponent wallCharacterLeftRenderComponent = wallCharacterLeft.addComponent(PlatformRenderComponent.class);
+            RectRenderer wallCharacterLeftRenderComponent = wallCharacterLeft.addComponent(RectRenderer.class);
             wallCharacterLeftRenderComponent.setSize(wallLeftW, wallH);
             wallCharacterLeftRenderComponent.color = PALETTE_PRIMARY;
             wallCharacterLeftRenderComponent.setLayer(20);
@@ -95,7 +92,7 @@ public class Level5 extends Level {
         GameObject wallCharacterRight = createGameObject(-5, -10.5f, 90);
 
         if (DEBUG) {
-            PlatformRenderComponent wallCharacterRightRenderComponent = wallCharacterRight.addComponent(PlatformRenderComponent.class);
+            RectRenderer wallCharacterRightRenderComponent = wallCharacterRight.addComponent(RectRenderer.class);
             wallCharacterRightRenderComponent.setSize(wallRightW, wallH);
             wallCharacterRightRenderComponent.color = PALETTE_PRIMARY;
             wallCharacterRightRenderComponent.setLayer(20);
@@ -149,7 +146,7 @@ public class Level5 extends Level {
         float poolFloorW = 11;
         GameObject floorPool = createGameObject(5, 0);
 
-        PlatformRenderComponent floorPoolRenderComponent = floorPool.addComponent(PlatformRenderComponent.class);
+        RectRenderer floorPoolRenderComponent = floorPool.addComponent(RectRenderer.class);
         floorPoolRenderComponent.setSize(poolFloorW, floorH);
         floorPoolRenderComponent.color = PALETTE_PRIMARY;
         floorPoolRenderComponent.setLayer(20);
@@ -162,7 +159,7 @@ public class Level5 extends Level {
         float poolWallW = 11;
         GameObject wallRightPool = createGameObject(10, 5, 90);
 
-        PlatformRenderComponent wallRightPoolRenderComponent = wallRightPool.addComponent(PlatformRenderComponent.class);
+        RectRenderer wallRightPoolRenderComponent = wallRightPool.addComponent(RectRenderer.class);
         wallRightPoolRenderComponent.setSize(poolWallW, wallH);
         wallRightPoolRenderComponent.color = PALETTE_PRIMARY;
         wallRightPoolRenderComponent.setLayer(20);
@@ -174,7 +171,7 @@ public class Level5 extends Level {
         //Muro Vasca destra
         GameObject wallLeftPool = createGameObject(0, 5, 90);
 
-        PlatformRenderComponent wallLeftPoolRenderComponent = wallLeftPool.addComponent(PlatformRenderComponent.class);
+        RectRenderer wallLeftPoolRenderComponent = wallLeftPool.addComponent(RectRenderer.class);
         wallLeftPoolRenderComponent.setSize(poolWallW, wallH);
         wallLeftPoolRenderComponent.color = PALETTE_PRIMARY;
         wallLeftPoolRenderComponent.setLayer(20);
@@ -188,6 +185,8 @@ public class Level5 extends Level {
 
         ParticleSystem waterParticleSystem = water.addComponent(ParticleSystem.class);
         waterParticleSystem.setRadius(0.5f);
+        waterParticleSystem.addParticlesGroup(5, 2, 4, 2, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
+        waterParticleSystem.addParticlesGroup(-4, 30, 8, 20, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
 //        waterParticleSystem.setSize(4, 2);
 //        waterParticleSystem.setGroupFlags(ParticleSystem.FLAG_GROUP_SOLID);
 //        waterParticleSystem.setFlags(ParticleSystem.FLAG_PARTICLE_WATER);
@@ -201,7 +200,7 @@ public class Level5 extends Level {
 
         RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
         trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
-        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3, -1, 3, -1, -3, 2, 1f, 0, 1, false));
+        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3, -1, 3, -1, -3, 2, 0.5f, 0, 1, false));
 
         //Piattaforma scorrevole acqua destra
         float draggingSizeW = 14;

@@ -1,9 +1,11 @@
-package unina.game.myapplication.core.animations;
+package unina.game.myapplication.logic.common.animations;
 
 import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Utility;
+import unina.game.myapplication.core.animations.Animation;
+import unina.game.myapplication.core.animations.EaseFunction;
 
 /**
  * An animation which moves a GameObject from its current position to a target position.

@@ -159,6 +159,11 @@ public abstract class Scene extends Screen {
                 for (Component component : gameObject.getComponents())
                     component.onDrawGizmos(graphics);
             }
+
+            for (int i = -500; i < 500; i++) {
+                graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.MAGENTA : Color.GREY);
+                graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.MAGENTA : Color.GREY);
+            }
         }
     }
 
@@ -391,7 +396,6 @@ public abstract class Scene extends Screen {
                 inputComponents.add((InputComponent) component);
                 break;
             case RENDER:
-                ((RenderComponent) component).scene = this;
                 renderComponents.add((RenderComponent) component);
                 layerDirty = true;
                 break;

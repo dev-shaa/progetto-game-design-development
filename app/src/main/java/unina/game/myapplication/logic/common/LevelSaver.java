@@ -6,9 +6,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import unina.game.myapplication.Level1;
-import unina.game.myapplication.Level2;
-import unina.game.myapplication.Level4;
+import unina.game.myapplication.logic.scenes.Level1;
+import unina.game.myapplication.logic.scenes.Level2;
+import unina.game.myapplication.logic.scenes.Level4;
 import unina.game.myapplication.Level5;
 import unina.game.myapplication.core.Scene;
 

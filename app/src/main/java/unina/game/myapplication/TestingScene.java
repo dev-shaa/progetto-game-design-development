@@ -1,11 +1,7 @@
 package unina.game.myapplication;
 
 import com.badlogic.androidgames.framework.Color;
-import com.badlogic.androidgames.framework.Font;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Graphics;
-import com.badlogic.androidgames.framework.Localization;
-import com.badlogic.androidgames.framework.Pixmap;
 
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
@@ -13,23 +9,20 @@ import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.Utility;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
-import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.logic.common.animations.MoveRigidBodyTo;
+import unina.game.myapplication.core.animations.ParallelAnimation;
+import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.CursorJoint;
 import unina.game.myapplication.core.physics.ParticleSystem;
 import unina.game.myapplication.core.physics.PrismaticJoint;
-import unina.game.myapplication.core.physics.RevoluteJoint;
 import unina.game.myapplication.core.physics.RigidBody;
-import unina.game.myapplication.core.physics.TriangleCollider;
 import unina.game.myapplication.core.rendering.ParticleSystemRenderer;
-import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.core.rendering.TextRenderer;
-import unina.game.myapplication.logic.CursorJointInput;
-import unina.game.myapplication.logic.common.CircleRenderer;
-import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
-import unina.game.myapplication.logic.common.RectRenderer;
+import unina.game.myapplication.logic.common.inputs.CursorJointInput;
+import unina.game.myapplication.core.rendering.CircleRenderer;
+import unina.game.myapplication.logic.common.renderers.DraggablePlatformLineRenderer;
+import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class TestingScene extends Scene {
 
@@ -41,121 +34,67 @@ public class TestingScene extends Scene {
     public void initialize() {
         super.initialize();
 
-        Localization localization = game.getLocalization();
-        Font playButtonFont = game.getGraphics().newFont("fonts/RG2014D.ttf");
+        Camera.getInstance().setSize(20);
 
-//        TextRenderer playButtonRenderer = createGameObject(0, 0).addComponent(TextRenderer.class);
-//        playButtonRenderer.setHorizontalAlign(Graphics.Align.CENTER);
-//        playButtonRenderer.setVerticalAlign(Graphics.Align.CENTER);
-//        playButtonRenderer.setColor(0xffECECE7);
-//        playButtonRenderer.setSize(24);
-//        playButtonRenderer.setFont(playButtonFont);
-//        playButtonRenderer.setText(localization.getString(R.string.menu_button_play));
-//        RectRenderer renderer = createGameObject(0, 0).addComponent(RectRenderer.class);
-//        renderer.setSize(1, 1);
-//        renderer.setColor(Color.RED);
+        createWall(0, -10, 0, 40, 1);
+        createWall(-10, 0, 0, 1, 100);
+        createWall(10, 0, 0, 1, 100);
+
+//        createWall(-5, -3, -30, 11, 1);
+//        createWall(-1, -8, 0, 1, 4);
+//        createWall(-5, 12, 0, 0.4f, 30);
+
+        createWall(-3, -9, 0, 0.5f, 2);
+        createWall(3, -9, 0, 0.5f, 2);
+        createWall(0, -8, 0, 6, 0.5f);
+        createWall(0, -6, 0, 6, 0.5f);
+//        createWall(3, 9, 0, 0.4f, 30f);
+
+//        createWall(0, 22, 0, 40, 0.5f);
+
+        GameObject go2 = createGameObject(3, 7);
 //
+        RigidBody rigidBody2 = go2.addComponent(RigidBody.class);
+        rigidBody2.setType(RigidBody.Type.KINEMATIC);
+        rigidBody2.addCollider(BoxCollider.build(0.4f, 30f, 1, 0, 0, false));
+
+        ParticleSystem particleSystem = createParticles(0.25f, Color.BLUE);
+        particleSystem.addParticlesGroup(-6, -3, 5, 6, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
+        particleSystem.addParticlesGroup(6, 6, 5, 25, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
+
+        GameObject go = createGameObject(-3, 7);
 //
-//        RectRenderer bar = createGameObject(5, 2).addComponent(RectRenderer.class);
-//        bar.setSize(1, 1);
-//        bar.setColor(Color.BLUE);
-
-//        TextRenderer foo = createGameObject(10, 0).addComponent(TextRenderer.class);
-//        foo.setHorizontalAlign(Graphics.Align.CENTER);
-//        foo.setVerticalAlign(Graphics.Align.CENTER);
-//        foo.setColor(0xffECECE7);
-//        foo.setSize(24);
-//        foo.setFont(playButtonFont);
-//        foo.setText(localization.getString(R.string.menu_button_play));
-
-//        AnimationSequence sequence = createGameObject().addComponent(AnimationSequence.class);
-//        sequence.add(WaitAnimation.build(3));
-//        sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 10, 2, 1, EaseFunction.CUBIC_IN_OUT));
-//        sequence.add(MoveToAnimation.build(Camera.getInstance().getOwner(), 0, 0, 1, EaseFunction.CUBIC_IN_OUT));
-//        sequence.start();
-
-//        Camera.getInstance().setSize(20);
-//
-//        for (int i = 0; i < 10; i++) {
-//            createGameObject(i - 5, 0).addComponent(TestSquare.class);
-//        }
-
-//        Pixmap pixmap = getImage("graphics/elements-light.png");
-
-//        GameObject go = createGameObject(0, 0, 30);
-//
-//        SpriteRenderer renderer = go.addComponent(SpriteRenderer.class);
-//        renderer.setImage(pixmap);
-//        renderer.setSrcPosition(0, 0);
-//        renderer.setSrcSize(128, 128);
-//        renderer.setSize(2, 2);
-//        renderer.setPivot(0.5f, 0.5f);
-//
-//        RigidBody rigidBody = go.addComponent(RigidBody.class);
-//        rigidBody.addCollider(BoxCollider.build(2, 2));
-
-
-//        ParticleSystem foo = createGameObject(0, 0).addComponent(ParticleSystem.class);
-//        foo.setRadius(0.1f);
-//        foo.setSize(8, 1);
-//        foo.setGroupFlags(ParticleSystem.FLAG_GROUP_SOLID);
-//        foo.setFlags(ParticleSystem.FLAG_PARTICLE_WATER);
-
-//        GameObject anchor = createGameObject(0, 0);
-//        RigidBody anchorRigidBody = anchor.addComponent(RigidBody.class);
-//        anchorRigidBody.setType(RigidBody.Type.STATIC);
-//
-//        GameObject platform = createGameObject(0, 0, 0);
-//
-//        RectRenderer renderer = platform.addComponent(RectRenderer.class);
-//        renderer.setSize(8, 0.25f);
-//
-//        BoxCollider b = BoxCollider.build(0.25f, 0.25f, 0.1f, 0, 0, false);
-//        b.setCenter(-4f, 0.25f);
-//
-//        RigidBody rigidBody = platform.addComponent(RigidBody.class);
-//        rigidBody.setType(RigidBody.Type.DYNAMIC);
-//        rigidBody.addCollider(BoxCollider.build(8, 0.25f));
-//        rigidBody.addJoint(RevoluteJoint.build(anchorRigidBody));
-//
-
-        ParticleSystem system = createParticles(0.25f, Color.BLUE);
-        system.addParticlesGroup(-2, 5, 3, 15, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
-        system.addParticlesGroup(2, 0, 2, 2, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
-//        createParticles(-2, -2, 3, 3, 0.25f, Color.BLUE);
-//        createParticles(3, -2, 3, 5, 0.25f, Color.RED);
-
-        RigidBody anchor = createGameObject(0, -6).addComponent(RigidBody.class);
-        anchor.setType(RigidBody.Type.STATIC);
-
-        GameObject go = createGameObject(0, -6);
-
-        PrismaticJoint joint = PrismaticJoint.build(anchor, 0, -1);
-        joint.setEnableLimit(true);
-        joint.setLowerLimit(10);
-        joint.setUpperLimit(20);
-
-        CursorJoint cursorJoint = CursorJoint.build();
-
         RigidBody rigidBody = go.addComponent(RigidBody.class);
-        rigidBody.setType(RigidBody.Type.DYNAMIC);
-        rigidBody.addCollider(BoxCollider.build(0.5f, 15));
-        rigidBody.addJoint(joint);
-        rigidBody.addJoint(cursorJoint);
+        rigidBody.setType(RigidBody.Type.KINEMATIC);
+        rigidBody.addCollider(BoxCollider.build(0.4f, 30f, 1, 0, 0, false));
 
-        CursorJointInput cursorJointInput = go.addComponent(CursorJointInput.class);
-        cursorJointInput.setJoint(cursorJoint);
-        cursorJointInput.setMaxForce(10000);
-        cursorJointInput.setSnap(false);
-        cursorJointInput.setSize(1, 15);
+        RectRenderer renderer = go.addComponent(RectRenderer.class);
+        renderer.setSize(0.4f, 30f);
+        renderer.setColor(Color.WHITE);
 
-        createWall(-5f, 0, 0, 0.5f, 40);
-        createWall(5f, 0, 0, 0.5f, 40);
-        createWall(0, -5f, 0, 10, 0.5f);
-//        createWall(0, 0, 0, 1, 40);
+        RigidBody f = createGameObject(6f, 90, 0).addComponent(RigidBody.class);
+        f.setType(RigidBody.Type.DYNAMIC);
+        f.addCollider(BoxCollider.build(5.5f, 5, 100f, 0, 1, false));
 
-        createBox(3, 5, 1, 1, 1f);
-//        createBall(1f, 5, 1f, 1f);
+//
+//        GameObject ballGO = createGameObject(-5, -10);
+//
+//        CircleRenderer ballRenderer = ballGO.addComponent(CircleRenderer.class);
+//        ballRenderer.setRadius(1);
+//
+//        RigidBody ballRigidBody = ballGO.addComponent(RigidBody.class);
+//        ballRigidBody.setType(RigidBody.Type.DYNAMIC);
+//        ballRigidBody.setLinearDamping(0.2f);
+//        ballRigidBody.addCollider(CircleCollider.build(0.5f, 1, 0, 0, false));
+//        ballRigidBody.addJoint(RopeJoint.build(rigidBody, 5));
+//
+        AnimationSequence sequence = createGameObject().addComponent(AnimationSequence.class);
+        sequence.add(WaitAnimation.build(1));
+        sequence.add(ParallelAnimation.build(
+                MoveRigidBodyTo.build(rigidBody, rigidBody.getPositionX(), 9, 1f, EaseFunction.LINEAR),
+                MoveRigidBodyTo.build(rigidBody2, rigidBody2.getPositionX(), 9, 1f, EaseFunction.LINEAR)
+        ));
+        sequence.start();
     }
 
     @Override
@@ -187,7 +126,7 @@ public class TestingScene extends Scene {
         rigidBody.addCollider(BoxCollider.build(width, height, density, 0.2f, 1, false));
     }
 
-    private void createBall(float x, float y, float radius, float density) {
+    private RigidBody createBall(float x, float y, float radius, float density) {
         GameObject platform = createGameObject(x, y);
 
         CircleRenderer renderer = platform.addComponent(CircleRenderer.class);
@@ -196,6 +135,8 @@ public class TestingScene extends Scene {
         RigidBody rigidBody = platform.addComponent(RigidBody.class);
         rigidBody.setType(RigidBody.Type.DYNAMIC);
         rigidBody.addCollider(CircleCollider.build(radius, density, 0.2f, 0, false));
+
+        return rigidBody;
     }
 
     private void createWall(float x, float y, float angle, float width, float height) {

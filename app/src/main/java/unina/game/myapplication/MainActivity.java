@@ -5,7 +5,7 @@ import android.os.Bundle;
 import com.badlogic.androidgames.framework.Screen;
 import com.badlogic.androidgames.framework.impl.AndroidGame;
 
-import unina.game.myapplication.logic.menu.MainMenu;
+import unina.game.myapplication.logic.scenes.Level1;
 
 public class MainActivity extends AndroidGame {
 

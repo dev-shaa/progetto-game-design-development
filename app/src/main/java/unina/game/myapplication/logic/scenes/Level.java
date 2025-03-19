@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic.common;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Game;
 import com.badlogic.androidgames.framework.Music;
@@ -11,8 +11,9 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.menu.MainMenu;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.logic.common.LevelSaver;
+import unina.game.myapplication.logic.common.inputs.Button;
 
 /**
  * Base class for levels.

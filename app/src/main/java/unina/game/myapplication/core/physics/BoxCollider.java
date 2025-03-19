@@ -9,7 +9,7 @@ import com.google.fpl.liquidfun.Shape;
 import unina.game.myapplication.core.Camera;
 
 /**
- * A collider shaped as a 2D box.
+ * A collider shaped as a box.
  */
 public final class BoxCollider extends Collider {
 

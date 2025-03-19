@@ -5,7 +5,6 @@ import com.badlogic.androidgames.framework.Graphics;
 public abstract class RenderComponent extends Component {
 
     private int layer;
-    Scene scene;
 
     @Override
     public final Type getType() {
@@ -15,7 +14,6 @@ public abstract class RenderComponent extends Component {
     @Override
     public void onRemove() {
         super.onRemove();
-        scene = null;
         layer = 0;
     }
 
@@ -44,9 +42,7 @@ public abstract class RenderComponent extends Component {
      */
     public final void setLayer(int layer) {
         this.layer = layer;
-
-        if (scene != null)
-            scene.layerDirty = true;
+        getOwner().scene.layerDirty = true;
     }
 
 }

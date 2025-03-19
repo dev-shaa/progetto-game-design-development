@@ -1,4 +1,4 @@
-package unina.game.myapplication;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
@@ -9,28 +9,26 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
-import unina.game.myapplication.core.animations.MoveRigidBodyTo;
-import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.logic.common.animations.MoveRigidBodyTo;
+import unina.game.myapplication.logic.common.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.CursorJoint;
 import unina.game.myapplication.core.physics.DistanceJoint;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.CursorJointInput;
-import unina.game.myapplication.logic.LineRenderer;
-import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.common.Button;
-import unina.game.myapplication.logic.common.CircleRenderer;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.logic.common.inputs.CursorJointInput;
+import unina.game.myapplication.logic.common.renderers.LineRenderer;
+import unina.game.myapplication.logic.common.PressurePlate;
+import unina.game.myapplication.logic.common.inputs.Button;
+import unina.game.myapplication.core.rendering.CircleRenderer;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
-import unina.game.myapplication.logic.common.DottedLineRenderer;
-import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.Level;
-import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.menu.MainMenu;
+import unina.game.myapplication.logic.common.animations.ColorAnimation;
+import unina.game.myapplication.logic.common.renderers.DottedLineRenderer;
+import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class Level4 extends Level {
 
@@ -71,7 +69,7 @@ public class Level4 extends Level {
 
         // Animator
         AnimationSequence animator = createGameObject().addComponent(AnimationSequence.class);
-        animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
+        animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
         // Character platform
@@ -150,14 +148,14 @@ public class Level4 extends Level {
         gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
         gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
 
-        PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
+        PressurePlate gameOverTrigger = gameOverTriggerGO.addComponent(PressurePlate.class);
         gameOverTrigger.setOnCollisionEnter(() -> {
             rockCrushSound.play(1);
             characterRenderer.setSize(6, 0.5f);
 
             animator.clear();
             animator.add(WaitAnimation.build(2));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level4.class));
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level4.class));
             animator.start();
         });
 
@@ -339,7 +337,7 @@ public class Level4 extends Level {
         wallSensorRigidBody.setType(RigidBody.Type.STATIC);
         wallSensorRigidBody.addCollider(BoxCollider.build(20, 2, true));
 
-        PhysicsButton wallSensor = wallSensorGO.addComponent(PhysicsButton.class);
+        PressurePlate wallSensor = wallSensorGO.addComponent(PressurePlate.class);
         wallSensor.setOnCollisionEnter(() -> {
             saveProgress();
             setUIButtonsInteractable(false);
@@ -352,7 +350,7 @@ public class Level4 extends Level {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 8, 1, 0.4f));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
             animator.start();
             removeGameObject(wallSensorGO);
         });

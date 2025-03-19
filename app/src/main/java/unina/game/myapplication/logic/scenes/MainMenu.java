@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic.menu;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Font;
@@ -17,12 +17,12 @@ import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.core.rendering.TextRenderer;
-import unina.game.myapplication.logic.common.Button;
-import unina.game.myapplication.logic.common.FadeAnimation;
+import unina.game.myapplication.logic.common.inputs.Button;
+import unina.game.myapplication.logic.common.animations.ColorAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
-import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.common.SoundFadeAnimation;
-import unina.game.myapplication.logic.common.SpriteRendererScaleAnimation;
+import unina.game.myapplication.core.rendering.RectRenderer;
+import unina.game.myapplication.logic.common.animations.SoundFadeAnimation;
+import unina.game.myapplication.logic.common.animations.SpriteRendererScaleAnimation;
 
 public class MainMenu extends Scene {
 
@@ -70,7 +70,7 @@ public class MainMenu extends Scene {
 
         AnimationSequence animator = createGameObject().addComponent(AnimationSequence.class);
         animator.add(ParallelAnimation.build(
-                FadeAnimation.build(fadeRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f),
+                ColorAnimation.build(fadeRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f),
                 SoundFadeAnimation.build(backgroundMusic, 0, 1, 0.5f)
         ));
         animator.start();
@@ -90,8 +90,8 @@ public class MainMenu extends Scene {
         playButton.setSize(8, 2);
         playButton.setOnClick(() -> {
             animator.clear();
-            animator.add(FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> Camera.getInstance().getOwner().setTransform(30, 0, 0));
-            animator.add(FadeAnimation.build(fadeRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f), () -> {
+            animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> Camera.getInstance().getOwner().setTransform(30, 0, 0));
+            animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f), () -> {
                 for (Button levelButton : levelButtons)
                     levelButton.setInteractable(true);
             });
@@ -165,7 +165,7 @@ public class MainMenu extends Scene {
 
                 animator.clear();
                 animator.add(ParallelAnimation.build(
-                                FadeAnimation.build(fadeRenderer, Color.TRANSPARENT, Color.BLACK, 1.5f),
+                                ColorAnimation.build(fadeRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 1.5f),
                                 SoundFadeAnimation.build(backgroundMusic, 1, 0, 1.5f)
                         ),
                         () -> loadScene(level));

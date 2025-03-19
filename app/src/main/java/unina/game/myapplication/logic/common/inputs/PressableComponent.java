@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic;
+package unina.game.myapplication.logic.common.inputs;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Graphics;

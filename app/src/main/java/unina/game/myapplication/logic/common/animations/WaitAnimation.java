@@ -1,6 +1,8 @@
-package unina.game.myapplication.core.animations;
+package unina.game.myapplication.logic.common.animations;
 
 import com.badlogic.androidgames.framework.Pool;
+
+import unina.game.myapplication.core.animations.Animation;
 
 public final class WaitAnimation extends Animation {
 

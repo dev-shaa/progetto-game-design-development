@@ -1,4 +1,4 @@
-package unina.game.myapplication.logic;
+package unina.game.myapplication.logic.common;
 
 public class Assets {
 

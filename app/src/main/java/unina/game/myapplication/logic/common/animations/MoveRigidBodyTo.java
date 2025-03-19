@@ -1,8 +1,10 @@
-package unina.game.myapplication.core.animations;
+package unina.game.myapplication.logic.common.animations;
 
 import com.badlogic.androidgames.framework.Pool;
 
 import unina.game.myapplication.core.Utility;
+import unina.game.myapplication.core.animations.Animation;
+import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.physics.RigidBody;
 
 public final class MoveRigidBodyTo extends Animation {

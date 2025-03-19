@@ -1,4 +1,4 @@
-package unina.game.myapplication;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
@@ -10,24 +10,22 @@ import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.LoopingAnimation;
-import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.logic.common.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.animations.Sequence;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.common.ColorAnimation;
-import unina.game.myapplication.logic.common.DraggablePlatformLineRenderer;
-import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformDraggingComponent;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.logic.common.animations.ColorAnimation;
+import unina.game.myapplication.logic.common.renderers.DraggablePlatformLineRenderer;
+import unina.game.myapplication.logic.common.PressurePlate;
+import unina.game.myapplication.logic.common.inputs.PlatformDraggingComponent;
 import unina.game.myapplication.logic.common.CollisionSoundPlayer;
-import unina.game.myapplication.logic.common.DottedLineRenderer;
-import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.Level;
-import unina.game.myapplication.logic.common.RectRenderer;
+import unina.game.myapplication.logic.common.renderers.DottedLineRenderer;
+import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class Level2 extends Level {
 
@@ -99,7 +97,7 @@ public class Level2 extends Level {
         // Animator
         GameObject animatorGO = createGameObject();
         AnimationSequence animator = animatorGO.addComponent(AnimationSequence.class);
-        animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
+        animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
         float floorW = 6;
@@ -260,7 +258,7 @@ public class Level2 extends Level {
         gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
         gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
 
-        PhysicsButton gameOverTrigger = gameOverTriggerGO.addComponent(PhysicsButton.class);
+        PressurePlate gameOverTrigger = gameOverTriggerGO.addComponent(PressurePlate.class);
         gameOverTrigger.setOnCollisionEnter(() -> {
             rockCrushSound.play(1);
             rightDraggablePlatform.setInteractable(false);
@@ -271,7 +269,7 @@ public class Level2 extends Level {
 
             animator.clear();
             animator.add(WaitAnimation.build(2));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level2.class));
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level2.class));
             animator.start();
         });
 
@@ -294,7 +292,7 @@ public class Level2 extends Level {
         pressurePlateRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlateRigidBody.addCollider(pressurePlateCollider);
 
-        PhysicsButton pressurePlate = pressurePlateGO.addComponent(PhysicsButton.class);
+        PressurePlate pressurePlate = pressurePlateGO.addComponent(PressurePlate.class);
 
         // Pressure plate platform
         float pressurePlatePlatformWidth = 6.5f;
@@ -342,7 +340,7 @@ public class Level2 extends Level {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 8f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
         });
     }

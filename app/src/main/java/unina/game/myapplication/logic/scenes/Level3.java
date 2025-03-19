@@ -1,8 +1,7 @@
-package unina.game.myapplication;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -10,25 +9,21 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
-import unina.game.myapplication.core.animations.MoveRigidBodyTo;
-import unina.game.myapplication.core.animations.MoveToAnimation;
-import unina.game.myapplication.core.animations.ParallelAnimation;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.logic.common.animations.MoveRigidBodyTo;
+import unina.game.myapplication.logic.common.animations.MoveToAnimation;
+import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.PhysicsButton;
-import unina.game.myapplication.logic.PlatformDraggingComponent;
-import unina.game.myapplication.logic.PlatformRenderComponent;
-import unina.game.myapplication.logic.common.Button;
-import unina.game.myapplication.logic.common.CircleRenderer;
-import unina.game.myapplication.logic.common.DottedLineRenderer;
-import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.Level;
-import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.menu.MainMenu;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.logic.common.PressurePlate;
+import unina.game.myapplication.logic.common.inputs.PlatformDraggingComponent;
+import unina.game.myapplication.logic.common.inputs.Button;
+import unina.game.myapplication.core.rendering.CircleRenderer;
+import unina.game.myapplication.logic.common.animations.ColorAnimation;
+import unina.game.myapplication.logic.common.renderers.DottedLineRenderer;
+import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class Level3 extends Level {
 
@@ -85,7 +80,7 @@ public class Level3 extends Level {
 
         // Animator
         animator = createGameObject().addComponent(AnimationSequence.class);
-        animator.add(FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.5f));
+        animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
         // Level selection button
@@ -113,7 +108,7 @@ public class Level3 extends Level {
 //
 //            // Fade animation and load main menu
 //            animator.clear();
-//            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+//            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
 //            animator.start();
 //        });
 
@@ -200,11 +195,9 @@ public class Level3 extends Level {
         draggablePlatformRigidBody.setType(RigidBody.Type.KINEMATIC);
         draggablePlatformRigidBody.addCollider(BoxCollider.build(dragPlatformWidth, dragPlatformHeight));
 
-        PlatformRenderComponent platformDraggedRenderComponent = draggablePlatform.addComponent(PlatformRenderComponent.class);
+        RectRenderer platformDraggedRenderComponent = draggablePlatform.addComponent(RectRenderer.class);
         platformDraggedRenderComponent.color = Color.DARKCYAN;
         platformDraggedRenderComponent.setSize(dragPlatformWidth, dragPlatformHeight);
-        platformDraggedRenderComponent.setStart(-4, 13);
-        platformDraggedRenderComponent.setEnd(5, 5);
 
         PlatformDraggingComponent platformDraggingComponent = draggablePlatform.addComponent(PlatformDraggingComponent.class);
         platformDraggingComponent.setSize(5, 5);
@@ -268,7 +261,7 @@ public class Level3 extends Level {
 
         GameObject pressurePlateLoseGO = createGameObject(1, 1);
 
-        PlatformRenderComponent pressurePlateLoseRenderer = pressurePlateLoseGO.addComponent(PlatformRenderComponent.class);
+        RectRenderer pressurePlateLoseRenderer = pressurePlateLoseGO.addComponent(RectRenderer.class);
         pressurePlateLoseRenderer.color = Color.RED;
         pressurePlateLoseRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
 
@@ -276,7 +269,7 @@ public class Level3 extends Level {
         pressurePlateLoseRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlateLoseRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
-        PhysicsButton pressurePlateLose = pressurePlateLoseGO.addComponent(PhysicsButton.class);
+        PressurePlate pressurePlateLose = pressurePlateLoseGO.addComponent(PressurePlate.class);
 
         //Linea orizzontale lose
         GameObject lineRenderLoseHorizzontalGO = createGameObject();
@@ -301,7 +294,7 @@ public class Level3 extends Level {
         // Win pressure plate
         GameObject pressurePlateWinGO = createGameObject(6, 1);
 
-        PlatformRenderComponent pressurePlateWinRenderer = pressurePlateWinGO.addComponent(PlatformRenderComponent.class);
+        RectRenderer pressurePlateWinRenderer = pressurePlateWinGO.addComponent(RectRenderer.class);
         pressurePlateWinRenderer.color = Color.BLUE;
         pressurePlateWinRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
 
@@ -309,7 +302,7 @@ public class Level3 extends Level {
         pressurePlateWinRigidBody.setType(RigidBody.Type.STATIC);
         pressurePlateWinRigidBody.addCollider(BoxCollider.build(pressurePlateWidth, pressurePlateHeight, true));
 
-        PhysicsButton pressurePlateWin = pressurePlateWinGO.addComponent(PhysicsButton.class);
+        PressurePlate pressurePlateWin = pressurePlateWinGO.addComponent(PressurePlate.class);
 
         //Linea verticale win
         GameObject lineRenderWinVerticalGO = createGameObject();
@@ -343,7 +336,7 @@ public class Level3 extends Level {
                 character.angle = 90;
             });
             animator.add(MoveToAnimation.build(character, character.x, -20, 0.25f));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::reloadLevel);
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::reloadLevel);
             animator.start();
         });
 
@@ -371,7 +364,7 @@ public class Level3 extends Level {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 6, character.y, 0.3f));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
         });
 
@@ -381,9 +374,9 @@ public class Level3 extends Level {
 
         GameObject platform3 = createGameObject(3.5f, 0.5f);
 
-        PlatformRenderComponent platformRenderComponent3 = platform3.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent3.color = PALETTE_PRIMARY;
-        platformRenderComponent3.setSize(plat3W, plat3H);
+        RectRenderer RectRenderer3 = platform3.addComponent(RectRenderer.class);
+        RectRenderer3.color = PALETTE_PRIMARY;
+        RectRenderer3.setSize(plat3W, plat3H);
 
         RigidBody rigidPlatform3 = platform3.addComponent(RigidBody.class);
         rigidPlatform3.setType(RigidBody.Type.STATIC);
@@ -394,9 +387,9 @@ public class Level3 extends Level {
         float plat4H = 4f;
         GameObject platform4 = createGameObject(3.5f, 2.5f);
 
-        PlatformRenderComponent platformRenderComponent4 = platform4.addComponent(PlatformRenderComponent.class);
-        platformRenderComponent4.color = PALETTE_PRIMARY;
-        platformRenderComponent4.setSize(plat4W, plat4H);
+        RectRenderer RectRenderer4 = platform4.addComponent(RectRenderer.class);
+        RectRenderer4.color = PALETTE_PRIMARY;
+        RectRenderer4.setSize(plat4W, plat4H);
 
         RigidBody rigidPlatform4 = platform4.addComponent(RigidBody.class);
         rigidPlatform4.setType(RigidBody.Type.STATIC);

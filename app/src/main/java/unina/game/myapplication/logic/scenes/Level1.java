@@ -1,8 +1,7 @@
-package unina.game.myapplication;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
-import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
@@ -10,20 +9,16 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
-import unina.game.myapplication.core.animations.MoveToAnimation;
+import unina.game.myapplication.logic.common.animations.MoveToAnimation;
 import unina.game.myapplication.core.animations.ParallelAnimation;
-import unina.game.myapplication.core.animations.WaitAnimation;
+import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
-import unina.game.myapplication.logic.Assets;
-import unina.game.myapplication.logic.common.CircleRenderer;
-import unina.game.myapplication.logic.common.ColorAnimation;
-import unina.game.myapplication.logic.common.Level;
-import unina.game.myapplication.logic.common.RectRenderer;
-import unina.game.myapplication.logic.common.DottedLineRenderer;
-import unina.game.myapplication.logic.common.FadeAnimation;
-import unina.game.myapplication.logic.common.Button;
-import unina.game.myapplication.logic.common.SoundFadeAnimation;
-import unina.game.myapplication.logic.menu.MainMenu;
+import unina.game.myapplication.logic.common.Assets;
+import unina.game.myapplication.core.rendering.CircleRenderer;
+import unina.game.myapplication.logic.common.animations.ColorAnimation;
+import unina.game.myapplication.core.rendering.RectRenderer;
+import unina.game.myapplication.logic.common.renderers.DottedLineRenderer;
+import unina.game.myapplication.logic.common.inputs.Button;
 
 public class Level1 extends Level {
 
@@ -142,7 +137,7 @@ public class Level1 extends Level {
                 winSound.play(1);
             });
             animator.add(MoveToAnimation.build(character, 4f, character.y, 1f, EaseFunction.CUBIC_IN_OUT));
-            animator.add(FadeAnimation.build(fullScreenRenderer, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
             animator.start();
 
             saveProgress();
@@ -151,7 +146,7 @@ public class Level1 extends Level {
         GameObject animatorGO = createGameObject();
         animator = animatorGO.addComponent(AnimationSequence.class);
         animator.add(ParallelAnimation.build(
-                        FadeAnimation.build(fullScreenRenderer, Color.BLACK, Color.TRANSPARENT, 0.4f),
+                        ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.4f),
                         MoveToAnimation.build(character, -2.5f, character.y, 0.25f, EaseFunction.CUBIC_IN_OUT)
                 ),
                 () -> characterRenderer.setSrcPosition(0, 128));

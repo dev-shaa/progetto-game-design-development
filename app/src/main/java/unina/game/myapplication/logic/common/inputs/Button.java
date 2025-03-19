@@ -1,6 +1,4 @@
-package unina.game.myapplication.logic.common;
-
-import unina.game.myapplication.logic.PressableComponent;
+package unina.game.myapplication.logic.common.inputs;
 
 public class Button extends PressableComponent {
 

@@ -2,7 +2,7 @@ package unina.game.myapplication.core;
 
 import com.google.fpl.liquidfun.World;
 
-public class PhysicsComponent extends Component {
+public abstract class PhysicsComponent extends Component {
 
     protected World world;
 

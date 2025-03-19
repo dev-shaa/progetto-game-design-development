@@ -1,9 +1,9 @@
-package unina.game.myapplication.logic;
+package unina.game.myapplication.logic.common;
 
 import unina.game.myapplication.core.BehaviourComponent;
 import unina.game.myapplication.core.physics.RigidBody;
 
-public final class PhysicsButton extends BehaviourComponent {
+public final class PressurePlate extends BehaviourComponent {
 
     private int counter;
     public Runnable onCollisionEnter;

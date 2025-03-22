@@ -35,8 +35,6 @@ public class MainMenu extends Scene {
 
     private Music backgroundMusic;
 
-    private Button musicButton, clearSaveButton;
-
     private LevelSaver levelSaver;
 
     public MainMenu(Game game) {
@@ -200,7 +198,7 @@ public class MainMenu extends Scene {
         musicButtonRenderer.setSize(size, size);
         musicButtonRenderer.setLayer(128);
 
-        musicButton = musicButtonGO.addComponent(Button.class);
+        Button musicButton = musicButtonGO.addComponent(Button.class);
         musicButton.setSize(size, size);
         musicButton.setOnClick(() -> {
             uiButtonSound.play(1);
@@ -222,7 +220,7 @@ public class MainMenu extends Scene {
         clearSaveButtonSpriteRender.setSize(size,size);
         clearSaveButtonSpriteRender.setLayer(128);
 
-        clearSaveButton = clearSaveButtonGO.addComponent(Button.class);
+        Button clearSaveButton = clearSaveButtonGO.addComponent(Button.class);
         clearSaveButton.setSize(size,size);
         clearSaveButton.setOnClick(() -> {
             uiButtonSound.play(1);

@@ -175,11 +175,7 @@ public class MainMenu extends Scene {
                 selectSound.play(1);
 
                 animator.clear();
-                animator.add(ParallelAnimation.build(
-                                ColorAnimation.build(fadeRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 1.5f),
-                                SoundFadeAnimation.build(backgroundMusic, 1, 0, 1.5f)
-                        ),
-                        () -> loadScene(level));
+                animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 1.5f), () -> loadScene(level));
                 animator.start();
             });
 

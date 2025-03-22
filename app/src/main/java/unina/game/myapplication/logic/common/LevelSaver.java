@@ -42,7 +42,9 @@ public final class LevelSaver {
         this.fileIO = fileIO;
 
         try (DataInputStream stream = new DataInputStream(fileIO.readFile("save.txt"))) {
-            latestCompletedLevel = stream.readInt();
+            //latestCompletedLevel = stream.readInt();
+            //TODO cambia
+            latestCompletedLevel = 4;
         } catch (IOException e) {
             latestCompletedLevel = -1;
         }

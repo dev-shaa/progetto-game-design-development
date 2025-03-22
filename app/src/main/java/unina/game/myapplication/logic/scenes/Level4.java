@@ -251,10 +251,21 @@ public class Level4 extends Level {
         lineButtonDown.setCount(10);
         lineButtonDown.setLayer(-4);
 
+        //Linea Button Platform
+        GameObject lineButtonRockGO = createGameObject();
+        DottedLineRenderer lineButtonRock = lineButtonRockGO.addComponent(DottedLineRenderer.class);
+        lineButtonRock.setColor(PALETTE_PRIMARY);
+        lineButtonRock.setPointA(buttonBall.x, buttonBall.y + 2.5f);
+        lineButtonRock.setPointB(buttonBall.x, bridgeRockUp.y - 2.5f);
+        lineButtonRock.setRadius(0.25f);
+        lineButtonRock.setCount(20);
+        lineButtonRock.setLayer(-4);
+
         buttonBallInputComponent.setOnClick(() -> {
             buttonSound.play(1);
             buttonBallCircleRender.setColor(Color.GREY);
             lineButtonDown.setColor(0xff009fff);
+            lineButtonRock.setColor(0xff009fff);
             buttonBridgeDownInputComponent.setInteractable(false);
 
             animator.clear();
@@ -282,10 +293,9 @@ public class Level4 extends Level {
 //        bridgeCharacterRenderComponent.setLayer(3);
 
         //Pulsante ponte personaggio
-        //TODO continuare
         CircleRenderer buttonBridgeCharacterCircleRender = createGameObject(10, -10).addComponent(CircleRenderer.class);
         buttonBridgeCharacterCircleRender.setColor(PALETTE_PRIMARY);
-        buttonBridgeCharacterCircleRender.setRadius(0.85f);
+        buttonBridgeCharacterCircleRender.setRadius(1.25f);
 
         GameObject buttonBridgeCharacter = createGameObject(10, -10);
 
@@ -293,16 +303,28 @@ public class Level4 extends Level {
         buttonBridgeCharacterRenderComponent.setImage(elementsImage);
         buttonBridgeCharacterRenderComponent.setSrcPosition(0, 0);
         buttonBridgeCharacterRenderComponent.setSrcSize(128, 128);
-        buttonBridgeCharacterRenderComponent.setSize(3, 3);
+        buttonBridgeCharacterRenderComponent.setSize(4, 4);
         buttonBridgeCharacterRenderComponent.setLayer(0);
 
         Button buttonBridgeCharacterInputComponent = buttonBridgeCharacter.addComponent(Button.class);
-        buttonBridgeCharacterInputComponent.setSize(3, 3);
+        buttonBridgeCharacterInputComponent.setSize(4, 4);
+
+        //Linea pulsante ponte character
+        //TODO continua
+        GameObject lineButtonCharacterGO = createGameObject();
+        DottedLineRenderer lineButtonCharacter = lineButtonCharacterGO.addComponent(DottedLineRenderer.class);
+        lineButtonCharacter.setColor(PALETTE_PRIMARY);
+        lineButtonCharacter.setPointA(buttonBridgeCharacter.x - 2.5f, buttonBridgeCharacter.y);
+        lineButtonCharacter.setPointB(buttonBridgeCharacter.x - 2.5f, bridgeCharacter.y - 2.5f);
+        lineButtonCharacter.setRadius(0.25f);
+        lineButtonCharacter.setCount(9);
+        lineButtonCharacter.setLayer(-4);
 
         buttonBridgeCharacterInputComponent.setOnClick(() -> {
             if (isWallDown) {
                 saveProgress();
                 setUIButtonsInteractable(false);
+                lineButtonCharacter.setColor(0xff009fff);
 
                 animator.clear();
                 animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
@@ -369,12 +391,18 @@ public class Level4 extends Level {
 
         // Wall
         float fooW = 3;
-        foo(1.5f, -25.5f + 2.5f, fooW, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f, fooW, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5, fooW, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, fooW, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, fooW, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, fooW, 5);
+        float fooH = 5;
+        foo(1.5f, -25.5f + 2.5f, fooW, fooH);
+        fooW *= 0.9f;
+        foo(1.5f, -25.5f + 2.5f + 5f, fooW, fooH);
+        fooW *= 0.9f;
+        foo(1.5f, -25.5f + 2.5f + 5f + 5, fooW, fooH);
+        fooW *= 0.9f;
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, fooW, fooH);
+        fooW *= 0.9f;
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, fooW, fooH);
+        fooW *= 0.9f;
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, fooW, fooH);
 //        GameObject dynamicWall = createGameObject(0, -9);
 //
 //        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);

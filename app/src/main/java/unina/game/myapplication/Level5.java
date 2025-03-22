@@ -8,6 +8,7 @@ import com.badlogic.androidgames.framework.Sound;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.physics.BoxCollider;
+import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.ParticleSystem;
 import unina.game.myapplication.core.physics.RigidBody;
 import unina.game.myapplication.core.physics.TriangleCollider;
@@ -195,12 +196,18 @@ public class Level5 extends Level {
         waterParticlesRenderer.setParticleSystem(waterParticleSystem);
         waterParticlesRenderer.setColor(Color.BLUE);
 
-        //Piattaforma Triangolo
-        GameObject trianglePlatform = createGameObject(5, 10);
+        //Sfera
+        GameObject sfera = createGameObject(5,10);
+        RigidBody sferaRigidBody = sfera.addComponent(RigidBody.class);
+        sferaRigidBody.setType(RigidBody.Type.DYNAMIC);
+        sferaRigidBody.addCollider(CircleCollider.build(1,0.15f,0,0,false));
 
-        RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
-        trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
-        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3, -1, 3, -1, -3, 2, 0.5f, 0, 1, false));
+        //Piattaforma Triangolo
+//        GameObject trianglePlatform = createGameObject(5, 10);
+//
+//        RigidBody trianglePlatformRigidBody = trianglePlatform.addComponent(RigidBody.class);
+//        trianglePlatformRigidBody.setType(RigidBody.Type.DYNAMIC);
+//        trianglePlatformRigidBody.addCollider(TriangleCollider.build(-3, -1, 3, -1, -3, 2, 0.5f, 0, 1, false));
 
         //Piattaforma scorrevole acqua destra
         float draggingSizeW = 14;

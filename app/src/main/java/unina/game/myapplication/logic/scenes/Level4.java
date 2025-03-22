@@ -73,16 +73,16 @@ public class Level4 extends Level {
         animator.start();
 
         // Character platform
-        float platformW = 8;
         float platformH = 2;
 
         RigidBody platformCharacterRigidBody = createGameObject(-8, 0).addComponent(RigidBody.class);
         platformCharacterRigidBody.setType(RigidBody.Type.STATIC);
-        platformCharacterRigidBody.addCollider(BoxCollider.build(platformW, platformH));
+        platformCharacterRigidBody.addCollider(BoxCollider.build(10, platformH));
 
-        RigidBody platformExitRigidBody = createGameObject(8, 0).addComponent(RigidBody.class);
+        //Exit platform
+        RigidBody platformExitRigidBody = createGameObject(12, 0).addComponent(RigidBody.class);
         platformExitRigidBody.setType(RigidBody.Type.STATIC);
-        platformExitRigidBody.addCollider(BoxCollider.build(platformW, platformH));
+        platformExitRigidBody.addCollider(BoxCollider.build(4, platformH));
 
         //Ponte Masso up
         GameObject bridgeRockUp = createGameObject(-8, 13);
@@ -209,7 +209,7 @@ public class Level4 extends Level {
         //Ponte palla demolitrice WreckingBall
         float bridgeBallW = 8;
         float bridgeBallH = 1;
-        GameObject bridgeWreckingBall = createGameObject(-4, -15, 90);
+        GameObject bridgeWreckingBall = createGameObject(-1, -15, 90);
 
         SpriteRenderer bridgeWreckingBallRenderComponent = bridgeWreckingBall.addComponent(SpriteRenderer.class);
         bridgeWreckingBallRenderComponent.setImage(elementsImage);
@@ -223,11 +223,11 @@ public class Level4 extends Level {
         bridgeWreckingBallRigidBody.addCollider(BoxCollider.build(bridgeBallW, bridgeBallH));
 
         //Pulsante ponte Palla
-        CircleRenderer buttonBallCircleRender = createGameObject(8, -13).addComponent(CircleRenderer.class);
+        CircleRenderer buttonBallCircleRender = createGameObject(-10, -20).addComponent(CircleRenderer.class);
         buttonBallCircleRender.setColor(PALETTE_PRIMARY);
         buttonBallCircleRender.setRadius(0.85f);
 
-        GameObject buttonBall = createGameObject(8, -13);
+        GameObject buttonBall = createGameObject(-10, -20);
 
         SpriteRenderer buttonBallRenderComponent = buttonBall.addComponent(SpriteRenderer.class);
         buttonBallRenderComponent.setImage(elementsImage);
@@ -274,9 +274,29 @@ public class Level4 extends Level {
         bridgeCharacterRenderComponent.setSize(8, 1);
         bridgeCharacterRenderComponent.setLayer(3);
 
-//        RigidBody bridgeCharacterRigidBody = bridgeCharacter.addComponent(RigidBody.class);
-//        bridgeCharacterRigidBody.setType(RigidBody.Type.KINEMATIC);
-//        bridgeCharacterRigidBody.addCollider(BoxCollider.build(8, 1));
+        //Pulsante ponte personaggio
+        //TODO continuare
+        CircleRenderer buttonBridgeCharacterCircleRender = createGameObject(-10, -20).addComponent(CircleRenderer.class);
+        buttonBridgeCharacterCircleRender.setColor(PALETTE_PRIMARY);
+        buttonBridgeCharacterCircleRender.setRadius(0.85f);
+
+        GameObject buttonBridgeCharacter = createGameObject(-10, -20);
+
+        SpriteRenderer buttonBridgeCharacterRenderComponent = buttonBridgeCharacter.addComponent(SpriteRenderer.class);
+        buttonBridgeCharacterRenderComponent.setImage(elementsImage);
+        buttonBridgeCharacterRenderComponent.setSrcPosition(0, 0);
+        buttonBridgeCharacterRenderComponent.setSrcSize(128, 128);
+        buttonBridgeCharacterRenderComponent.setSize(3, 3);
+        buttonBridgeCharacterRenderComponent.setLayer(0);
+
+        Button buttonBridgeCharacterInputComponent = buttonBridgeCharacter.addComponent(Button.class);
+        buttonBridgeCharacterInputComponent.setSize(3, 3);
+
+
+        //Anchor Palla
+        RigidBody anchorBall = createGameObject(-4,0).addComponent(RigidBody.class);
+        anchorBall.setType(RigidBody.Type.STATIC);
+
 
         // Wrecking ball
         GameObject wreckingBall = createGameObject(-8, -15);
@@ -290,7 +310,7 @@ public class Level4 extends Level {
         wreckingBallRigidBody.setType(RigidBody.Type.DYNAMIC);
         wreckingBallRigidBody.addCollider(CircleCollider.build(2, 5, 0, 1, false));
 
-        DistanceJoint distanceJoint = DistanceJoint.build(platformCharacterRigidBody, 15, 10, 1);
+        DistanceJoint distanceJoint = DistanceJoint.build(anchorBall, 15, 10, 1);
         wreckingBallRigidBody.addJoint(distanceJoint);
 
         CursorJoint cursorJoint = CursorJoint.build();
@@ -301,8 +321,9 @@ public class Level4 extends Level {
         cursorJointInput.setSize(4, 4);
         cursorJointInput.setMaxForce(9000);
 
+        //Wreking ball line
         LineRenderer wreckingBallLineRenderer = createGameObject().addComponent(LineRenderer.class);
-        wreckingBallLineRenderer.setA(platformCharacterRigidBody.getOwner());
+        wreckingBallLineRenderer.setA(anchorBall.getOwner());
         wreckingBallLineRenderer.setB(wreckingBall);
         wreckingBallLineRenderer.setColor(Color.WHITE);
         wreckingBallLineRenderer.setWidth(0.2f);
@@ -313,12 +334,13 @@ public class Level4 extends Level {
         platformBaseRigidBody.addCollider(BoxCollider.build(7, 1));
 
         // Wall
-        foo(1.5f, -25.5f + 2.5f, 2, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f, 2, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5, 2, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, 2, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, 2, 5);
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, 2, 5);
+        float fooW = 3;
+        foo(1.5f, -25.5f + 2.5f, fooW, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f, fooW, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5, fooW, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, fooW, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, fooW, 5);
+        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, fooW, 5);
 //        GameObject dynamicWall = createGameObject(0, -9);
 //
 //        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
@@ -335,7 +357,7 @@ public class Level4 extends Level {
 
         RigidBody wallSensorRigidBody = wallSensorGO.addComponent(RigidBody.class);
         wallSensorRigidBody.setType(RigidBody.Type.STATIC);
-        wallSensorRigidBody.addCollider(BoxCollider.build(20, 2, true));
+        wallSensorRigidBody.addCollider(BoxCollider.build(50, 2, true));
 
         PressurePlate wallSensor = wallSensorGO.addComponent(PressurePlate.class);
         wallSensor.setOnCollisionEnter(() -> {

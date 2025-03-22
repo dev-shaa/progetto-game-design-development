@@ -35,6 +35,8 @@ public class Level4 extends Level {
     private static final int PALETTE_BACKGROUND = 0xff005387;
     private static final int PALETTE_PRIMARY = 0xffECECE7;
 
+    private boolean isWallDown = false;
+
     public Level4(Game game) {
         super(game);
     }
@@ -80,9 +82,9 @@ public class Level4 extends Level {
         platformCharacterRigidBody.addCollider(BoxCollider.build(10, platformH));
 
         //Exit platform
-        RigidBody platformExitRigidBody = createGameObject(12, 0).addComponent(RigidBody.class);
+        RigidBody platformExitRigidBody = createGameObject(10, 0).addComponent(RigidBody.class);
         platformExitRigidBody.setType(RigidBody.Type.STATIC);
-        platformExitRigidBody.addCollider(BoxCollider.build(4, platformH));
+        platformExitRigidBody.addCollider(BoxCollider.build(6, platformH));
 
         //Ponte Masso up
         GameObject bridgeRockUp = createGameObject(-8, 13);
@@ -265,22 +267,27 @@ public class Level4 extends Level {
         });
 
         //Ponte Personaggio
-        GameObject bridgeCharacter = createGameObject(7, 0.3f);
+        GameObject bridgeCharacter = createGameObject(10, 0.3f);
 
-        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
-        bridgeCharacterRenderComponent.setImage(elementsImage);
-        bridgeCharacterRenderComponent.setSrcPosition(128, 48);
-        bridgeCharacterRenderComponent.setSrcSize(128, 32);
-        bridgeCharacterRenderComponent.setSize(8, 1);
-        bridgeCharacterRenderComponent.setLayer(3);
+        RectRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(RectRenderer.class);
+        bridgeCharacterRenderComponent.setColor(Color.RED);
+        bridgeCharacterRenderComponent.setSize(8,1);
+        bridgeCharacterRenderComponent.setLayer(500);
+
+//        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
+//        bridgeCharacterRenderComponent.setImage(elementsImage);
+//        bridgeCharacterRenderComponent.setSrcPosition(128, 48);
+//        bridgeCharacterRenderComponent.setSrcSize(128, 32);
+//        bridgeCharacterRenderComponent.setSize(8, 1);
+//        bridgeCharacterRenderComponent.setLayer(3);
 
         //Pulsante ponte personaggio
         //TODO continuare
-        CircleRenderer buttonBridgeCharacterCircleRender = createGameObject(-10, -20).addComponent(CircleRenderer.class);
+        CircleRenderer buttonBridgeCharacterCircleRender = createGameObject(10, -10).addComponent(CircleRenderer.class);
         buttonBridgeCharacterCircleRender.setColor(PALETTE_PRIMARY);
         buttonBridgeCharacterCircleRender.setRadius(0.85f);
 
-        GameObject buttonBridgeCharacter = createGameObject(-10, -20);
+        GameObject buttonBridgeCharacter = createGameObject(10, -10);
 
         SpriteRenderer buttonBridgeCharacterRenderComponent = buttonBridgeCharacter.addComponent(SpriteRenderer.class);
         buttonBridgeCharacterRenderComponent.setImage(elementsImage);
@@ -291,6 +298,33 @@ public class Level4 extends Level {
 
         Button buttonBridgeCharacterInputComponent = buttonBridgeCharacter.addComponent(Button.class);
         buttonBridgeCharacterInputComponent.setSize(3, 3);
+
+        buttonBridgeCharacterInputComponent.setOnClick(() -> {
+            if (isWallDown) {
+                saveProgress();
+                setUIButtonsInteractable(false);
+
+                animator.clear();
+                animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
+                animator.add(MoveToAnimation.build(bridgeCharacter, 0, 0.3f, 0.4f));
+                animator.add(WaitAnimation.build(0.4f), () -> {
+                    characterRenderer.setSrcPosition(128, 128);
+                    winSound.play(1);
+                });
+                animator.add(MoveToAnimation.build(character, 10, 1, 0.4f));
+                animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+                animator.start();
+            }
+            else {
+                buttonBridgeCharacterInputComponent.setInteractable(false);
+                animator.clear();
+                animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
+                animator.add(MoveToAnimation.build(bridgeCharacter, 7, 0.3f, 0.4f),() -> rockCrushSound.play(1));
+                animator.add(WaitAnimation.build(0.25f));
+                animator.add(MoveToAnimation.build(bridgeCharacter, 9, 0.3f, 0.4f), () -> buttonBridgeCharacterInputComponent.setInteractable(true));
+                animator.start();
+            }
+        });
 
 
         //Anchor Palla
@@ -361,19 +395,7 @@ public class Level4 extends Level {
 
         PressurePlate wallSensor = wallSensorGO.addComponent(PressurePlate.class);
         wallSensor.setOnCollisionEnter(() -> {
-            saveProgress();
-            setUIButtonsInteractable(false);
-
-            animator.clear();
-            animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
-            animator.add(MoveToAnimation.build(bridgeCharacter, 0, 0.3f, 0.4f));
-            animator.add(WaitAnimation.build(0.4f), () -> {
-                characterRenderer.setSrcPosition(128, 128);
-                winSound.play(1);
-            });
-            animator.add(MoveToAnimation.build(character, 8, 1, 0.4f));
-            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
-            animator.start();
+            isWallDown = true;
             removeGameObject(wallSensorGO);
         });
     }

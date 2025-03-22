@@ -9,6 +9,8 @@ import com.badlogic.androidgames.framework.Music;
 import com.badlogic.androidgames.framework.Pixmap;
 import com.badlogic.androidgames.framework.Sound;
 
+import java.io.IOException;
+
 import unina.game.myapplication.R;
 import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
@@ -17,6 +19,7 @@ import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.core.rendering.TextRenderer;
+import unina.game.myapplication.logic.common.Assets;
 import unina.game.myapplication.logic.common.inputs.Button;
 import unina.game.myapplication.logic.common.animations.ColorAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
@@ -28,7 +31,13 @@ public class MainMenu extends Scene {
 
     private static boolean firstTime = true;
 
+    private boolean ENABLE_MUSIC;
+
     private Music backgroundMusic;
+
+    private Button musicButton, clearSaveButton;
+
+    private LevelSaver levelSaver;
 
     public MainMenu(Game game) {
         super(game);
@@ -37,6 +46,13 @@ public class MainMenu extends Scene {
     @Override
     public void initialize() {
         super.initialize();
+
+        final Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
+
+        levelSaver = LevelSaver.getInstance(game.getFileIO());
+
+        ENABLE_MUSIC = levelSaver.isMusicEnabled();
+
 
         Pixmap menuBackgroundImage = getImage("graphics/environment-main-menu.jpg");
         Pixmap backgroundImage = getImage("graphics/environment-level-selection.png");
@@ -49,7 +65,7 @@ public class MainMenu extends Scene {
 
         backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(1);
+        backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0);
 
         SpriteRenderer menuBackground = createGameObject(0, 0).addComponent(SpriteRenderer.class);
         menuBackground.setImage(menuBackgroundImage);
@@ -69,10 +85,7 @@ public class MainMenu extends Scene {
         fadeRenderer.setLayer(Short.MAX_VALUE);
 
         AnimationSequence animator = createGameObject().addComponent(AnimationSequence.class);
-        animator.add(ParallelAnimation.build(
-                ColorAnimation.build(fadeRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f),
-                SoundFadeAnimation.build(backgroundMusic, 0, 1, 0.5f)
-        ));
+        animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
         // Main menu
@@ -175,12 +188,68 @@ public class MainMenu extends Scene {
             levelButtons[i] = button;
         }
 
+        //Music Button
+        float size = 1.6f * Camera.getInstance().getSizeX() / 10;
+
+        GameObject musicButtonGO = createGameObject(3 + 30, 8);
+
+        SpriteRenderer musicButtonRenderer = musicButtonGO.addComponent(SpriteRenderer.class);
+        musicButtonRenderer.setImage(spritesImage);
+        musicButtonRenderer.setSrcSize(128, 128);
+        musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
+        musicButtonRenderer.setSize(size, size);
+        musicButtonRenderer.setLayer(128);
+
+        musicButton = musicButtonGO.addComponent(Button.class);
+        musicButton.setSize(size, size);
+        musicButton.setOnClick(() -> {
+            uiButtonSound.play(1);
+            ENABLE_MUSIC = !ENABLE_MUSIC;
+
+            saveMusicToggle(ENABLE_MUSIC);
+
+            backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
+            musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
+        });
+
+        //Clear Save Button
+        GameObject clearSaveButtonGO = createGameObject(3 + 30, -8);
+
+        SpriteRenderer clearSaveButtonSpriteRender = clearSaveButtonGO.addComponent(SpriteRenderer.class);
+        clearSaveButtonSpriteRender.setImage(spritesImage);
+        clearSaveButtonSpriteRender.setSrcSize(128,128);
+        clearSaveButtonSpriteRender.setSrcPosition(0,128);
+        clearSaveButtonSpriteRender.setSize(size,size);
+        clearSaveButtonSpriteRender.setLayer(128);
+
+        clearSaveButton = clearSaveButtonGO.addComponent(Button.class);
+        clearSaveButton.setSize(size,size);
+        clearSaveButton.setOnClick(() -> {
+            uiButtonSound.play(1);
+            try {
+                levelSaver.clearSave();
+            } catch (IOException e) {
+                //throw new RuntimeException(e);
+            }
+            loadScene(MainMenu.class);
+        });
+
+
+
         // Skip the landing page if returning here from another scene
         if (firstTime) {
             Camera.getInstance().getOwner().setTransform(0, 0, 0);
             firstTime = false;
         } else {
             Camera.getInstance().getOwner().setTransform(30, 0, 0);
+        }
+    }
+
+    private void saveMusicToggle(boolean status) {
+        try {
+            levelSaver.saveMusicToggle(status);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

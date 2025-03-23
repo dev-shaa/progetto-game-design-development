@@ -206,9 +206,9 @@ public final class RigidBody extends PhysicsComponent {
      *
      * @param collider collider to add
      */
-    public void addCollider(Collider collider) {
+    public <T extends Collider> T addCollider(T collider) {
         if (collider.owner == this)
-            return;
+            return collider;
 
         if (collider.owner != null)
             throw new RuntimeException("Collider is already attached to another RigidBody");
@@ -218,6 +218,8 @@ public final class RigidBody extends PhysicsComponent {
 
         if (body != null)
             collider.createFixture(body);
+
+        return collider;
     }
 
     /**

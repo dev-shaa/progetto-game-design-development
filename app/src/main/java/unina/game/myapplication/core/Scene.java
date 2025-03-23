@@ -23,7 +23,7 @@ import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
-    public static final boolean DEBUG = false; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
+    public static final boolean DEBUG = true; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
 
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
     private static final float DEFAULT_GRAVITY_X = 0, DEFAULT_GRAVITY_Y = -9.82f;
@@ -58,33 +58,38 @@ public abstract class Scene extends Screen {
 
     @Override
     public void initialize() {
+        sceneToBeLoaded = null;
         collisionListener = new CollisionListener();
 
         world = new World(DEFAULT_GRAVITY_X, DEFAULT_GRAVITY_Y);
         world.setContactListener(collisionListener);
 
-        // Camera needs to be initialized before anything else
-        GameObject cameraGO = gameObjectsPool.get();
-        camera = cameraGO.addComponent(Camera.class);
+        // Add a camera object
+        camera = createGameObject().addComponent(Camera.class);
         camera.setGraphics(game.getGraphics());
+        camera.setLayer(Integer.MIN_VALUE);
         camera.setSize(10);
-        cameraGO.initialize();
-
-        sceneToBeLoaded = null;
     }
 
     @Override
     public final void update(float deltaTime) {
+        // Load the next scene and stop the execution of the current one, if requested
         if (sceneToBeLoaded != null) {
             game.setScreen(sceneToBeLoaded);
             return;
         }
 
+        // Add or remove gameObjects, if requested
+        // The insertion or removal of gameObjects is deferred because otherwise some components
+        // of the instantiated/removed object may be executed while others may not, and also it is not
+        // wise to change a list while iterating upon it
         applySceneChanges();
 
+        // Apply physics simulation
         world.step(deltaTime, VELOCITY_ITERATIONS, POSITION_ITERATIONS, PARTICLE_ITERATIONS);
 
         // Process physics component
+        // Execute the update, mostly to sync rigid bodies positions with game objects
         for (int i = 0; i < physicsComponents.size(); i++)
             physicsComponents.valueAt(i).update(deltaTime);
 
@@ -104,6 +109,10 @@ public abstract class Scene extends Screen {
         });
 
         collisionListener.forEachExit(collision -> {
+            // NOTE:
+            // we do a null check because when a body gets destroyed it is detected as a collision exit
+            // but the instance is already disposed and it causes a NullPointerException
+
             GameObject gameObjectA = collision.a.getOwner();
             GameObject gameObjectB = collision.b.getOwner();
 
@@ -144,13 +153,14 @@ public abstract class Scene extends Screen {
         // Clear the screen
         graphics.clear(clearColor);
 
-        // Sort the renderers by layer
+        // Sort the renderers by layer, if needed
         if (layerDirty) {
             renderComponents.sort(Comparator.comparingInt(RenderComponent::getLayer));
             layerDirty = false;
         }
 
-        camera.update();
+        //
+//        camera.update();
 
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)
@@ -163,9 +173,9 @@ public abstract class Scene extends Screen {
                     component.onDrawGizmos(graphics);
             }
 
-            for (int i = -500; i < 500; i++) {
-                graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.MAGENTA : Color.GREY);
-                graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.MAGENTA : Color.GREY);
+            for (int i = -500; i < 500; i += 5) {
+                graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.WHITE : Color.GREY);
+                graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.WHITE : Color.GREY);
             }
         }
     }
@@ -215,7 +225,7 @@ public abstract class Scene extends Screen {
         gameObjectsToOperate.clear();
         gameObjectsOperations.clear();
 
-        camera.getOwner().dispose();
+        camera = null;
     }
 
     /**

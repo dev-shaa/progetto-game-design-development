@@ -2,7 +2,7 @@ package unina.game.myapplication.core;
 
 import com.badlogic.androidgames.framework.Graphics;
 
-public final class Camera extends Component {
+public final class Camera extends RenderComponent {
 
     private static Camera instance;
 
@@ -34,11 +34,8 @@ public final class Camera extends Component {
             instance = null;
     }
 
-    void setGraphics(Graphics graphics) {
-        this.graphics = graphics;
-    }
-
-    void update() {
+    @Override
+    public void render(float deltaTime, Graphics graphics) {
         graphics.restoreCanvas();
         graphics.saveCanvas();
 
@@ -47,6 +44,10 @@ public final class Camera extends Component {
         graphics.translateCanvas((float) graphics.getWidth() / 2, (float) graphics.getHeight() / 2);
         graphics.scaleCanvas(sx, sx);
         graphics.translateCanvas(-getOwner().x, getOwner().y);
+    }
+
+    void setGraphics(Graphics graphics) {
+        this.graphics = graphics;
     }
 
     /**
@@ -105,11 +106,6 @@ public final class Camera extends Component {
 
     public float screenToViewportY(float y) {
         return Utility.inverseLerp(0, graphics.getHeight(), y);
-    }
-
-    @Override
-    public Type getType() {
-        return Type.RENDER;
     }
 
     @Override

@@ -10,6 +10,7 @@ import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Utility;
 import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
+import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
 import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.CursorJoint;
@@ -21,6 +22,7 @@ import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.logic.common.Assets;
 import unina.game.myapplication.logic.common.PressurePlate;
 import unina.game.myapplication.logic.common.animations.ColorAnimation;
+import unina.game.myapplication.logic.common.animations.MoveRigidBodyTo;
 import unina.game.myapplication.logic.common.animations.MoveToAnimation;
 import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.logic.common.inputs.CursorJointInput;
@@ -64,9 +66,9 @@ public class Level5 extends Level {
         GameObject waterPlatform = createGameObject();
 
         ParticleSystem waterPlatformParticleSystem = waterPlatform.addComponent(ParticleSystem.class);
-        waterPlatformParticleSystem.setRadius(0.25f);
+        waterPlatformParticleSystem.setRadius(0.3f);
         waterPlatformParticleSystem.addParticlesGroup(-5f, 12, 3, 4, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
-        waterPlatformParticleSystem.addParticlesGroup(-6.25f, -14, 5, 0.25f, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
+//        waterPlatformParticleSystem.addParticlesGroup(-6.25f, -14, 5, 0.25f, ParticleSystem.FLAG_GROUP_SOLID, ParticleSystem.FLAG_PARTICLE_WATER);
 
         ParticleSystemRenderer waterPlatformRenderer = waterPlatform.addComponent(ParticleSystemRenderer.class);
         waterPlatformRenderer.setParticleSystem(waterPlatformParticleSystem);
@@ -87,29 +89,15 @@ public class Level5 extends Level {
         createPlatform(2f, 10.5f, -2f, 14.5f, -45, 6, 0.5f, 3, 3);
         createPlatform(0f, 3.5f, -4.5f, 7.5f, -45, 3.7f, 0.5f, 3, 3);
 
-        // Pool
-//        GameObject poolGO = createGameObject(2f, -5);
-//
-//        RigidBody poolRigidBody = poolGO.addComponent(RigidBody.class);
-//        poolRigidBody.setType(RigidBody.Type.STATIC);
-//        poolRigidBody.addCollider(BoxCollider.build(5f, 0.5f));
-//        poolRigidBody.addCollider(BoxCollider.build(0.5f, 3f)).setCenter(-2.5f, 1.5f);
-//        poolRigidBody.addCollider(BoxCollider.build(0.5f, 3f)).setCenter(2.5f, 1.5f);
+        // Funnel
+        GameObject funnelGO = createGameObject(3f, -6f);
 
-//        GameObject ballGO = createGameObject(2.5f, -0);
-//        RigidBody ball = ballGO.addComponent(RigidBody.class);
-//        ball.setType(RigidBody.Type.DYNAMIC);
-//        ball.setSleepingAllowed(false);
-//        ball.addCollider(CircleCollider.build(1, 0.05f, 0, 0, false));
-
-        GameObject ballDeflectorGO = createGameObject(3f, -6f);
-
-        RigidBody ballDeflectorRigidBody = ballDeflectorGO.addComponent(RigidBody.class);
-        ballDeflectorRigidBody.setType(RigidBody.Type.STATIC);
-        BoxCollider ballDeflectorLeftCollider = ballDeflectorRigidBody.addCollider(BoxCollider.build(10f, 0.5f));
-        BoxCollider ballDeflectorRightCollider = ballDeflectorRigidBody.addCollider(BoxCollider.build(10f, 0.5f));
-        ballDeflectorLeftCollider.setCategory(0x0002);
-        ballDeflectorRightCollider.setCategory(0x0002);
+        RigidBody funnelRigidBody = funnelGO.addComponent(RigidBody.class);
+        funnelRigidBody.setType(RigidBody.Type.STATIC);
+        BoxCollider ballDeflectorLeftCollider = funnelRigidBody.addCollider(BoxCollider.build(10f, 0.5f));
+        BoxCollider ballDeflectorRightCollider = funnelRigidBody.addCollider(BoxCollider.build(10f, 0.5f));
+        ballDeflectorLeftCollider.setCollisionFilter(0x0002, 0x0002);
+        ballDeflectorRightCollider.setCollisionFilter(0x0002, 0x0002);
         ballDeflectorLeftCollider.setCenter(-3, 3);
         ballDeflectorLeftCollider.setAngle(-70);
         ballDeflectorRightCollider.setCenter(3, 3);
@@ -131,47 +119,65 @@ public class Level5 extends Level {
         characterRenderer.setPivot(0.5f, 1f);
         characterRenderer.setLayer(-2);
 
-        // Particles initially are very active and may shoot out the detection ball
-        // We add a temporary wall to prevent it
-        RigidBody temp = createGameObject(-7, -14).addComponent(RigidBody.class);
-        temp.setType(RigidBody.Type.STATIC);
-        temp.addCollider(BoxCollider.build(8, 0.5f));
-
+        // Animator
         AnimationSequence animationSequence = createGameObject().addComponent(AnimationSequence.class);
         animationSequence.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
-        animationSequence.add(WaitAnimation.build(1), () -> removeGameObject(temp.getOwner()));
         animationSequence.start();
 
-        GameObject detectionTriggerGO = createGameObject(-6.25f, -13f);
+        // Game Over Detection Mechanism
+        GameObject gameOverTriggerGO = createGameObject(-6.25f, -15f);
 
-        RigidBody detectionTrigger = detectionTriggerGO.addComponent(RigidBody.class);
-        detectionTrigger.setType(RigidBody.Type.STATIC);
-        detectionTrigger.addCollider(BoxCollider.build(4, 0.3f, true));
+        RigidBody gameOverTriggerRigidBody = gameOverTriggerGO.addComponent(RigidBody.class);
+        gameOverTriggerRigidBody.setType(RigidBody.Type.STATIC);
+        gameOverTriggerRigidBody.addCollider(BoxCollider.build(3, 1f, true)).setCollisionFilter(0x0004, 0x0004);
 
-        PressurePlate trigger = detectionTriggerGO.addComponent(PressurePlate.class);
-        trigger.setOnCollisionEnter(() -> {
+        PressurePlate gameOverTrigger = gameOverTriggerGO.addComponent(PressurePlate.class);
+        gameOverTrigger.setOnCollisionEnter(() -> {
             characterRenderer.setSrcPosition(256, 128);
 
             animationSequence.clear();
             animationSequence.add(WaitAnimation.build(3f));
             animationSequence.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), this::reloadLevel);
             animationSequence.start();
-            removeGameObject(detectionTriggerGO);
+            removeGameObject(gameOverTriggerGO);
         });
 
+        RigidBody gameOverPressurePlateAnchor = createGameObject(-6.25f, -13f).addComponent(RigidBody.class);
+        gameOverPressurePlateAnchor.setType(RigidBody.Type.STATIC);
+
+        GameObject gameOverPressurePlateGO = createGameObject(gameOverPressurePlateAnchor.getPositionX(), gameOverPressurePlateAnchor.getPositionY());
+
+        RigidBody gameOverPressurePlate = gameOverPressurePlateGO.addComponent(RigidBody.class);
+        gameOverPressurePlate.setType(RigidBody.Type.DYNAMIC);
+        gameOverPressurePlate.addCollider(BoxCollider.build(3.5f, 0.2f, 0.05f, 0, 0, false));
+
+        PrismaticJoint gameOverPressurePlateJoint = gameOverPressurePlate.addJoint(PrismaticJoint.build(gameOverPressurePlateAnchor, 0, -1));
+        gameOverPressurePlateJoint.setEnableLimit(true);
+        gameOverPressurePlateJoint.setLowerLimit(-1.8f);
+        gameOverPressurePlateJoint.setUpperLimit(0);
+        gameOverPressurePlateJoint.setEnableMotor(true);
+        gameOverPressurePlateJoint.setMaxMotorForce(15);
+
+        // Floor
         RigidBody floor = createGameObject(0, -16).addComponent(RigidBody.class);
         floor.setType(RigidBody.Type.STATIC);
         floor.addCollider(BoxCollider.build(5, 2f)).setCenter(-6, 0);
         floor.addCollider(BoxCollider.build(7, 2f)).setCenter(5, 0);
 
-        RigidBody characterWall = createGameObject(-4f, -13f).addComponent(RigidBody.class);
+        // Character barrier
+        GameObject characterWallGO = createGameObject(-4f, -13f, 90);
+
+        RigidBody characterWall = characterWallGO.addComponent(RigidBody.class);
         characterWall.setType(RigidBody.Type.KINEMATIC);
-        characterWall.addCollider(BoxCollider.build(0.5f, 4f));
+        characterWall.addCollider(BoxCollider.build(3.75f, 1f));
 
-        RigidBody detectionBall = createGameObject(-6.5f, -14f).addComponent(RigidBody.class);
-        detectionBall.setType(RigidBody.Type.DYNAMIC);
-        detectionBall.addCollider(CircleCollider.build(0.25f, 0.1f, 0, 0, false));
+        SpriteRenderer characterWallRenderer = characterWallGO.addComponent(SpriteRenderer.class);
+        characterWallRenderer.setImage(spriteSheet);
+        characterWallRenderer.setSize(3.75f, 1f);
+        characterWallRenderer.setSrcPosition(128, 48);
+        characterWallRenderer.setSrcSize(128, 32);
 
+        // Pressure plate
         RigidBody anchor = createGameObject(3, -5).addComponent(RigidBody.class);
         anchor.setType(RigidBody.Type.STATIC);
 
@@ -179,9 +185,8 @@ public class Level5 extends Level {
 
         RigidBody pressurePlate = pressurePlateGO.addComponent(RigidBody.class);
         pressurePlate.setType(RigidBody.Type.DYNAMIC);
-        BoxCollider pressurePlateCollider = pressurePlate.addCollider(BoxCollider.build(4, 1f, 0.5f, 0, 0, false));
-        pressurePlateCollider.setCategory(0x0004);
-        pressurePlateCollider.setMask(0x0004);
+        pressurePlate.addCollider(BoxCollider.build(4, 1f, 0.5f, 0, 0, false))
+                .setCollisionFilter(0x0004, 0x0004);
 
         PrismaticJoint joint = pressurePlate.addJoint(PrismaticJoint.build(anchor, 0, -1));
         joint.setEnableLimit(true);
@@ -229,12 +234,15 @@ public class Level5 extends Level {
             dottedLineRendererA.setColor(PALETTE_PRIMARY);
             bridgeTriggerRenderer.setSrcPosition(128, 384);
 
-            removeGameObject(detectionTriggerGO);
+            removeGameObject(gameOverTriggerGO);
             removeGameObject(bridgeTriggerGo);
 
             animationSequence.clear();
             animationSequence.add(WaitAnimation.build(0.8f), () -> movingPlatformSound.play(1));
-            animationSequence.add(MoveToAnimation.build(bridge, -3.5f, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT));
+            animationSequence.add(ParallelAnimation.build(
+                    MoveToAnimation.build(bridge, -3.5f, bridge.y, 0.25f, EaseFunction.CUBIC_IN_OUT),
+                    MoveRigidBodyTo.build(characterWall, characterWall.getPositionX(), characterWall.getPositionY() - 5, 0.25f, EaseFunction.CUBIC_IN_OUT)
+            ));
             animationSequence.add(WaitAnimation.build(0.2f), () -> {
                 characterRenderer.setSrcPosition(128, 128);
                 winSound.play(1);
@@ -294,7 +302,7 @@ public class Level5 extends Level {
         line.setStart(startX, startY);
         line.setEnd(endX, endY);
         line.setRadius(0.25f);
-        line.setColor(Color.WHITE);
+        line.setColor(PALETTE_PRIMARY);
         line.setWidth(0.1f);
         line.setLayer(-2);
     }

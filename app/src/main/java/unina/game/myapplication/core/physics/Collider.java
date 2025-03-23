@@ -117,11 +117,8 @@ public abstract class Collider {
             fixture.setSensor(sensor);
     }
 
-    public void setCategory(int category) {
+    public void setCollisionFilter(int category, int mask) {
         this.category = category;
-    }
-
-    public void setMask(int mask) {
         this.mask = mask;
     }
 

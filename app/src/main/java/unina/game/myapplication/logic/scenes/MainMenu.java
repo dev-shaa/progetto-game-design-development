@@ -29,8 +29,6 @@ public class MainMenu extends Scene {
 
     private static boolean firstTime = true;
 
-    private boolean ENABLE_MUSIC;
-
     private Music backgroundMusic;
 
     private LevelSaver levelSaver;
@@ -47,20 +45,18 @@ public class MainMenu extends Scene {
 
         levelSaver = LevelSaver.getInstance(game.getFileIO());
 
-        ENABLE_MUSIC = levelSaver.isMusicEnabled();
-
         Pixmap menuBackgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_MENU);
         Pixmap levelSelectionBackgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_SELECTION);
         Pixmap spritesImage = getImage(Assets.GRAPHICS_UI_SPRITES);
 
-        Sound selectSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
+        Sound selectSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
 
         Font playButtonFont = game.getGraphics().newFont("fonts/RG2014D.ttf");
         Font cabinFont = game.getGraphics().newFont("fonts/Cabin-Bold.ttf");
 
-        backgroundMusic = getMusic("sounds/HappyLoops/intro.wav");
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_MENU);
         backgroundMusic.setLooping(true);
-        backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0);
+        backgroundMusic.setVolume(levelSaver.isMusicEnabled() ? 0.5f : 0);
 
         SpriteRenderer menuBackground = createGameObject(0, 0).addComponent(SpriteRenderer.class);
         menuBackground.setImage(menuBackgroundImage);
@@ -179,7 +175,7 @@ public class MainMenu extends Scene {
             levelButtons[i] = button;
         }
 
-        //Music Button
+        // Music Button
         float size = 1.6f * Camera.getInstance().getSizeX() / 10;
 
         GameObject musicButtonGO = createGameObject(3 + 30, 8);
@@ -187,7 +183,7 @@ public class MainMenu extends Scene {
         SpriteRenderer musicButtonRenderer = musicButtonGO.addComponent(SpriteRenderer.class);
         musicButtonRenderer.setImage(spritesImage);
         musicButtonRenderer.setSrcSize(128, 128);
-        musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
+        musicButtonRenderer.setSrcPosition(levelSaver.isMusicEnabled() ? 256 : 256 + 128, 0);
         musicButtonRenderer.setSize(size, size);
         musicButtonRenderer.setLayer(128);
 
@@ -195,15 +191,23 @@ public class MainMenu extends Scene {
         musicButton.setSize(size, size);
         musicButton.setOnClick(() -> {
             uiButtonSound.play(1);
-            ENABLE_MUSIC = !ENABLE_MUSIC;
 
-            saveMusicToggle(ENABLE_MUSIC);
+            try {
+                levelSaver.saveMusicToggle(!levelSaver.isMusicEnabled());
 
-            backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
-            musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
+                if (levelSaver.isMusicEnabled()) {
+                    backgroundMusic.setVolume(0.5f);
+                    musicButtonRenderer.setSrcPosition(256, 0);
+                } else {
+                    backgroundMusic.setVolume(0f);
+                    musicButtonRenderer.setSrcPosition(256 + 128, 0);
+                }
+            } catch (IOException ignored) {
+
+            }
         });
 
-        //Clear Save Button
+        // Clear Save Button
         GameObject clearSaveButtonGO = createGameObject(3 + 30, -8);
 
         SpriteRenderer clearSaveButtonSpriteRender = clearSaveButtonGO.addComponent(SpriteRenderer.class);
@@ -219,12 +223,11 @@ public class MainMenu extends Scene {
             uiButtonSound.play(1);
             try {
                 levelSaver.clearSave();
-            } catch (IOException e) {
-                //throw new RuntimeException(e);
-            }
-            loadScene(MainMenu.class);
-        });
+                loadScene(MainMenu.class);
+            } catch (IOException ignored) {
 
+            }
+        });
 
         // Skip the landing page if returning here from another scene
         if (firstTime) {
@@ -232,14 +235,6 @@ public class MainMenu extends Scene {
             firstTime = false;
         } else {
             Camera.getInstance().getOwner().setTransform(30, 0, 0);
-        }
-    }
-
-    private void saveMusicToggle(boolean status) {
-        try {
-            levelSaver.saveMusicToggle(status);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

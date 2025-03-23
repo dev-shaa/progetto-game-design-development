@@ -23,6 +23,13 @@ public class CursorJointInput extends PressableComponent {
     }
 
     @Override
+    public void onRemove() {
+        super.onRemove();
+        snap = false;
+        joint = null;
+    }
+
+    @Override
     protected void onPointerDown(int pointer, float x, float y) {
         super.onPointerDown(pointer, x, y);
 

@@ -43,9 +43,7 @@ public class Level3 extends Level {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-
+    protected void onInitialize() {
         Pixmap backgroundImage = getImage("graphics/environment-construction-site.png");
         Pixmap elementsImage = getImage("graphics/elements-dark.png");
         Pixmap uiSpriteSheet = getImage("graphics/elements-ui.png");
@@ -399,11 +397,6 @@ public class Level3 extends Level {
     @Override
     protected int getLevelIndex() {
         return 2;
-    }
-
-    @Override
-    protected String getBackgroundMusic() {
-        return Assets.SOUND_MUSIC_LEVELS;
     }
 
 }

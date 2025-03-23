@@ -20,83 +20,77 @@ import unina.game.myapplication.logic.common.inputs.Button;
  */
 public abstract class Level extends Scene {
 
-    private static boolean ENABLE_MUSIC;
-
     private LevelSaver levelSaver;
     private Music backgroundMusic;
     private Button menuButton, musicButton;
-
-    private boolean firstResume = true;
 
     public Level(Game game) {
         super(game);
     }
 
     @Override
-    public void initialize() {
+    public final void initialize() {
         super.initialize();
+
+        // Let the level initialize everything first
+        onInitialize();
+
+        levelSaver = LevelSaver.getInstance(game.getFileIO());
+
+        backgroundMusic = getMusic(Assets.SOUND_MUSIC_LEVELS);
+        backgroundMusic.setLooping(true);
+        backgroundMusic.setVolume(levelSaver.isMusicEnabled() ? 0.5f : 0f);
+
+        final Pixmap uiPixmap = getImage(Assets.GRAPHICS_UI_SPRITES);
+        final Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
+
+        // NOTE:
+        // we always place the buttons at the top and let have the same size regardless of camera size
+        // we don't move the camera so it's okay
+        float size = 1.6f * Camera.getInstance().getSizeX() / 10;
+
+        GameObject musicButtonGO = createGameObject(Camera.getInstance().getSizeX() / 2 - size, Camera.getInstance().getSizeY() / 2 - size / 1.5f);
+
+        SpriteRenderer musicButtonRenderer = musicButtonGO.addComponent(SpriteRenderer.class);
+        musicButtonRenderer.setImage(uiPixmap);
+        musicButtonRenderer.setSrcSize(128, 128);
+        musicButtonRenderer.setSrcPosition(levelSaver.isMusicEnabled() ? 256 : 256 + 128, 0);
+        musicButtonRenderer.setSize(size, size);
+        musicButtonRenderer.setLayer(128);
+
+        musicButton = musicButtonGO.addComponent(Button.class);
+        musicButton.setSize(size, size);
+        musicButton.setOnClick(() -> {
+            uiButtonSound.play(1);
+
+            saveMusicToggle(!levelSaver.isMusicEnabled());
+            backgroundMusic.setVolume(levelSaver.isMusicEnabled() ? 0.5f : 0f);
+            musicButtonRenderer.setSrcPosition(levelSaver.isMusicEnabled() ? 256 : 256 + 128, 0);
+        });
+
+        GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + size, Camera.getInstance().getSizeY() / 2 - size / 1.5f);
+
+        SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
+        menuButtonRenderer.setImage(uiPixmap);
+        menuButtonRenderer.setSrcPosition(0, 0);
+        menuButtonRenderer.setSrcSize(128, 128);
+        menuButtonRenderer.setSize(size, size);
+        menuButtonRenderer.setLayer(128);
+
+        menuButton = menuButtonGO.addComponent(Button.class);
+        menuButton.setSize(size, size);
+        menuButton.setOnClick(() -> {
+            menuButton.setInteractable(false);
+            musicButton.setInteractable(false);
+
+            uiButtonSound.play(1);
+            loadScene(MainMenu.class);
+        });
     }
 
     @Override
     public void resume() {
         super.resume();
-
-        if (firstResume) {
-            levelSaver = LevelSaver.getInstance(game.getFileIO());
-            ENABLE_MUSIC = levelSaver.isMusicEnabled();
-
-            backgroundMusic = getMusic(getBackgroundMusic());
-            backgroundMusic.setLooping(true);
-            backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
-
-            final Pixmap uiPixmap = getImage("graphics/elements-ui.png");
-            final Sound uiButtonSound = getSound(Assets.SOUND_UI_BUTTON_CLICK);
-
-            float size = 1.6f * Camera.getInstance().getSizeX() / 10;
-
-            GameObject musicButtonGO = createGameObject(Camera.getInstance().getSizeX() / 2 - size, Camera.getInstance().getSizeY() / 2 - size / 1.5f);
-
-            SpriteRenderer musicButtonRenderer = musicButtonGO.addComponent(SpriteRenderer.class);
-            musicButtonRenderer.setImage(uiPixmap);
-            musicButtonRenderer.setSrcSize(128, 128);
-            musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
-            musicButtonRenderer.setSize(size, size);
-            musicButtonRenderer.setLayer(128);
-
-            musicButton = musicButtonGO.addComponent(Button.class);
-            musicButton.setSize(size, size);
-            musicButton.setOnClick(() -> {
-                uiButtonSound.play(1);
-                ENABLE_MUSIC = !ENABLE_MUSIC;
-
-                saveMusicToggle(ENABLE_MUSIC);
-
-                backgroundMusic.setVolume(ENABLE_MUSIC ? 0.5f : 0f);
-                musicButtonRenderer.setSrcPosition(ENABLE_MUSIC ? 256 : 256 + 128, 0);
-            });
-
-            GameObject menuButtonGO = createGameObject(-Camera.getInstance().getSizeX() / 2 + size, Camera.getInstance().getSizeY() / 2 - size / 1.5f);
-
-            SpriteRenderer menuButtonRenderer = menuButtonGO.addComponent(SpriteRenderer.class);
-            menuButtonRenderer.setImage(uiPixmap);
-            menuButtonRenderer.setSrcPosition(0, 0);
-            menuButtonRenderer.setSrcSize(128, 128);
-            menuButtonRenderer.setSize(size, size);
-            menuButtonRenderer.setLayer(128);
-
-            menuButton = menuButtonGO.addComponent(Button.class);
-            menuButton.setSize(size, size);
-            menuButton.setOnClick(() -> {
-                menuButton.setInteractable(false);
-                musicButton.setInteractable(false);
-
-                uiButtonSound.play(1);
-                loadScene(MainMenu.class);
-            });
-
-            firstResume = false;
-        }
-
         backgroundMusic.play();
     }
 
@@ -111,6 +105,11 @@ public abstract class Level extends Scene {
         super.dispose();
         backgroundMusic = null;
     }
+
+    /**
+     * Initializes the level.
+     */
+    protected abstract void onInitialize();
 
     /**
      * Saves the level as completed.
@@ -134,14 +133,18 @@ public abstract class Level extends Scene {
      * Loads the next level.
      */
     protected final void loadNextLevel() {
-        loadScene(levelSaver.getLevel(getLevelIndex() + 1));
+        if (getLevelIndex() >= levelSaver.getLevelsCount() - 1)
+            loadScene(MainMenu.class);
+        else
+            loadScene(levelSaver.getLevel(getLevelIndex() + 1));
     }
 
     private void saveMusicToggle(boolean status) {
         try {
             levelSaver.saveMusicToggle(status);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            // It is a rare eventuality and it is not worth it to do something
+            // Worst case scenario the user has to disable music again next time
         }
     }
 
@@ -153,12 +156,10 @@ public abstract class Level extends Scene {
     protected abstract int getLevelIndex();
 
     /**
-     * Returns the path of the background music.
+     * Enables or disables the UI buttons.
      *
-     * @return background music path
+     * @param enabled status of the buttons
      */
-    protected abstract String getBackgroundMusic();
-
     protected final void setUIButtonsInteractable(boolean enabled) {
         menuButton.setInteractable(enabled);
         musicButton.setInteractable(enabled);

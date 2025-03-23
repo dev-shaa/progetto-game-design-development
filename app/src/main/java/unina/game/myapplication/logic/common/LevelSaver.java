@@ -36,15 +36,13 @@ public final class LevelSaver {
         levels = new Class[4];
         levels[0] = Level1.class;
         levels[1] = Level2.class;
-        levels[2] = Level5.class;
-        levels[3] = Level4.class;
+        levels[2] = Level4.class;
+        levels[3] = Level5.class;
 
         this.fileIO = fileIO;
 
         try (DataInputStream stream = new DataInputStream(fileIO.readFile("save.txt"))) {
-            //latestCompletedLevel = stream.readInt();
-            //TODO cambia
-            latestCompletedLevel = 4;
+            latestCompletedLevel = stream.readInt();
         } catch (IOException e) {
             latestCompletedLevel = -1;
         }
@@ -54,7 +52,6 @@ public final class LevelSaver {
         } catch (IOException e) {
             isMusicEnabled = true;
         }
-
     }
 
     /**
@@ -116,6 +113,7 @@ public final class LevelSaver {
     public void saveMusicToggle(boolean status) throws IOException {
         try (DataOutputStream stream = new DataOutputStream(fileIO.writeFile("music.txt"))) {
             stream.writeBoolean(status);
+        } finally {
             isMusicEnabled = status;
         }
     }

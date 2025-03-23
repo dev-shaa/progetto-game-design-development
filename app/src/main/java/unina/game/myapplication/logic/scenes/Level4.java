@@ -41,15 +41,14 @@ public class Level4 extends Level {
         super(game);
     }
 
-    public void initialize() {
-        super.initialize();
+    @Override
+    protected void onInitialize() {
+        Pixmap backgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_4);
+        Pixmap elementsImage = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
 
-        Pixmap backgroundImage = getImage("graphics/environment-bus-stop.png");
-        Pixmap elementsImage = getImage("graphics/elements-light.png");
-
-        Sound buttonSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
-        Sound movingPlatformSound = getSound("sounds/kenney-interface-sounds/error_001.ogg"); // FIXME: placeholder
-        Sound winSound = getSound("sounds/kenney-sax-jingles/jingles_SAX10.ogg");
+        Sound buttonSound = getSound(Assets.SOUND_GAME_BUTTON_CLICK);
+        Sound movingPlatformSound = getSound(Assets.SOUND_GAME_PLATFORM_MOVE);
+        Sound winSound = getSound(Assets.SOUND_GAME_WIN);
         Sound movingRock = getSound("sounds/moving-rock.mp3");
         Sound rockCrushSound = getSound("sounds/rock-crush.mp3");
 
@@ -75,18 +74,16 @@ public class Level4 extends Level {
         animator.start();
 
         // Character platform
-        float platformH = 2;
-
         RigidBody platformCharacterRigidBody = createGameObject(-8, 0).addComponent(RigidBody.class);
         platformCharacterRigidBody.setType(RigidBody.Type.STATIC);
-        platformCharacterRigidBody.addCollider(BoxCollider.build(10, platformH));
+        platformCharacterRigidBody.addCollider(BoxCollider.build(10, 2));
 
-        //Exit platform
+        // Exit platform
         RigidBody platformExitRigidBody = createGameObject(10, 0).addComponent(RigidBody.class);
         platformExitRigidBody.setType(RigidBody.Type.STATIC);
-        platformExitRigidBody.addCollider(BoxCollider.build(6, platformH));
+        platformExitRigidBody.addCollider(BoxCollider.build(6, 2));
 
-        //Ponte Masso up
+        // Ponte Masso up
         GameObject bridgeRockUp = createGameObject(-8, 13);
 
         SpriteRenderer bridgeRockUpRenderComponent = bridgeRockUp.addComponent(SpriteRenderer.class);
@@ -144,6 +141,7 @@ public class Level4 extends Level {
         characterRenderer.setPivot(0.5f, 1);
         characterRenderer.setLayer(-2);
 
+        // Game over trigger
         GameObject gameOverTriggerGO = createGameObject(-8, 1);
 
         RigidBody gameOverTriggerRigidBody = gameOverTriggerGO.addComponent(RigidBody.class);
@@ -157,28 +155,13 @@ public class Level4 extends Level {
 
             animator.clear();
             animator.add(WaitAnimation.build(2));
-            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> loadScene(Level4.class));
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), this::reloadLevel);
             animator.start();
         });
 
         // Pulsante ponte down
         GameObject buttonBridgeDown = createGameObject(4, 20);
 
-        SpriteRenderer buttonBridgeDownRenderComponent = buttonBridgeDown.addComponent(SpriteRenderer.class);
-        buttonBridgeDownRenderComponent.setImage(elementsImage);
-        buttonBridgeDownRenderComponent.setSrcPosition(0, 0);
-        buttonBridgeDownRenderComponent.setSrcSize(128, 128);
-        buttonBridgeDownRenderComponent.setSize(6, 6);
-        buttonBridgeDownRenderComponent.setLayer(0);
-
-        Button buttonBridgeDownInputComponent = buttonBridgeDown.addComponent(Button.class);
-        buttonBridgeDownInputComponent.setSize(6, 6);
-
-        CircleRenderer buttonBridgeDownCircleRender = createGameObject(buttonBridgeDown.x, buttonBridgeDown.y).addComponent(CircleRenderer.class);
-        buttonBridgeDownCircleRender.setColor(PALETTE_PRIMARY);
-        buttonBridgeDownCircleRender.setRadius(2f);
-
-        // Linea Bridge Down
         DottedLineRenderer lineBridgeDown = createGameObject().addComponent(DottedLineRenderer.class);
         lineBridgeDown.setColor(Color.GREY);
         lineBridgeDown.setPointA(buttonBridgeDown.x, buttonBridgeDown.y - 3.5f);
@@ -195,12 +178,29 @@ public class Level4 extends Level {
         lineBridgeDownB.setCount(8);
         lineBridgeDownB.setLayer(65);
 
+        SpriteRenderer buttonBridgeDownRenderComponent = buttonBridgeDown.addComponent(SpriteRenderer.class);
+        buttonBridgeDownRenderComponent.setImage(elementsImage);
+        buttonBridgeDownRenderComponent.setSrcPosition(0, 0);
+        buttonBridgeDownRenderComponent.setSrcSize(128, 128);
+        buttonBridgeDownRenderComponent.setSize(6, 6);
+        buttonBridgeDownRenderComponent.setLayer(0);
+
+        Button buttonBridgeDownInputComponent = buttonBridgeDown.addComponent(Button.class);
+        buttonBridgeDownInputComponent.setSize(6, 6);
+        buttonBridgeDownInputComponent.setOnInteractableChange(interactable -> {
+            if (interactable) {
+                buttonBridgeDownRenderComponent.setSrcPosition(0, 0);
+                lineBridgeDown.setColor(Color.GREY);
+                lineBridgeDownB.setColor(Color.GREY);
+            } else {
+                buttonBridgeDownRenderComponent.setSrcPosition(384, 0);
+                lineBridgeDown.setColor(0xff009fff);
+                lineBridgeDownB.setColor(0xff009fff);
+            }
+        });
         buttonBridgeDownInputComponent.setOnClick(() -> {
             buttonBridgeDownInputComponent.setInteractable(false);
             buttonSound.play(1);
-            buttonBridgeDownCircleRender.setColor(Color.GREY);
-            lineBridgeDown.setColor(0xff009fff);
-            lineBridgeDownB.setColor(0xff009fff);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
@@ -208,151 +208,140 @@ public class Level4 extends Level {
             animator.start();
         });
 
-        //Ponte palla demolitrice WreckingBall
-        float bridgeBallW = 8;
-        float bridgeBallH = 1;
-        GameObject bridgeWreckingBall = createGameObject(-1, -15, 90);
+        // Wrecking ball barrier
+        GameObject wreckingBallBarrierGO = createGameObject(-1, -17, 90);
 
-        SpriteRenderer bridgeWreckingBallRenderComponent = bridgeWreckingBall.addComponent(SpriteRenderer.class);
-        bridgeWreckingBallRenderComponent.setImage(elementsImage);
-        bridgeWreckingBallRenderComponent.setSrcPosition(128, 48);
-        bridgeWreckingBallRenderComponent.setSrcSize(128, 32);
-        bridgeWreckingBallRenderComponent.setSize(bridgeBallW, bridgeBallH);
-        bridgeWreckingBallRenderComponent.setLayer(0);
+        SpriteRenderer wreckingBallBarrierRenderer = wreckingBallBarrierGO.addComponent(SpriteRenderer.class);
+        wreckingBallBarrierRenderer.setImage(elementsImage);
+        wreckingBallBarrierRenderer.setSrcPosition(128, 48);
+        wreckingBallBarrierRenderer.setSrcSize(128, 32);
+        wreckingBallBarrierRenderer.setSize(16, 1);
+        wreckingBallBarrierRenderer.setLayer(0);
 
-        RigidBody bridgeWreckingBallRigidBody = bridgeWreckingBall.addComponent(RigidBody.class);
-        bridgeWreckingBallRigidBody.setType(RigidBody.Type.KINEMATIC);
-        bridgeWreckingBallRigidBody.addCollider(BoxCollider.build(bridgeBallW, bridgeBallH));
+        RigidBody wreckingBallBarrierRigidBody = wreckingBallBarrierGO.addComponent(RigidBody.class);
+        wreckingBallBarrierRigidBody.setType(RigidBody.Type.KINEMATIC);
+        wreckingBallBarrierRigidBody.addCollider(BoxCollider.build(16, 1));
 
-        //Pulsante ponte Palla
-        CircleRenderer buttonBallCircleRender = createGameObject(-10, -20).addComponent(CircleRenderer.class);
-        buttonBallCircleRender.setColor(PALETTE_PRIMARY);
-        buttonBallCircleRender.setRadius(0.85f);
+        // Pulsante ponte Palla
+        GameObject buttonBall = createGameObject(-9, -21);
 
-        GameObject buttonBall = createGameObject(-10, -20);
+        DottedLineRenderer lineButtonDown = createGameObject().addComponent(DottedLineRenderer.class);
+        lineButtonDown.setColor(Color.GREY);
+        lineButtonDown.setPointA(buttonBall.x + 3.5f, buttonBall.y);
+        lineButtonDown.setPointB(wreckingBallBarrierGO.x - 1f, buttonBall.y);
+        lineButtonDown.setRadius(0.25f);
+        lineButtonDown.setCount(4);
+        lineButtonDown.setLayer(65);
+
+        DottedLineRenderer lineButtonRock = createGameObject().addComponent(DottedLineRenderer.class);
+        lineButtonRock.setColor(Color.GREY);
+        lineButtonRock.setPointA(buttonBall.x, buttonBall.y + 3.5f);
+        lineButtonRock.setPointB(buttonBall.x, bridgeRockUp.y - 1f);
+        lineButtonRock.setRadius(0.25f);
+        lineButtonRock.setCount(20);
+        lineButtonRock.setLayer(65);
 
         SpriteRenderer buttonBallRenderComponent = buttonBall.addComponent(SpriteRenderer.class);
         buttonBallRenderComponent.setImage(elementsImage);
         buttonBallRenderComponent.setSrcPosition(0, 0);
         buttonBallRenderComponent.setSrcSize(128, 128);
-        buttonBallRenderComponent.setSize(3, 3);
+        buttonBallRenderComponent.setSize(6, 6);
         buttonBallRenderComponent.setLayer(0);
 
         Button buttonBallInputComponent = buttonBall.addComponent(Button.class);
-        buttonBallInputComponent.setSize(3, 3);
-
-        //Linea Button Down
-        GameObject lineButtonDownGO = createGameObject();
-        DottedLineRenderer lineButtonDown = lineButtonDownGO.addComponent(DottedLineRenderer.class);
-        lineButtonDown.setColor(PALETTE_PRIMARY);
-        lineButtonDown.setPointA(buttonBall.x, buttonBall.y + 2.5f);
-        lineButtonDown.setPointB(bridgeWreckingBall.x + 1.5f, buttonBall.y + 2.5f);
-        lineButtonDown.setRadius(0.25f);
-        lineButtonDown.setCount(10);
-        lineButtonDown.setLayer(-4);
-
-        //Linea Button Platform
-        GameObject lineButtonRockGO = createGameObject();
-        DottedLineRenderer lineButtonRock = lineButtonRockGO.addComponent(DottedLineRenderer.class);
-        lineButtonRock.setColor(PALETTE_PRIMARY);
-        lineButtonRock.setPointA(buttonBall.x, buttonBall.y + 2.5f);
-        lineButtonRock.setPointB(buttonBall.x, bridgeRockUp.y - 2.5f);
-        lineButtonRock.setRadius(0.25f);
-        lineButtonRock.setCount(20);
-        lineButtonRock.setLayer(-4);
-
+        buttonBallInputComponent.setSize(6, 6);
+        buttonBallInputComponent.setOnInteractableChange(interactable -> {
+            if (interactable) {
+                buttonBallRenderComponent.setSrcPosition(0, 0);
+                lineButtonDown.setColor(PALETTE_PRIMARY);
+                lineButtonRock.setColor(PALETTE_PRIMARY);
+            } else {
+                buttonBallRenderComponent.setSrcPosition(384, 0);
+                lineButtonDown.setColor(0xff009fff);
+                lineButtonRock.setColor(0xff009fff);
+            }
+        });
         buttonBallInputComponent.setOnClick(() -> {
             buttonSound.play(1);
-            buttonBallCircleRender.setColor(Color.GREY);
-            lineButtonDown.setColor(0xff009fff);
-            lineButtonRock.setColor(0xff009fff);
-            buttonBridgeDownInputComponent.setInteractable(false);
+            buttonBallInputComponent.setInteractable(false);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
             animator.add(ParallelAnimation.build(
-                    MoveRigidBodyTo.build(bridgeWreckingBallRigidBody, bridgeWreckingBall.x, -23, 0.5f),
+                    MoveRigidBodyTo.build(wreckingBallBarrierRigidBody, wreckingBallBarrierGO.x, -30, 0.5f),
                     MoveRigidBodyTo.build(bridgeRockUpRigidBody, 0, bridgeRockUp.y, 0.5f)
             ));
             animator.start();
         });
 
-        //Ponte Personaggio
-        GameObject bridgeCharacter = createGameObject(10, 0.3f);
+        // Bridge
+        GameObject bridgeGO = createGameObject(11f, 0.35f);
 
-        RectRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(RectRenderer.class);
-        bridgeCharacterRenderComponent.setColor(Color.RED);
-        bridgeCharacterRenderComponent.setSize(8,1);
-        bridgeCharacterRenderComponent.setLayer(500);
+        SpriteRenderer bridgeRenderer = bridgeGO.addComponent(SpriteRenderer.class);
+        bridgeRenderer.setImage(elementsImage);
+        bridgeRenderer.setSrcPosition(128, 48);
+        bridgeRenderer.setSrcSize(128, 32);
+        bridgeRenderer.setSize(10.5f, 1);
 
-//        SpriteRenderer bridgeCharacterRenderComponent = bridgeCharacter.addComponent(SpriteRenderer.class);
-//        bridgeCharacterRenderComponent.setImage(elementsImage);
-//        bridgeCharacterRenderComponent.setSrcPosition(128, 48);
-//        bridgeCharacterRenderComponent.setSrcSize(128, 32);
-//        bridgeCharacterRenderComponent.setSize(8, 1);
-//        bridgeCharacterRenderComponent.setLayer(3);
+        // Bridge button
+        GameObject bridgeButtonGO = createGameObject(7.5f, -12);
 
-        //Pulsante ponte personaggio
-        CircleRenderer buttonBridgeCharacterCircleRender = createGameObject(10, -10).addComponent(CircleRenderer.class);
-        buttonBridgeCharacterCircleRender.setColor(PALETTE_PRIMARY);
-        buttonBridgeCharacterCircleRender.setRadius(1.25f);
-
-        GameObject buttonBridgeCharacter = createGameObject(10, -10);
-
-        SpriteRenderer buttonBridgeCharacterRenderComponent = buttonBridgeCharacter.addComponent(SpriteRenderer.class);
-        buttonBridgeCharacterRenderComponent.setImage(elementsImage);
-        buttonBridgeCharacterRenderComponent.setSrcPosition(0, 0);
-        buttonBridgeCharacterRenderComponent.setSrcSize(128, 128);
-        buttonBridgeCharacterRenderComponent.setSize(4, 4);
-        buttonBridgeCharacterRenderComponent.setLayer(0);
-
-        Button buttonBridgeCharacterInputComponent = buttonBridgeCharacter.addComponent(Button.class);
-        buttonBridgeCharacterInputComponent.setSize(4, 4);
-
-        //Linea pulsante ponte character
-        //TODO continua
-        GameObject lineButtonCharacterGO = createGameObject();
-        DottedLineRenderer lineButtonCharacter = lineButtonCharacterGO.addComponent(DottedLineRenderer.class);
-        lineButtonCharacter.setColor(PALETTE_PRIMARY);
-        lineButtonCharacter.setPointA(buttonBridgeCharacter.x - 2.5f, buttonBridgeCharacter.y);
-        lineButtonCharacter.setPointB(buttonBridgeCharacter.x - 2.5f, bridgeCharacter.y - 2.5f);
+        DottedLineRenderer lineButtonCharacter = createGameObject().addComponent(DottedLineRenderer.class);
+        lineButtonCharacter.setColor(Color.GREY);
+        lineButtonCharacter.setPointA(bridgeButtonGO.x, bridgeButtonGO.y + 3f);
+        lineButtonCharacter.setPointB(bridgeButtonGO.x, bridgeGO.y - 2.5f);
         lineButtonCharacter.setRadius(0.25f);
-        lineButtonCharacter.setCount(9);
-        lineButtonCharacter.setLayer(-4);
+        lineButtonCharacter.setCount(8);
 
-        buttonBridgeCharacterInputComponent.setOnClick(() -> {
+        SpriteRenderer bridgeButtonRenderer = bridgeButtonGO.addComponent(SpriteRenderer.class);
+        bridgeButtonRenderer.setImage(elementsImage);
+        bridgeButtonRenderer.setSrcPosition(0, 0);
+        bridgeButtonRenderer.setSrcSize(128, 128);
+        bridgeButtonRenderer.setSize(6, 6);
+
+        Button bridgeButton = bridgeButtonGO.addComponent(Button.class);
+        bridgeButton.setSize(6, 6);
+        bridgeButton.setOnInteractableChange(interactable -> {
+            if (interactable) {
+                bridgeButtonRenderer.setSrcPosition(0, 0);
+                lineButtonCharacter.setColor(Color.GREY);
+            } else {
+                bridgeButtonRenderer.setSrcPosition(384, 0);
+                lineButtonCharacter.setColor(0xff009fff);
+            }
+        });
+        bridgeButton.setOnClick(() -> {
+            animator.clear();
+
             if (isWallDown) {
                 saveProgress();
                 setUIButtonsInteractable(false);
-                lineButtonCharacter.setColor(0xff009fff);
 
-                animator.clear();
-                animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
-                animator.add(MoveToAnimation.build(bridgeCharacter, 0, 0.3f, 0.4f));
+                movingPlatformSound.play(1);
+                animator.add(MoveToAnimation.build(bridgeGO, 2.5f, 0.3f, 0.4f));
                 animator.add(WaitAnimation.build(0.4f), () -> {
                     characterRenderer.setSrcPosition(128, 128);
                     winSound.play(1);
                 });
-                animator.add(MoveToAnimation.build(character, 10, 1, 0.4f));
+                animator.add(MoveToAnimation.build(character, 15, 1, 1f, EaseFunction.CUBIC_IN_OUT));
                 animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
                 animator.start();
-            }
-            else {
-                buttonBridgeCharacterInputComponent.setInteractable(false);
-                animator.clear();
+            } else {
+                bridgeButton.setInteractable(false);
+
                 animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
-                animator.add(MoveToAnimation.build(bridgeCharacter, 7, 0.3f, 0.4f),() -> rockCrushSound.play(1));
-                animator.add(WaitAnimation.build(0.25f));
-                animator.add(MoveToAnimation.build(bridgeCharacter, 9, 0.3f, 0.4f), () -> buttonBridgeCharacterInputComponent.setInteractable(true));
-                animator.start();
+                animator.add(MoveToAnimation.build(bridgeGO, 8.25f, 0.3f, 0.4f), () -> rockCrushSound.play(1));
+                animator.add(WaitAnimation.build(0.1f));
+                animator.add(MoveToAnimation.build(bridgeGO, bridgeGO.x, 0.3f, 0.4f), () -> bridgeButton.setInteractable(true));
             }
+
+            animator.start();
         });
 
 
-        //Anchor Palla
-        RigidBody anchorBall = createGameObject(-4,0).addComponent(RigidBody.class);
+        // Wrecking ball anchor
+        RigidBody anchorBall = createGameObject(-4, 0).addComponent(RigidBody.class);
         anchorBall.setType(RigidBody.Type.STATIC);
-
 
         // Wrecking ball
         GameObject wreckingBall = createGameObject(-8, -15);
@@ -377,7 +366,6 @@ public class Level4 extends Level {
         cursorJointInput.setSize(4, 4);
         cursorJointInput.setMaxForce(9000);
 
-        //Wreking ball line
         LineRenderer wreckingBallLineRenderer = createGameObject().addComponent(LineRenderer.class);
         wreckingBallLineRenderer.setA(anchorBall.getOwner());
         wreckingBallLineRenderer.setB(wreckingBall);
@@ -390,29 +378,19 @@ public class Level4 extends Level {
         platformBaseRigidBody.addCollider(BoxCollider.build(7, 1));
 
         // Wall
-        float fooW = 3;
-        float fooH = 5;
-        foo(1.5f, -25.5f + 2.5f, fooW, fooH);
-        fooW *= 0.9f;
-        foo(1.5f, -25.5f + 2.5f + 5f, fooW, fooH);
-        fooW *= 0.9f;
-        foo(1.5f, -25.5f + 2.5f + 5f + 5, fooW, fooH);
-        fooW *= 0.9f;
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5, fooW, fooH);
-        fooW *= 0.9f;
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, fooW, fooH);
-        fooW *= 0.9f;
-        foo(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, fooW, fooH);
-//        GameObject dynamicWall = createGameObject(0, -9);
-//
-//        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
-//        dynamicWallRenderComponent.setSize(1.5f, 30);
-//        dynamicWallRenderComponent.setColor(PALETTE_PRIMARY);
-//        dynamicWallRenderComponent.setLayer(3);
-//
-//        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
-//        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
-//        dynamicWallRigidBody.addCollider(BoxCollider.build(1.5f, 30f, 10, 0, 1, false));
+        // NOTE: progressively shrink the width otherwise the stack is unstable and may fall by itself
+        float boxWallWidth = 3, boxWallHeight = 5;
+        createBox(1.5f, -25.5f + 2.5f, boxWallWidth, boxWallHeight);
+        boxWallWidth *= 0.98f;
+        createBox(1.5f, -25.5f + 2.5f + 5f, boxWallWidth, boxWallHeight);
+        boxWallWidth *= 0.98f;
+        createBox(1.5f, -25.5f + 2.5f + 5f + 5, boxWallWidth, boxWallHeight);
+        boxWallWidth *= 0.98f;
+        createBox(1.5f, -25.5f + 2.5f + 5f + 5 + 5, boxWallWidth, boxWallHeight);
+        boxWallWidth *= 0.98f;
+        createBox(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5, boxWallWidth, boxWallHeight);
+        boxWallWidth *= 0.98f;
+        createBox(1.5f, -25.5f + 2.5f + 5f + 5 + 5 + 5 + 5, boxWallWidth, boxWallHeight);
 
         // Sensor
         GameObject wallSensorGO = createGameObject(0, -28);
@@ -426,29 +404,29 @@ public class Level4 extends Level {
             isWallDown = true;
             removeGameObject(wallSensorGO);
         });
+
+        // Outer walls
+        RigidBody outerWalls = createGameObject().addComponent(RigidBody.class);
+        outerWalls.setType(RigidBody.Type.STATIC);
+        outerWalls.addCollider(BoxCollider.build(1, 50)).setCenter(-13.5f, 0);
+        outerWalls.addCollider(BoxCollider.build(1, 50)).setCenter(13.5f, 0);
     }
 
-    private void foo(float x, float y, float width, float height) {
-        // Wall
-        GameObject dynamicWall = createGameObject(x, y);
+    private void createBox(float x, float y, float width, float height) {
+        GameObject gameObject = createGameObject(x, y);
 
-        RectRenderer dynamicWallRenderComponent = dynamicWall.addComponent(RectRenderer.class);
-        dynamicWallRenderComponent.setSize(width, height);
-        dynamicWallRenderComponent.setColor(PALETTE_PRIMARY);
+        RectRenderer renderer = gameObject.addComponent(RectRenderer.class);
+        renderer.setSize(width, height);
+        renderer.setColor(PALETTE_PRIMARY);
 
-        RigidBody dynamicWallRigidBody = dynamicWall.addComponent(RigidBody.class);
-        dynamicWallRigidBody.setType(RigidBody.Type.DYNAMIC);
-        dynamicWallRigidBody.addCollider(BoxCollider.build(width, height));
+        RigidBody rigidBody = gameObject.addComponent(RigidBody.class);
+        rigidBody.setType(RigidBody.Type.DYNAMIC);
+        rigidBody.addCollider(BoxCollider.build(width, height));
     }
 
     @Override
     protected int getLevelIndex() {
-        return 3;
-    }
-
-    @Override
-    protected String getBackgroundMusic() {
-        return Assets.SOUND_MUSIC_LEVELS;
+        return 2;
     }
 
 }

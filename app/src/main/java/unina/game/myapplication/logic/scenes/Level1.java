@@ -33,9 +33,7 @@ public class Level1 extends Level {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-
+    protected void onInitialize() {
         Camera.getInstance().setSize(10);
 
         setClearColor(PALETTE_BACKGROUND);
@@ -163,11 +161,6 @@ public class Level1 extends Level {
     @Override
     protected int getLevelIndex() {
         return 0;
-    }
-
-    @Override
-    protected String getBackgroundMusic() {
-        return Assets.SOUND_MUSIC_LEVELS;
     }
 
     private void showPrompt() {

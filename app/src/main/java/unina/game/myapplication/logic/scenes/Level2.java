@@ -36,9 +36,7 @@ public class Level2 extends Level {
     }
 
     @Override
-    public void initialize() {
-        super.initialize();
-
+    protected void onInitialize() {
         Pixmap backgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_2);
         Pixmap elementsImage = getImage(Assets.GRAPHICS_GAME_SPRITES_LIGHT);
         Pixmap elementsUIImage = getImage(Assets.GRAPHICS_UI_SPRITES);
@@ -61,8 +59,7 @@ public class Level2 extends Level {
         backgroundRenderer.setLayer(16);
 
         // Transition panel
-        GameObject fade = createGameObject();
-        RectRenderer fullScreenRenderer = fade.addComponent(RectRenderer.class);
+        RectRenderer fullScreenRenderer = createGameObject().addComponent(RectRenderer.class);
         fullScreenRenderer.setSize(50, 50);
         fullScreenRenderer.setLayer(256);
         fullScreenRenderer.setColor(Color.TRANSPARENT);
@@ -100,15 +97,12 @@ public class Level2 extends Level {
         animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f));
         animator.start();
 
-        float floorW = 6;
-        float floorH = 15;
-
         // Left floor
         GameObject leftFloor = createGameObject(-6, -14);
 
         RigidBody leftFloorRigidBody = leftFloor.addComponent(RigidBody.class);
         leftFloorRigidBody.setType(RigidBody.Type.STATIC);
-        leftFloorRigidBody.addCollider(BoxCollider.build(floorW, floorH));
+        leftFloorRigidBody.addCollider(BoxCollider.build(6, 15));
 
         // Rock Platform
         GameObject rockPlatform = createGameObject(4.5f, 11, 30);
@@ -274,18 +268,16 @@ public class Level2 extends Level {
         });
 
         // Pressure plate
-        float pressurePlateWidth = 4;
-        float pressurePlateHeight = 4;
         GameObject pressurePlateGO = createGameObject(6.75f, 0.35f);
 
         SpriteRenderer pressurePlateRenderer = pressurePlateGO.addComponent(SpriteRenderer.class);
         pressurePlateRenderer.setImage(elementsImage);
         pressurePlateRenderer.setPivot(0.5f, 1f);
-        pressurePlateRenderer.setSize(pressurePlateWidth, pressurePlateHeight);
+        pressurePlateRenderer.setSize(4, 4);
         pressurePlateRenderer.setSrcSize(128, 128);
         pressurePlateRenderer.setSrcPosition(0, 384);
 
-        BoxCollider pressurePlateCollider = BoxCollider.build(pressurePlateWidth, 0.25f, true);
+        BoxCollider pressurePlateCollider = BoxCollider.build(4, 0.25f, true);
         pressurePlateCollider.setCenter(0, 0.5f);
 
         RigidBody pressurePlateRigidBody = pressurePlateGO.addComponent(RigidBody.class);
@@ -327,10 +319,10 @@ public class Level2 extends Level {
             buttonSound.play(1);
             pressurePlateRenderer.setSrcPosition(128, 384);
 
-            lineRendererA.setColor(0xff009fff);
-            lineRendererB.setColor(0xff009fff);
-            lineRendererC.setColor(0xff009fff);
-            lineRendererD.setColor(0xff009fff);
+            lineRendererA.setColor(PALETTE_BACKGROUND);
+            lineRendererB.setColor(PALETTE_BACKGROUND);
+            lineRendererC.setColor(PALETTE_BACKGROUND);
+            lineRendererD.setColor(PALETTE_BACKGROUND);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.8f), () -> movingPlatformSound.play(1));
@@ -359,11 +351,6 @@ public class Level2 extends Level {
     @Override
     protected int getLevelIndex() {
         return 1;
-    }
-
-    @Override
-    protected String getBackgroundMusic() {
-        return Assets.SOUND_MUSIC_LEVELS;
     }
 
 }

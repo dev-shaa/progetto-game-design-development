@@ -34,12 +34,12 @@ public abstract class Scene extends Screen {
     private CollisionListener collisionListener;
     private Camera camera;
 
-    private final ArraySet<GameObject> gameObjects = new ArraySet<>(8);
+    private final ArraySet<GameObject> gameObjects = new ArraySet<>(32);
     private final ArraySet<InputComponent> inputComponents = new ArraySet<>(4);
-    private final ArraySet<PhysicsComponent> physicsComponents = new ArraySet<>(4);
+    private final ArraySet<PhysicsComponent> physicsComponents = new ArraySet<>(32);
     private final ArraySet<BehaviourComponent> behaviourComponents = new ArraySet<>(4);
     private final ArraySet<AnimationComponent> animationComponents = new ArraySet<>(4);
-    private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(8); // Render components need to be ordered
+    private final ArrayList<RenderComponent> renderComponents = new ArrayList<>(16); // Render components need to be ordered
 
     private Scene sceneToBeLoaded = null;
     boolean layerDirty = false;
@@ -159,9 +159,6 @@ public abstract class Scene extends Screen {
             layerDirty = false;
         }
 
-        //
-//        camera.update();
-
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)
             renderComponents.get(i).render(deltaTime, graphics);
@@ -173,7 +170,7 @@ public abstract class Scene extends Screen {
                     component.onDrawGizmos(graphics);
             }
 
-            for (int i = -500; i < 500; i += 5) {
+            for (int i = -500; i < 500; i++) {
                 graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.WHITE : Color.GREY);
                 graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.WHITE : Color.GREY);
             }

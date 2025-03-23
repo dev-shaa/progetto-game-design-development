@@ -16,7 +16,6 @@ import unina.game.myapplication.core.Camera;
 import unina.game.myapplication.core.GameObject;
 import unina.game.myapplication.core.Scene;
 import unina.game.myapplication.core.animations.AnimationSequence;
-import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.rendering.SpriteRenderer;
 import unina.game.myapplication.core.rendering.TextRenderer;
 import unina.game.myapplication.logic.common.Assets;
@@ -24,7 +23,6 @@ import unina.game.myapplication.logic.common.inputs.Button;
 import unina.game.myapplication.logic.common.animations.ColorAnimation;
 import unina.game.myapplication.logic.common.LevelSaver;
 import unina.game.myapplication.core.rendering.RectRenderer;
-import unina.game.myapplication.logic.common.animations.SoundFadeAnimation;
 import unina.game.myapplication.logic.common.animations.SpriteRendererScaleAnimation;
 
 public class MainMenu extends Scene {
@@ -51,10 +49,9 @@ public class MainMenu extends Scene {
 
         ENABLE_MUSIC = levelSaver.isMusicEnabled();
 
-
-        Pixmap menuBackgroundImage = getImage("graphics/environment-main-menu.jpg");
-        Pixmap backgroundImage = getImage("graphics/environment-level-selection.png");
-        Pixmap spritesImage = getImage("graphics/elements-ui.png");
+        Pixmap menuBackgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_MENU);
+        Pixmap levelSelectionBackgroundImage = getImage(Assets.GRAPHICS_BACKGROUND_LEVEL_SELECTION);
+        Pixmap spritesImage = getImage(Assets.GRAPHICS_UI_SPRITES);
 
         Sound selectSound = getSound("sounds/kenney-interface-sounds/click_002.ogg");
 
@@ -113,7 +110,7 @@ public class MainMenu extends Scene {
         setClearColor(0xff2B2B2C);
 
         SpriteRenderer levelSelectionBackgroundRenderer = createGameObject(30, 0).addComponent(SpriteRenderer.class);
-        levelSelectionBackgroundRenderer.setImage(backgroundImage);
+        levelSelectionBackgroundRenderer.setImage(levelSelectionBackgroundImage);
         levelSelectionBackgroundRenderer.setSrcPosition(0, 0);
         levelSelectionBackgroundRenderer.setSrcSize(412, 892);
         levelSelectionBackgroundRenderer.setSize(Camera.getInstance().getSizeX(), Camera.getInstance().getSizeY());
@@ -211,13 +208,13 @@ public class MainMenu extends Scene {
 
         SpriteRenderer clearSaveButtonSpriteRender = clearSaveButtonGO.addComponent(SpriteRenderer.class);
         clearSaveButtonSpriteRender.setImage(spritesImage);
-        clearSaveButtonSpriteRender.setSrcSize(128,128);
-        clearSaveButtonSpriteRender.setSrcPosition(0,128);
-        clearSaveButtonSpriteRender.setSize(size,size);
+        clearSaveButtonSpriteRender.setSrcSize(128, 128);
+        clearSaveButtonSpriteRender.setSrcPosition(0, 128);
+        clearSaveButtonSpriteRender.setSize(size, size);
         clearSaveButtonSpriteRender.setLayer(128);
 
         Button clearSaveButton = clearSaveButtonGO.addComponent(Button.class);
-        clearSaveButton.setSize(size,size);
+        clearSaveButton.setSize(size, size);
         clearSaveButton.setOnClick(() -> {
             uiButtonSound.play(1);
             try {
@@ -227,7 +224,6 @@ public class MainMenu extends Scene {
             }
             loadScene(MainMenu.class);
         });
-
 
 
         // Skip the landing page if returning here from another scene

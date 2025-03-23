@@ -6,8 +6,6 @@ import com.google.fpl.liquidfun.Fixture;
 import com.google.fpl.liquidfun.FixtureDef;
 import com.google.fpl.liquidfun.Shape;
 
-import unina.game.myapplication.core.Camera;
-
 public abstract class Collider {
 
     RigidBody owner;
@@ -15,6 +13,8 @@ public abstract class Collider {
 
     protected float density, restitution, friction;
     protected boolean isSensor;
+    private int category = 0xffffffff;
+    private int mask = 0xffffffff;
 
     Collider() {
 
@@ -44,6 +44,8 @@ public abstract class Collider {
 
         fixture = body.createFixture(fixtureDef);
         fixture.setUserData(this);
+        fixture.getFilterData().setCategoryBits(category);
+        fixture.getFilterData().setMaskBits(mask);
 
         shape.delete();
         fixtureDef.delete();
@@ -59,6 +61,8 @@ public abstract class Collider {
         }
 
         owner = null;
+        category = 0xffffffff;
+        mask = 0xffffffff;
     }
 
     void onDrawGizmos(Graphics graphics) {
@@ -111,6 +115,14 @@ public abstract class Collider {
 
         if (fixture != null)
             fixture.setSensor(sensor);
+    }
+
+    public void setCategory(int category) {
+        this.category = category;
+    }
+
+    public void setMask(int mask) {
+        this.mask = mask;
     }
 
 }

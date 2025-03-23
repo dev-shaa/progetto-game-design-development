@@ -132,11 +132,6 @@ public final class RigidBody extends PhysicsComponent {
             body.setTransform(x, y, body.getAngle());
     }
 
-    @Deprecated
-    public void setCollider(Collider collider) {
-        addCollider(collider);
-    }
-
     /**
      * Sets the RigidBody type.
      *
@@ -240,7 +235,7 @@ public final class RigidBody extends PhysicsComponent {
      *
      * @param joint joint to add
      */
-    public void addJoint(Joint joint) {
+    public <T extends Joint> T addJoint(T joint) {
         if (joint.rigidBodyA != null)
             throw new RuntimeException("Joint is already attached to another RigidBody");
 
@@ -251,6 +246,8 @@ public final class RigidBody extends PhysicsComponent {
             joint.createJoint(world);
             joint.rigidBodyB.joints.add(joint);
         }
+
+        return joint;
     }
 
     /**

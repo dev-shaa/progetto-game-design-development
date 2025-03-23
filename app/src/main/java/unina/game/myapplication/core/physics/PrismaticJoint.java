@@ -23,8 +23,8 @@ public final class PrismaticJoint extends Joint {
     }
 
     private float axisX, axisY;
-    private boolean enableLimit;
-    private float lowerLimit, upperLimit;
+    private boolean enableLimit, enableMotor;
+    private float lowerLimit, upperLimit, maxMotorForce;
     private com.google.fpl.liquidfun.Joint joint;
 
     private PrismaticJoint() {
@@ -41,6 +41,8 @@ public final class PrismaticJoint extends Joint {
         def.setEnableLimit(enableLimit);
         def.setLowerTranslation(lowerLimit);
         def.setUpperTranslation(upperLimit);
+        def.setEnableMotor(enableMotor);
+        def.setMaxMotorForce(maxMotorForce);
 
         joint = world.createJoint(def);
 
@@ -54,6 +56,7 @@ public final class PrismaticJoint extends Joint {
 
         world.destroyJoint(joint);
         joint = null;
+        enableLimit = enableMotor = false;
 
         pool.free(this);
     }
@@ -62,12 +65,20 @@ public final class PrismaticJoint extends Joint {
         this.enableLimit = enableLimit;
     }
 
+    public void setEnableMotor(boolean enableMotor) {
+        this.enableMotor = enableMotor;
+    }
+
     public void setLowerLimit(float lowerLimit) {
         this.lowerLimit = lowerLimit;
     }
 
     public void setUpperLimit(float upperLimit) {
         this.upperLimit = upperLimit;
+    }
+
+    public void setMaxMotorForce(float maxMotorForce) {
+        this.maxMotorForce = maxMotorForce;
     }
 
 }

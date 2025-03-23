@@ -61,6 +61,8 @@ public class SpriteRenderer extends RenderComponent {
         image = null;
         color = Color.WHITE;
         pivotX = pivotY = 0.5f;
+        srcWidth = srcHeight = 0;
+        srcX = srcY = 0;
     }
 
     @Override

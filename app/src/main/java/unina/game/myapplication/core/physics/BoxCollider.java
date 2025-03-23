@@ -53,7 +53,7 @@ public final class BoxCollider extends Collider {
     @Override
     Shape createShape() {
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width, height, centerX, centerY, angle);
+        shape.setAsBox(width, height, centerX, centerY, (float) Math.toRadians(angle));
         return shape;
     }
 

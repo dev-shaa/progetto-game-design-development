@@ -9,7 +9,7 @@ import java.nio.ByteOrder;
 import unina.game.myapplication.core.RenderComponent;
 import unina.game.myapplication.core.physics.ParticleSystem;
 
-public class ParticleSystemRenderer extends RenderComponent {
+public final class ParticleSystemRenderer extends RenderComponent {
 
     private static final int MAX_PARTICLES = 10240;
     private static final int PARTICLES_SIZE = 8;

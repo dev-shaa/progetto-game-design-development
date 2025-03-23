@@ -6,7 +6,7 @@ import com.badlogic.androidgames.framework.Graphics;
 
 import unina.game.myapplication.core.RenderComponent;
 
-public class TextRenderer extends RenderComponent {
+public final class TextRenderer extends RenderComponent {
 
     private String text;
     private float size = 11;

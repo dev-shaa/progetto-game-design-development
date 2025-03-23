@@ -53,13 +53,4 @@ public abstract class Component {
 
     }
 
-    /**
-     * Returns the maximum size of the component pool.
-     *
-     * @return component pool size
-     */
-    public int getComponentPoolSize() {
-        return 8;
-    }
-
 }

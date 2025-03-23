@@ -8,7 +8,7 @@ import unina.game.myapplication.core.RenderComponent;
 /**
  * Draws a rectangle on screen.
  */
-public class RectRenderer extends RenderComponent {
+public final class RectRenderer extends RenderComponent {
 
     public float width, height;
     public float pivotX, pivotY;
@@ -31,7 +31,13 @@ public class RectRenderer extends RenderComponent {
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        graphics.drawRect(getOwner().x - pivotX * width, -getOwner().y - pivotY * height, width, height, getOwner().angle, color);
+        float x = getOwner().x - pivotX * width;
+        float y = -getOwner().y - pivotY * height;
+
+        graphics.saveCanvas();
+        graphics.rotateCanvas(getOwner().angle, x + width / 2, y + height / 2);
+        graphics.drawRect(x, y, width, height, color);
+        graphics.restoreCanvas();
     }
 
     /**

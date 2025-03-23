@@ -248,6 +248,14 @@ public class AndroidGraphics implements Graphics {
     }
 
     @Override
+    public void restoreCanvasFully() {
+        while (saveCount > 0) {
+            canvas.restore();
+            saveCount--;
+        }
+    }
+
+    @Override
     public void setFont(Font font) {
         if (font == null)
             paint.setTypeface(null);

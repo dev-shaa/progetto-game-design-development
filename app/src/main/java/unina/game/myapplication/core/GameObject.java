@@ -1,14 +1,8 @@
 package unina.game.myapplication.core;
 
-import android.util.ArrayMap;
-
-import com.badlogic.androidgames.framework.PoolManual;
-
 import java.util.EnumMap;
 
 public final class GameObject {
-
-    private static final ArrayMap<Class<?>, PoolManual<Component>> componentPools = new ArrayMap<>();
 
     /**
      * The x coordinate of the GameObject, in world units.
@@ -52,7 +46,7 @@ public final class GameObject {
      */
     void dispose() {
         for (Component component : components.values())
-            disposeComponent(component);
+            component.onRemove();
 
         components.clear();
         scene = null;
@@ -115,10 +109,7 @@ public final class GameObject {
             throw new IllegalStateException("GameObject was already initialized");
 
         try {
-            PoolManual<Component> pool = componentPools.get(type);
-
-            @SuppressWarnings("unchecked")
-            T component = pool == null || pool.isEmpty() ? type.getConstructor().newInstance() : (T) pool.get();
+            T component = type.getConstructor().newInstance();
 
             if (hasComponent(component.getType()))
                 throw new RuntimeException("GameObject already has a component of the same type");
@@ -129,22 +120,6 @@ public final class GameObject {
             return component;
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException("Could not create instance of component, make sure it has a public no-args constructor", e);
-        }
-    }
-
-    private void disposeComponent(Component component) {
-        component.onRemove();
-
-        if (component.getComponentPoolSize() > 0) {
-            Class<?> type = component.getClass();
-            PoolManual<Component> pool = componentPools.get(type);
-
-            if (pool == null) {
-                pool = new PoolManual<>(component.getComponentPoolSize());
-                componentPools.put(type, pool);
-            }
-
-            pool.free(component);
         }
     }
 

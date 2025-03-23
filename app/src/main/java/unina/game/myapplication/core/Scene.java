@@ -23,7 +23,7 @@ import unina.game.myapplication.core.physics.CollisionListener;
 
 public abstract class Scene extends Screen {
 
-    public static final boolean DEBUG = false; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
+    public static final boolean DEBUG = true; // TODO: SET TO FALSE WHEN BUILDING RELEASE VERSION
 
     private static final int VELOCITY_ITERATIONS = 8, POSITION_ITERATIONS = 3, PARTICLE_ITERATIONS = 3;
     private static final float DEFAULT_GRAVITY_X = 0, DEFAULT_GRAVITY_Y = -9.82f;
@@ -65,10 +65,16 @@ public abstract class Scene extends Screen {
         world.setContactListener(collisionListener);
 
         // Add a camera object
-        camera = createGameObject().addComponent(Camera.class);
+        GameObject cameraGO = gameObjectsPool.get();
+        cameraGO.scene = this;
+        cameraGO.setTransform(0, 0, 0);
+
+        camera = cameraGO.addComponent(Camera.class);
         camera.setGraphics(game.getGraphics());
         camera.setLayer(Integer.MIN_VALUE);
         camera.setSize(10);
+
+        cameraGO.initialize();
     }
 
     @Override
@@ -159,6 +165,8 @@ public abstract class Scene extends Screen {
             layerDirty = false;
         }
 
+        camera.render(deltaTime, graphics);
+
         // Render each component
         for (int i = 0; i < renderComponents.size(); i++)
             renderComponents.get(i).render(deltaTime, graphics);
@@ -170,10 +178,10 @@ public abstract class Scene extends Screen {
                     component.onDrawGizmos(graphics);
             }
 
-            for (int i = -500; i < 500; i++) {
-                graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.WHITE : Color.GREY);
-                graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.WHITE : Color.GREY);
-            }
+//            for (int i = -500; i < 500; i++) {
+//                graphics.drawLine(-1000, i, 1000, i, i % 5 == 0 ? Color.WHITE : Color.GREY);
+//                graphics.drawLine(i, -1000, i, 1000, i % 5 == 0 ? Color.WHITE : Color.GREY);
+//            }
         }
     }
 
@@ -190,19 +198,6 @@ public abstract class Scene extends Screen {
     @Override
     public void dispose() {
         sceneToBeLoaded = null;
-
-        for (Music music : musics.values())
-            music.dispose();
-
-        for (Sound sounds : sounds.values())
-            sounds.dispose();
-
-        for (Pixmap image : images.values())
-            image.dispose();
-
-        musics.clear();
-        sounds.clear();
-        images.clear();
 
         for (GameObject gameObject : gameObjects)
             gameObject.dispose();
@@ -222,6 +217,20 @@ public abstract class Scene extends Screen {
         gameObjectsToOperate.clear();
         gameObjectsOperations.clear();
 
+        for (Music music : musics.values())
+            music.dispose();
+
+        for (Sound sounds : sounds.values())
+            sounds.dispose();
+
+        for (Pixmap image : images.values())
+            image.dispose();
+
+        musics.clear();
+        sounds.clear();
+        images.clear();
+
+        camera.getOwner().dispose();
         camera = null;
     }
 

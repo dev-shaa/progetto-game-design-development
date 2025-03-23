@@ -76,6 +76,8 @@ public interface Graphics {
 
     void restoreCanvas();
 
+    void restoreCanvasFully();
+
     void setFont(Font font);
 
     int getWidth();

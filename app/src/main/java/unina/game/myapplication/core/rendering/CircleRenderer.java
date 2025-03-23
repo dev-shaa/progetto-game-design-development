@@ -8,7 +8,7 @@ import unina.game.myapplication.core.RenderComponent;
 /**
  * Draws a circle on the screen.
  */
-public class CircleRenderer extends RenderComponent {
+public final class CircleRenderer extends RenderComponent {
 
     public float radius = 0.5f;
     public int color = Color.WHITE;

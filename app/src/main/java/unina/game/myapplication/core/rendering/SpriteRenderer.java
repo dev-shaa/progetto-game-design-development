@@ -6,7 +6,7 @@ import com.badlogic.androidgames.framework.Pixmap;
 
 import unina.game.myapplication.core.RenderComponent;
 
-public class SpriteRenderer extends RenderComponent {
+public final class SpriteRenderer extends RenderComponent {
 
     public int srcX, srcY;
     public int srcWidth, srcHeight;
@@ -63,6 +63,7 @@ public class SpriteRenderer extends RenderComponent {
         pivotX = pivotY = 0.5f;
         srcWidth = srcHeight = 0;
         srcX = srcY = 0;
+        width = height = 1;
     }
 
     @Override

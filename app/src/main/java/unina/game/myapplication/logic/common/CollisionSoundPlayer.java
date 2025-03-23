@@ -32,11 +32,6 @@ public class CollisionSoundPlayer extends BehaviourComponent {
         }
     }
 
-    @Override
-    public int getComponentPoolSize() {
-        return 2;
-    }
-
     /**
      * Sets the sound to play when a collision occurs.
      *

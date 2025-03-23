@@ -27,7 +27,7 @@ public final class Camera extends RenderComponent {
     public void onRemove() {
         super.onRemove();
 
-        graphics.restoreCanvas();
+        graphics.restoreCanvasFully();
         graphics = null;
 
         if (instance == this)
@@ -36,7 +36,7 @@ public final class Camera extends RenderComponent {
 
     @Override
     public void render(float deltaTime, Graphics graphics) {
-        graphics.restoreCanvas();
+        graphics.restoreCanvasFully();
         graphics.saveCanvas();
 
         float sx = graphics.getWidth() / (halfSizeX * 2);
@@ -106,11 +106,6 @@ public final class Camera extends RenderComponent {
 
     public float screenToViewportY(float y) {
         return Utility.inverseLerp(0, graphics.getHeight(), y);
-    }
-
-    @Override
-    public int getComponentPoolSize() {
-        return 0;
     }
 
 }

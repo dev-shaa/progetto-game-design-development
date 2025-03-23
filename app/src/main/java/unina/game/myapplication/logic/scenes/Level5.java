@@ -1,4 +1,4 @@
-package unina.game.myapplication;
+package unina.game.myapplication.logic.scenes;
 
 import com.badlogic.androidgames.framework.Color;
 import com.badlogic.androidgames.framework.Game;
@@ -27,7 +27,6 @@ import unina.game.myapplication.logic.common.animations.WaitAnimation;
 import unina.game.myapplication.logic.common.inputs.CursorJointInput;
 import unina.game.myapplication.logic.common.renderers.DottedLineRenderer;
 import unina.game.myapplication.logic.common.renderers.DraggablePlatformLineRenderer;
-import unina.game.myapplication.logic.scenes.Level;
 import unina.game.myapplication.core.rendering.RectRenderer;
 
 public class Level5 extends Level {

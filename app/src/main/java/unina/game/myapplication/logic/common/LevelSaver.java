@@ -9,7 +9,7 @@ import java.io.IOException;
 import unina.game.myapplication.logic.scenes.Level1;
 import unina.game.myapplication.logic.scenes.Level2;
 import unina.game.myapplication.logic.scenes.Level4;
-import unina.game.myapplication.Level5;
+import unina.game.myapplication.logic.scenes.Level5;
 import unina.game.myapplication.core.Scene;
 
 /**

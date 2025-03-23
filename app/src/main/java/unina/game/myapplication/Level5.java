@@ -12,7 +12,6 @@ import unina.game.myapplication.core.animations.AnimationSequence;
 import unina.game.myapplication.core.animations.EaseFunction;
 import unina.game.myapplication.core.animations.ParallelAnimation;
 import unina.game.myapplication.core.physics.BoxCollider;
-import unina.game.myapplication.core.physics.CircleCollider;
 import unina.game.myapplication.core.physics.CursorJoint;
 import unina.game.myapplication.core.physics.ParticleSystem;
 import unina.game.myapplication.core.physics.PrismaticJoint;

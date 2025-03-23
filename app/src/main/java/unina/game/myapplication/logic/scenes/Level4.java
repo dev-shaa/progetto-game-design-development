@@ -324,7 +324,7 @@ public class Level4 extends Level {
                     winSound.play(1);
                 });
                 animator.add(MoveToAnimation.build(character, 15, 1, 1f, EaseFunction.CUBIC_IN_OUT));
-                animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), () -> loadScene(MainMenu.class));
+                animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
                 animator.start();
             } else {
                 bridgeButton.setInteractable(false);

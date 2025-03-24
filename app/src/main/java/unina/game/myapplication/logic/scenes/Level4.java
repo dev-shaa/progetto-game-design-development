@@ -149,15 +149,6 @@ public class Level4 extends Level {
         gameOverTriggerRigidBody.addCollider(BoxCollider.build(4, 1, true));
 
         PressurePlate gameOverTrigger = gameOverTriggerGO.addComponent(PressurePlate.class);
-        gameOverTrigger.setOnCollisionEnter(() -> {
-            rockCrushSound.play(1);
-            characterRenderer.setSize(6, 0.5f);
-
-            animator.clear();
-            animator.add(WaitAnimation.build(2));
-            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), this::reloadLevel);
-            animator.start();
-        });
 
         // Pulsante ponte down
         GameObject buttonBridgeDown = createGameObject(4, 20);
@@ -198,15 +189,7 @@ public class Level4 extends Level {
                 lineBridgeDownB.setColor(0xff009fff);
             }
         });
-        buttonBridgeDownInputComponent.setOnClick(() -> {
-            buttonBridgeDownInputComponent.setInteractable(false);
-            buttonSound.play(1);
 
-            animator.clear();
-            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
-            animator.add(MoveRigidBodyTo.build(bridgeRockDownRigidBody, -8, bridgeRockDown.y, 0.4f, EaseFunction.CUBIC_IN_OUT));
-            animator.start();
-        });
 
         // Wrecking ball barrier
         GameObject wreckingBallBarrierGO = createGameObject(-1, -17, 90);
@@ -261,18 +244,6 @@ public class Level4 extends Level {
                 lineButtonRock.setColor(0xff009fff);
             }
         });
-        buttonBallInputComponent.setOnClick(() -> {
-            buttonSound.play(1);
-            buttonBallInputComponent.setInteractable(false);
-
-            animator.clear();
-            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
-            animator.add(ParallelAnimation.build(
-                    MoveRigidBodyTo.build(wreckingBallBarrierRigidBody, wreckingBallBarrierGO.x, -30, 0.5f),
-                    MoveRigidBodyTo.build(bridgeRockUpRigidBody, 0, bridgeRockUp.y, 0.5f)
-            ));
-            animator.start();
-        });
 
         // Bridge
         GameObject bridgeGO = createGameObject(11f, 0.35f);
@@ -309,33 +280,6 @@ public class Level4 extends Level {
                 bridgeButtonRenderer.setSrcPosition(384, 0);
                 lineButtonCharacter.setColor(0xff009fff);
             }
-        });
-        bridgeButton.setOnClick(() -> {
-            animator.clear();
-
-            if (isWallDown) {
-                saveProgress();
-                setUIButtonsInteractable(false);
-
-                movingPlatformSound.play(1);
-                animator.add(MoveToAnimation.build(bridgeGO, 2.5f, 0.3f, 0.4f));
-                animator.add(WaitAnimation.build(0.4f), () -> {
-                    characterRenderer.setSrcPosition(128, 128);
-                    winSound.play(1);
-                });
-                animator.add(MoveToAnimation.build(character, 15, 1, 1f, EaseFunction.CUBIC_IN_OUT));
-                animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
-                animator.start();
-            } else {
-                bridgeButton.setInteractable(false);
-
-                animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
-                animator.add(MoveToAnimation.build(bridgeGO, 8.25f, 0.3f, 0.4f), () -> rockCrushSound.play(1));
-                animator.add(WaitAnimation.build(0.1f));
-                animator.add(MoveToAnimation.build(bridgeGO, bridgeGO.x, 0.3f, 0.4f), () -> bridgeButton.setInteractable(true));
-            }
-
-            animator.start();
         });
 
 
@@ -410,6 +354,85 @@ public class Level4 extends Level {
         outerWalls.setType(RigidBody.Type.STATIC);
         outerWalls.addCollider(BoxCollider.build(1, 50)).setCenter(-13.5f, 0);
         outerWalls.addCollider(BoxCollider.build(1, 50)).setCenter(13.5f, 0);
+
+        buttonBridgeDownInputComponent.setOnClick(() -> {
+            buttonBridgeDownInputComponent.setInteractable(false);
+            buttonBallInputComponent.setInteractable(false);
+            bridgeButton.setInteractable(false);
+            buttonSound.play(1);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
+            animator.add(MoveRigidBodyTo.build(bridgeRockDownRigidBody, -8, bridgeRockDown.y, 0.4f, EaseFunction.CUBIC_IN_OUT), () -> {
+                bridgeButton.setInteractable(true);
+                buttonBallInputComponent.setInteractable(true);
+            });
+            animator.start();
+        });
+
+        buttonBallInputComponent.setOnClick(() -> {
+            buttonSound.play(1);
+            buttonBallInputComponent.setInteractable(false);
+            buttonBridgeDownInputComponent.setInteractable(false);
+            bridgeButton.setInteractable(false);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
+            animator.add(ParallelAnimation.build(
+                    MoveRigidBodyTo.build(wreckingBallBarrierRigidBody, wreckingBallBarrierGO.x, -30, 0.5f),
+                    MoveRigidBodyTo.build(bridgeRockUpRigidBody, 0, bridgeRockUp.y, 0.5f)
+            ), () -> {
+                bridgeButton.setInteractable(true);
+                buttonBridgeDownInputComponent.setInteractable(true);
+            });
+            animator.start();
+        });
+
+        bridgeButton.setOnClick(() -> {
+            animator.clear();
+            bridgeButton.setInteractable(false);
+            buttonBallInputComponent.setInteractable(false);
+            buttonBridgeDownInputComponent.setInteractable(false);
+
+            if (isWallDown) {
+                saveProgress();
+                setUIButtonsInteractable(false);
+
+                movingPlatformSound.play(1);
+                animator.add(MoveToAnimation.build(bridgeGO, 2.5f, 0.3f, 0.4f));
+                animator.add(WaitAnimation.build(0.4f), () -> {
+                    characterRenderer.setSrcPosition(128, 128);
+                    winSound.play(1);
+                });
+                animator.add(MoveToAnimation.build(character, 15, 1, 1f, EaseFunction.CUBIC_IN_OUT));
+                animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.75f), this::loadNextLevel);
+                animator.start();
+            } else {
+                animator.add(WaitAnimation.build(0.25f), () -> movingPlatformSound.play(1));
+                animator.add(MoveToAnimation.build(bridgeGO, 8.25f, 0.3f, 0.4f), () -> rockCrushSound.play(1));
+                animator.add(WaitAnimation.build(0.1f));
+                animator.add(MoveToAnimation.build(bridgeGO, bridgeGO.x, 0.3f, 0.4f), () -> {
+                    bridgeButton.setInteractable(true);
+                    buttonBallInputComponent.setInteractable(true);
+                    buttonBridgeDownInputComponent.setInteractable(true);
+                });
+            }
+
+            animator.start();
+        });
+
+        gameOverTrigger.setOnCollisionEnter(() -> {
+            buttonBridgeDownInputComponent.setInteractable(false);
+            buttonBallInputComponent.setInteractable(false);
+            bridgeButton.setInteractable(false);
+            rockCrushSound.play(1);
+            characterRenderer.setSize(6, 0.5f);
+
+            animator.clear();
+            animator.add(WaitAnimation.build(2));
+            animator.add(ColorAnimation.build(fullScreenRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), this::reloadLevel);
+            animator.start();
+        });
     }
 
     private void createBox(float x, float y, float width, float height) {

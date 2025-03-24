@@ -178,17 +178,6 @@ public class Level4 extends Level {
 
         Button buttonBridgeDownInputComponent = buttonBridgeDown.addComponent(Button.class);
         buttonBridgeDownInputComponent.setSize(6, 6);
-        buttonBridgeDownInputComponent.setOnInteractableChange(interactable -> {
-            if (interactable) {
-                buttonBridgeDownRenderComponent.setSrcPosition(0, 0);
-                lineBridgeDown.setColor(Color.GREY);
-                lineBridgeDownB.setColor(Color.GREY);
-            } else {
-                buttonBridgeDownRenderComponent.setSrcPosition(384, 0);
-                lineBridgeDown.setColor(0xff009fff);
-                lineBridgeDownB.setColor(0xff009fff);
-            }
-        });
 
 
         // Wrecking ball barrier
@@ -233,17 +222,6 @@ public class Level4 extends Level {
 
         Button buttonBallInputComponent = buttonBall.addComponent(Button.class);
         buttonBallInputComponent.setSize(6, 6);
-        buttonBallInputComponent.setOnInteractableChange(interactable -> {
-            if (interactable) {
-                buttonBallRenderComponent.setSrcPosition(0, 0);
-                lineButtonDown.setColor(PALETTE_PRIMARY);
-                lineButtonRock.setColor(PALETTE_PRIMARY);
-            } else {
-                buttonBallRenderComponent.setSrcPosition(384, 0);
-                lineButtonDown.setColor(0xff009fff);
-                lineButtonRock.setColor(0xff009fff);
-            }
-        });
 
         // Bridge
         GameObject bridgeGO = createGameObject(11f, 0.35f);
@@ -272,15 +250,6 @@ public class Level4 extends Level {
 
         Button bridgeButton = bridgeButtonGO.addComponent(Button.class);
         bridgeButton.setSize(6, 6);
-        bridgeButton.setOnInteractableChange(interactable -> {
-            if (interactable) {
-                bridgeButtonRenderer.setSrcPosition(0, 0);
-                lineButtonCharacter.setColor(Color.GREY);
-            } else {
-                bridgeButtonRenderer.setSrcPosition(384, 0);
-                lineButtonCharacter.setColor(0xff009fff);
-            }
-        });
 
 
         // Wrecking ball anchor
@@ -360,6 +329,9 @@ public class Level4 extends Level {
             buttonBallInputComponent.setInteractable(false);
             bridgeButton.setInteractable(false);
             buttonSound.play(1);
+            buttonBridgeDownRenderComponent.setSrcPosition(384, 0);
+            lineBridgeDown.setColor(0xff009fff);
+            lineBridgeDownB.setColor(0xff009fff);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
@@ -375,6 +347,9 @@ public class Level4 extends Level {
             buttonBallInputComponent.setInteractable(false);
             buttonBridgeDownInputComponent.setInteractable(false);
             bridgeButton.setInteractable(false);
+            buttonBallRenderComponent.setSrcPosition(384, 0);
+            lineButtonDown.setColor(0xff009fff);
+            lineButtonRock.setColor(0xff009fff);
 
             animator.clear();
             animator.add(WaitAnimation.build(0.1f), () -> movingPlatformSound.play(1));
@@ -393,6 +368,8 @@ public class Level4 extends Level {
             bridgeButton.setInteractable(false);
             buttonBallInputComponent.setInteractable(false);
             buttonBridgeDownInputComponent.setInteractable(false);
+            bridgeButtonRenderer.setSrcPosition(384, 0);
+            lineButtonCharacter.setColor(0xff009fff);
 
             if (isWallDown) {
                 saveProgress();
@@ -415,6 +392,8 @@ public class Level4 extends Level {
                     bridgeButton.setInteractable(true);
                     buttonBallInputComponent.setInteractable(true);
                     buttonBridgeDownInputComponent.setInteractable(true);
+                    bridgeButtonRenderer.setSrcPosition(0, 0);
+                    lineButtonCharacter.setColor(Color.GREY);
                 });
             }
 

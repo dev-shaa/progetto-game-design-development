@@ -93,11 +93,13 @@ public class MainMenu extends Scene {
         Button playButton = playButtonGO.addComponent(Button.class);
         playButton.setSize(8, 2);
         playButton.setOnClick(() -> {
+            playButton.setInteractable(false);
             animator.clear();
             animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.TRANSPARENT, Color.BLACK, 0.5f), () -> Camera.getInstance().getOwner().setTransform(30, 0, 0));
             animator.add(ColorAnimation.build(fadeRenderer::setColor, Color.BLACK, Color.TRANSPARENT, 0.5f), () -> {
                 for (Button levelButton : levelButtons)
                     levelButton.setInteractable(true);
+                playButton.setInteractable(true);
             });
             animator.start();
         });

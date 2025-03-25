@@ -210,12 +210,12 @@ public class MainMenu extends Scene {
         });
 
         // Clear Save Button
-        GameObject clearSaveButtonGO = createGameObject(3 + 30, -8);
+        GameObject clearSaveButtonGO = createGameObject(3 + 30, -7.5f);
 
         SpriteRenderer clearSaveButtonSpriteRender = clearSaveButtonGO.addComponent(SpriteRenderer.class);
         clearSaveButtonSpriteRender.setImage(spritesImage);
         clearSaveButtonSpriteRender.setSrcSize(128, 128);
-        clearSaveButtonSpriteRender.setSrcPosition(0, 128);
+        clearSaveButtonSpriteRender.setSrcPosition(256, 128);
         clearSaveButtonSpriteRender.setSize(size, size);
         clearSaveButtonSpriteRender.setLayer(128);
 

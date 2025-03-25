@@ -70,7 +70,7 @@ public class Level5 extends Level {
 
         ParticleSystemRenderer waterPlatformRenderer = waterPlatform.addComponent(ParticleSystemRenderer.class);
         waterPlatformRenderer.setParticleSystem(waterPlatformParticleSystem);
-        waterPlatformRenderer.setColor(PALETTE_PRIMARY);
+        waterPlatformRenderer.setColor(0xffECECE7);
 
         // Water container
         GameObject waterContainerGo = createGameObject(-7f, 10f, -45);
@@ -85,7 +85,7 @@ public class Level5 extends Level {
         createPlatform(-2f + 2, 7f, 0.5f + 2, 9.5f, 45, 7f, 0.5f, 2, 2);
 
         createPlatform(2f, 10.5f, -2f, 14.5f, -45, 6, 0.5f, 3, 3);
-        createPlatform(0f, 3.5f, -4.5f, 7.5f, -45, 3.7f, 0.5f, 3, 3);
+        createPlatform(0f, 3f, -4.5f, 7.5f, -45, 3.7f, 0.5f, 3, 3);
 
         // Funnel
         GameObject funnelGO = createGameObject(3f, -6f);
@@ -269,8 +269,14 @@ public class Level5 extends Level {
 
         GameObject platform = createGameObject(startX, startY, angle);
 
-        RectRenderer renderer = platform.addComponent(RectRenderer.class);
-        renderer.setSize(width, height);
+//        RectRenderer renderer = platform.addComponent(RectRenderer.class);
+//        renderer.setSize(width, height);
+        SpriteRenderer rightDraggablePlatformRenderer = platform.addComponent(SpriteRenderer.class);
+        rightDraggablePlatformRenderer.setImage(getImage(Assets.GRAPHICS_GAME_SPRITES_DARK));
+        rightDraggablePlatformRenderer.setSrcPosition(256, 384);
+        rightDraggablePlatformRenderer.setSrcSize(256, 34);
+        rightDraggablePlatformRenderer.setSize(width, height);
+
 
         float halfDistance = Utility.distance(startX, startY, endX, endY) / 2;
         float axisX = endX - startX;

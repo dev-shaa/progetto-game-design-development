@@ -47,6 +47,7 @@ public class Level5 extends Level {
         Pixmap spriteSheet = getImage(Assets.GRAPHICS_GAME_SPRITES_DARK);
         Sound movingPlatformSound = getSound(Assets.SOUND_GAME_PLATFORM_MOVE);
         Sound winSound = getSound(Assets.SOUND_GAME_WIN);
+        Sound drowningSound = getSound(Assets.SOUND_GAME_DROWNING);
 
         // Background
         SpriteRenderer backgroundRenderer = createGameObject().addComponent(SpriteRenderer.class);
@@ -132,6 +133,7 @@ public class Level5 extends Level {
         PressurePlate gameOverTrigger = gameOverTriggerGO.addComponent(PressurePlate.class);
         gameOverTrigger.setOnCollisionEnter(() -> {
             characterRenderer.setSrcPosition(256, 128);
+            drowningSound.play(1);
 
             animationSequence.clear();
             animationSequence.add(WaitAnimation.build(3f));
